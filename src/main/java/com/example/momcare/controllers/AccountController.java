@@ -7,6 +7,7 @@ import com.example.momcare.security.Encode;
 import com.example.momcare.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,6 +39,10 @@ public class AccountController {
         }
 
         return "";
+    }
+    @GetMapping("/hello")
+    public String Checking(){
+        return "hello";
     }
     @PostMapping("/login")
     public Boolean loginAccount(@RequestBody Account account) {
