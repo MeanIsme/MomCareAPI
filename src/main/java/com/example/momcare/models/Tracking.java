@@ -6,6 +6,8 @@ import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 @Getter
 @Setter
 @ToString
@@ -15,8 +17,9 @@ public class Tracking {
     private String id;
 
     private int week;
-    private TrackingBaby baby;
-    private TrackingMom mom;
-    private TrackingAdvice advice;
+    private List<String> thumbnails;
+    private String baby;
+    private String mom;
+    private String advice;
 
 }
