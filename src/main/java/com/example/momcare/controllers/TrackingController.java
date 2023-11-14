@@ -25,7 +25,7 @@ public class TrackingController {
         for (Tracking tracking : trackings) {
             weekResponses.add(new TrackingWeekResponse(tracking.getId(),  tracking.getWeek(), "Week " + tracking.getWeek(), "tracking"));
         }
-        return new Response("ok", weekResponses , "success");
+        return new Response("OK", weekResponses , "success");
     }
     @GetMapping("/tracking")
     @ResponseBody
@@ -36,7 +36,7 @@ public class TrackingController {
                 tracking.getBaby(), tracking.getMom(), tracking.getAdvice(), tracking.getThumbnails());
         List<TrackingWeekDetailResponse> responses = new ArrayList<>();
         responses.add(response);
-        return new Response("ok", responses, "success");
+        return new Response("OK", responses, "success");
     }
 
 
