@@ -7,6 +7,7 @@ import com.example.momcare.payload.response.TrackingWeekResponse;
 import com.example.momcare.service.AccountService;
 import com.example.momcare.service.TrackingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +26,7 @@ public class TrackingController {
         for (Tracking tracking : trackings) {
             weekResponses.add(new TrackingWeekResponse(tracking.getId(),  tracking.getWeek(), "Week " + tracking.getWeek(), "tracking"));
         }
-        return new Response("OK", weekResponses , "success");
+        return new Response(HttpStatus.OK.getReasonPhrase(), weekResponses , "success");
     }
     @GetMapping("/tracking")
     @ResponseBody
@@ -36,7 +37,7 @@ public class TrackingController {
                 tracking.getBaby(), tracking.getMom(), tracking.getAdvice(), tracking.getThumbnails());
         List<TrackingWeekDetailResponse> responses = new ArrayList<>();
         responses.add(response);
-        return new Response("OK", responses, "success");
+        return new Response(HttpStatus.OK.getReasonPhrase(), responses, "success");
     }
 
 
