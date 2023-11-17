@@ -20,6 +20,7 @@ public class Category {
     @NotBlank
     private String name;
     @DBRef
-    private List<Collection> collection;
+    private List<String> collection;
+    private String content;
     private String thumbnail;
 }
