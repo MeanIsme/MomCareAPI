@@ -15,6 +15,6 @@ public class HandBookCollection {
     private String id;
     @NotBlank
     private String name;
+    private String content;
     private String thumbnail;
-
 }
