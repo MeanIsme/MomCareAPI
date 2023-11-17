@@ -1,16 +1,16 @@
 package com.example.momcare.service;
 
 import com.example.momcare.models.Collection;
-import com.example.momcare.repository.CollectionRepository;
+import com.example.momcare.repository.HandBookCollectionRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class CollectionService {
-    CollectionRepository repository;
+public class HandBookCollectionService {
+    HandBookCollectionRepository repository;
 
-    public CollectionService(CollectionRepository repository) {
+    public HandBookCollectionService(HandBookCollectionRepository repository) {
         this.repository = repository;
     }
 
