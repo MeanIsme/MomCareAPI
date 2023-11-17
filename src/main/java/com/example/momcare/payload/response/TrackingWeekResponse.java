@@ -18,6 +18,4 @@ public class TrackingWeekResponse {
         this.type = type;
     }
 
-    public TrackingWeekResponse() {
-    }
 }

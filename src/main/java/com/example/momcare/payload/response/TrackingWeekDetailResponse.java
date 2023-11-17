@@ -25,6 +25,5 @@ public class TrackingWeekDetailResponse {
         this.thumbnail = thumbnail;
     }
 
-    public TrackingWeekDetailResponse() {
-    }
+
 }

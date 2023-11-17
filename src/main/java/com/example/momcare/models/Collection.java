@@ -1,0 +1,20 @@
+package com.example.momcare.models;
+
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+@Getter
+@Setter
+@ToString
+@Document(collection = "Collection")
+public class Collection {
+    @Id
+    private String id;
+    @NotBlank
+    private String name;
+    private String thumbnail;
+
+}
