@@ -1,6 +1,6 @@
 package com.example.momcare.service;
 
-import com.example.momcare.models.Category;
+import com.example.momcare.models.HandBookCategory;
 
 import com.example.momcare.repository.HandBookCategoryRepository;
 import org.springframework.stereotype.Service;
@@ -15,6 +15,6 @@ public class HandBookCategoryService {
         this.handBookCategoryRepository = handBookCategoryRepository;
     }
 
-    public List<Category> findAll(){return this.handBookCategoryRepository.findAll();}
+    public List<HandBookCategory> findAll(){return this.handBookCategoryRepository.findAll();}
 
 }

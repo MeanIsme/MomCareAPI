@@ -1,6 +1,6 @@
 package com.example.momcare.service;
 
-import com.example.momcare.models.Collection;
+import com.example.momcare.models.HandBookCollection;
 import com.example.momcare.repository.HandBookCollectionRepository;
 import org.springframework.stereotype.Service;
 
@@ -14,5 +14,5 @@ public class HandBookCollectionService {
         this.repository = repository;
     }
 
-    public List<Collection> findAll(){ return this.repository.findAll();}
+    public List<HandBookCollection> findAll(){ return this.repository.findAll();}
 }
