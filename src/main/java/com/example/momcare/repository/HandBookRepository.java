@@ -9,4 +9,6 @@ import java.util.List;
 public interface HandBookRepository extends MongoRepository<HandBook,String> {
     @Query("{'category': ?0}")
     List<HandBook> getHandBookByCategory(String id);
+
+    HandBook getHandBookById(String id);
 }

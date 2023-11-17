@@ -16,4 +16,7 @@ public class HandBookService {
     public List<HandBook> findHandBookByCategory(String id){
         return this.handBookRepository.getHandBookByCategory(id);
     }
+    public HandBook findHandBookByID(String id){
+        return this.handBookRepository.getHandBookById(id);
+    }
 }
