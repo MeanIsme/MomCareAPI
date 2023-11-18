@@ -19,7 +19,6 @@ public class HandBookCategory {
     private String id;
     @NotBlank
     private String name;
-    @DBRef
     private List<String> collection;
     private String content;
     private String thumbnail;
