@@ -24,7 +24,7 @@ public class HandBookController {
         List<HandBook> handBooks = service.findHandBookByCategory(idCategory);
         List<HandBookResponse> handBookResponses = new ArrayList<>();
         for (HandBook handBook : handBooks){
-            handBookResponses.add(new HandBookResponse(handBook.getId(), handBook.getCategory(), handBook.getTitle(),handBook.getThumbnail(), handBook.getTime()));
+            handBookResponses.add(new HandBookResponse(handBook.getId(), handBook.getTitle(),handBook.getThumbnail(), handBook.getTime()));
         }
         return new Response(HttpStatus.OK.getReasonPhrase(), handBookResponses, "success");
     }
