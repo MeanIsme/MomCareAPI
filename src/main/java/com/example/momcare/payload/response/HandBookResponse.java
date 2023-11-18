@@ -15,8 +15,9 @@ public class HandBookResponse {
     private String thumbnail;
     private Date time;
 
-    public HandBookResponse(String id, String title, String thumbnail, Date time) {
+    public HandBookResponse(String id, List<String> category, String title, String thumbnail, Date time) {
         this.id = id;
+        this.category = category;
         this.title = title;
         this.thumbnail = thumbnail;
         this.time = time;
