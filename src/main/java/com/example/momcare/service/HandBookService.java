@@ -14,7 +14,7 @@ public class HandBookService {
         this.handBookRepository = handBookRepository;
     }
     public List<HandBook> findHandBookByCategory(String id){
-        return this.handBookRepository.getHandBookByCategory(id);
+        return this.handBookRepository.findAllByCategory(id);
     }
     public HandBook findHandBookByID(String id){
         return this.handBookRepository.getHandBookById(id);

@@ -1,8 +1,6 @@
 package com.example.momcare.controllers;
 
 import com.example.momcare.models.HandBook;
-import com.example.momcare.payload.response.HandBookDetailResponse;
-import com.example.momcare.payload.response.HandBookResponse;
 import com.example.momcare.payload.response.Response;
 import com.example.momcare.service.HandBookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,16 +19,13 @@ public class HandBookController {
     HandBookService service;
     @GetMapping("/handbookall")
     public Response findAllByCategory(@RequestParam("idCategory") String idCategory){
-        List<HandBook> handBooks = service.findHandBookByCategory(idCategory);
-        List<HandBookResponse> handBookResponses = new ArrayList<>();
-        for (HandBook handBook : handBooks){
-            handBookResponses.add(new HandBookResponse(handBook.getId(), handBook.getCategory(), handBook.getTitle(),handBook.getThumbnail(), handBook.getTime()));
-        }
-        return new Response(HttpStatus.OK.getReasonPhrase(), handBookResponses, "success");
+        return new Response(HttpStatus.OK.getReasonPhrase(), service.findHandBookByCategory(idCategory), "success");
     }
 
     @GetMapping("/handbook")
-    public HandBookDetailResponse findByID(@RequestParam("id") String id){
-        return new HandBookDetailResponse(HttpStatus.OK.getReasonPhrase(),  service.findHandBookByID(id), "success");
+    public Response findByID(@RequestParam("id") String id){
+        List<HandBook> handBooks = new ArrayList<>();
+        handBooks.add(service.findHandBookByID(id));
+        return new Response(HttpStatus.OK.getReasonPhrase(), handBooks, "success");
     }
 }
