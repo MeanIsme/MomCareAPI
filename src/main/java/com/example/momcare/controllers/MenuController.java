@@ -2,7 +2,6 @@ package com.example.momcare.controllers;
 
 import com.example.momcare.models.Menu;
 import com.example.momcare.payload.response.MenuDetailResponse;
-import com.example.momcare.payload.response.MenuResponse;
 import com.example.momcare.payload.response.Response;
 import com.example.momcare.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +21,13 @@ public class MenuController {
     @GetMapping("/menu")
     public Response findMenuByCategory(@RequestParam("idCategory") String idCategory){
         List<Menu> menus = service.findByCategory(idCategory);
-        List<MenuResponse> responses = new ArrayList<>();
-        for(Menu menu : menus){
-            responses.add(new MenuResponse(menu.getId(), menu.getCategory(), menu.getThumbnail(), menu.getRate()));
-        }
-        return new Response(HttpStatus.OK.getReasonPhrase(), responses, "success");
+
+        return new Response(HttpStatus.OK.getReasonPhrase(), menus, "success");
     }
     @GetMapping("/detailmenu")
-    public MenuDetailResponse findMenuById(@RequestParam("id") String id){
-        return new MenuDetailResponse(HttpStatus.OK.getReasonPhrase(), service.findById(id), "success");
+    public Response findMenuById(@RequestParam("id") String id){
+        List<Menu> menus = new ArrayList<>();
+        menus.add(service.findById(id));
+        return new Response(HttpStatus.OK.getReasonPhrase(), menus , "success");
     }
 }
