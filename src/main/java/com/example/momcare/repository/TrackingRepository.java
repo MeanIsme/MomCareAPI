@@ -8,4 +8,6 @@ import org.springframework.data.mongodb.repository.Query;
 public interface TrackingRepository extends MongoRepository<Tracking,String> {
     @Query("{week : ?0}")
     Tracking findTrackingByWeek(int week);
+    
+
 }
