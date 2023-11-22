@@ -16,7 +16,7 @@ public class Menu {
     @Id
     private String id;
     private String title;
-    private String content;
+    private List<String> content;
     private String category;
     private String thumbnail;
     private List<Integer> rate;

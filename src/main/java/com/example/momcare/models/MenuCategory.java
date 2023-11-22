@@ -15,5 +15,6 @@ public class MenuCategory {
     private String id;
     private String name;
     private String thumbnail;
+    private String content;
 
 }
