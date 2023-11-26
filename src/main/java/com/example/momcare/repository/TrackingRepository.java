@@ -1,6 +1,5 @@
 package com.example.momcare.repository;
 
-import com.example.momcare.models.Account;
 import com.example.momcare.models.Tracking;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;

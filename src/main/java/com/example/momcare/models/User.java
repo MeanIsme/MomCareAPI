@@ -9,12 +9,15 @@ import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Collection;
+import java.util.List;
+
 @Getter
 @Setter
 @ToString
 
 @Document(collection = "Account")
-public class Account {
+public class User   {
     @Id
     private String id;
     @NotBlank
@@ -28,4 +31,5 @@ public class Account {
     @Email
     private String email;
     private Boolean premium;
+
 }

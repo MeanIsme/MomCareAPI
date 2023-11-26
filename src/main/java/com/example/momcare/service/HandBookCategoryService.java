@@ -17,7 +17,6 @@ public class HandBookCategoryService {
 
     public List<HandBookCategory> findAll(){return this.handBookCategoryRepository.findAll();}
     public List<HandBookCategory> findCategoryByCollection(String collection){
-        List<HandBookCategory> a = this.handBookCategoryRepository.findByCollectionIn(collection);
         return this.handBookCategoryRepository.findByCollectionIn(collection);
     }
 
