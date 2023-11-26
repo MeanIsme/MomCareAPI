@@ -44,6 +44,7 @@ public class DiaryController {
         if (diary != null)
         {
             List<Diary> diaries = new ArrayList<>();
+            diaryRequest.setTimeUpdate(LocalDateTime.now().toString());
             diaries.add(diaryRequest);
             if(service.save(diaryRequest))
                 return new Response((HttpStatus.OK.getReasonPhrase()), diaries, "success");
