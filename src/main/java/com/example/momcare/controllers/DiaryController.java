@@ -17,7 +17,7 @@ import java.util.List;
 public class DiaryController {
     @Autowired
     private DiaryService service;
-    @PutMapping("/diary/new")
+    @PostMapping ("/diary/new")
     public Response CreateDiary(@RequestBody Diary diaryRequest){
         Diary diary = new Diary(diaryRequest.getIdUser(),diaryRequest.getTitle(), diaryRequest.getContent(), diaryRequest.getThumbnail(), LocalDateTime.now().toString(),LocalDateTime.now().toString());
         if(service.save(diary))
