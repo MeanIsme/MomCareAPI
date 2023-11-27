@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -47,6 +46,7 @@ public class DiaryController {
             diaryRequest.setTimeUpdate(LocalDateTime.now().toString());
             diaries.add(diaryRequest);
             if(service.save(diaryRequest))
+
                 return new Response((HttpStatus.OK.getReasonPhrase()), diaries, "success");
             else
                 return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "failure");
