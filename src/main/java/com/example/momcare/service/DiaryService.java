@@ -21,9 +21,18 @@ public class DiaryService {
     public Diary findDiaryById(String id){
         return  this.diaryRepository.getDiaryById(id);
     }
-    public boolean save(Diary diary1) {
+    public boolean save(Diary diary) {
         try {
-            this.diaryRepository.save(diary1);
+            this.diaryRepository.save(diary);
+            return true;
+        }
+        catch (Exception e){
+            return false;
+        }
+    }
+    public boolean delete(Diary diary){
+        try {
+            this.diaryRepository.deleteById(diary.getId());
             return true;
         }
         catch (Exception e){

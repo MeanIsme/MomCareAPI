@@ -54,4 +54,18 @@ public class DiaryController {
         else
             return new Response((HttpStatus.NOT_FOUND.getReasonPhrase()), new ArrayList<>(), "failure");
     }
+    @DeleteMapping("/diary/delete")
+    public Response DeleteDiary(@RequestParam String id){
+        Diary diary = service.findDiaryById(id);
+        if (diary != null)
+        {
+            if(service.delete(diary))
+
+                return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");
+            else
+                return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "failure");
+        }
+        else
+            return new Response((HttpStatus.NOT_FOUND.getReasonPhrase()), new ArrayList<>(), "failure");
+    }
 }
