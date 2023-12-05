@@ -18,7 +18,7 @@ public class DiaryController {
     private DiaryService service;
     @PostMapping ("/diary/new")
     public Response CreateDiary(@RequestBody Diary diaryRequest){
-        Diary diary = new Diary(diaryRequest.getIdUser(),diaryRequest.getTitle(), diaryRequest.getContent(), diaryRequest.getThumbnail(), LocalDateTime.now().toString(),LocalDateTime.now().toString());
+        Diary diary = new Diary(diaryRequest.getIdUser(),diaryRequest.getTitle(), diaryRequest.getContent(), diaryRequest.getThumbnail(), diaryRequest.getReaction(), LocalDateTime.now().toString(),LocalDateTime.now().toString());
         if(service.save(diary))
             return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");
         else

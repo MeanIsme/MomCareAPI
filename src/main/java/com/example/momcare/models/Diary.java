@@ -19,17 +19,19 @@ public class Diary {
     private String title;
     private String content;
     private List<String> thumbnail;
+    private int reaction;
     private String timeCreate;
     private String timeUpdate;
 
     public Diary() {
     }
 
-    public Diary(String idUser, String title, String content, List<String> thumbnail, String timeCreate, String timeUpdate) {
+    public Diary(String idUser, String title, String content, List<String> thumbnail,int reaction, String timeCreate, String timeUpdate) {
         this.idUser = idUser;
         this.title = title;
         this.content = content;
         this.thumbnail = thumbnail;
+        this.reaction = reaction;
         this.timeCreate = timeCreate;
         this.timeUpdate = timeUpdate;
     }
