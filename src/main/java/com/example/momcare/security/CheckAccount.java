@@ -4,16 +4,15 @@ import com.example.momcare.models.User;
 import com.example.momcare.service.UserService;
 
 public class CheckAccount {
+    public int checkSignup(User user, UserService service){
+        if (!checkPassWordstrength(user.getPassWord()))
+            return 2;
+        if( service.findAccountByUserName(user.getUserName()) == null)
+            return 1;
+        else
+            return 0;
 
-//    public int checkSignup(User user, UserService service){
-//        if (!checkPassWordstrength(user.getPassWord()))
-//            return 2;
-//        if( service.findAccountByUserName(user.getUserName()) == null)
-//            return 1;
-//        else
-//            return 0;
-//
-//    }
+    }
 
     private boolean checkPassWordstrength(String passWord){
         int upChars=0, lowChars=0;

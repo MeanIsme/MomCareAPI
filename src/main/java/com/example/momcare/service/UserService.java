@@ -4,7 +4,7 @@ import com.example.momcare.models.User;
 import com.example.momcare.repository.UserRepository;
 
 
-
+import com.example.momcare.security.Encode;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -12,23 +12,30 @@ import java.util.ArrayList;
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
+    UserRepository userRepository;
+    Encode encode;
 
-    public UserService(UserRepository userRepository) {
+
+
+
+    public UserService(UserRepository userRepository){
         this.userRepository = userRepository;
+        this.encode = new Encode();
+    }
+
+    public void save (User user){
+        String encoderPassword = encode.encoderPassword(user.getPassWord());
+        user.setPassWord(encoderPassword);
+        this.userRepository.save(user);
+    }
+    public void update (User user){
+        this.userRepository.save(user);
     }
 
 
- //   @Override
-//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//        User user = userRepository.findUserByUserName(username);
-//        if (user == null) {
-//            throw new UsernameNotFoundException("User not found with username: " + username);
-//        }
-//        return new org.springframework.security.core.userdetails.User(
-//                user.getUserName(),
-//                user.getPassWord(),
-//                new ArrayList<>()
-//        );
-//    }
+
+    public User findAccountByUserName(String user){
+        return this.userRepository.findUserByUserName(user);
+    }
+
 }
