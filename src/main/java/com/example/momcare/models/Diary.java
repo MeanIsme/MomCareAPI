@@ -18,14 +18,14 @@ public class Diary {
     private String idUser;
     private String title;
     private String content;
-    private String thumbnail;
+    private List<String> thumbnail;
     private String timeCreate;
     private String timeUpdate;
 
     public Diary() {
     }
 
-    public Diary(String idUser, String title, String content, String thumbnail, String timeCreate, String timeUpdate) {
+    public Diary(String idUser, String title, String content, List<String> thumbnail, String timeCreate, String timeUpdate) {
         this.idUser = idUser;
         this.title = title;
         this.content = content;
@@ -34,7 +34,7 @@ public class Diary {
         this.timeUpdate = timeUpdate;
     }
 
-    public Diary(String id, String idUser, String title, String content, String thumbnail, String timeCreate, String timeUpdate) {
+    public Diary(String id, String idUser, String title, String content, List<String> thumbnail, String timeCreate, String timeUpdate) {
         this.id = id;
         this.idUser = idUser;
         this.title = title;
