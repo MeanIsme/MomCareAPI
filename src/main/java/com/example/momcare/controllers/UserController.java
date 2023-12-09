@@ -32,7 +32,7 @@ public class UserController {
                 return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "User name has been used");
             case (1):
                 user.setPremium(false);
-
+                user.setDatePregnant("");
                 service.save(user);
                 List<User> users = new ArrayList<>();
                 users.add(user);
