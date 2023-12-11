@@ -33,5 +33,7 @@ public class User   {
 
     private String datePregnant;
     private Boolean premium;
+    private List<MomHealthIndex> momIndex;
+    private List<BabyHealthIndex> babyIndex;
 
 }

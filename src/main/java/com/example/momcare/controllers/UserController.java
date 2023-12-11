@@ -1,5 +1,7 @@
 package com.example.momcare.controllers;
 
+import com.example.momcare.models.BabyHealthIndex;
+import com.example.momcare.models.MomHealthIndex;
 import com.example.momcare.models.User;
 import com.example.momcare.payload.response.Response;
 import com.example.momcare.security.CheckAccount;
@@ -31,8 +33,12 @@ public class UserController {
             case (0):
                 return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "User name has been used");
             case (1):
+                List<MomHealthIndex> momHealthIndices = new ArrayList<>();
+                List<BabyHealthIndex> babyHealthIndices = new ArrayList<>();
                 user.setPremium(false);
                 user.setDatePregnant("");
+                user.setMomIndex(momHealthIndices);
+                user.setBabyIndex(babyHealthIndices);
                 service.save(user);
                 List<User> users = new ArrayList<>();
                 users.add(user);
