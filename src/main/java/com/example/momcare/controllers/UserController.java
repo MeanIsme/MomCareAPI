@@ -64,7 +64,8 @@ public class UserController {
         User check = service.findAccountByUserName(user.getUserName());
         if(check!=null){
             List<User> users = new ArrayList<>();
-            users.add(user);
+            check.setDatePregnant(user.getDatePregnant());
+            users.add(check);
             service.update(user);
             return new Response(HttpStatus.OK.getReasonPhrase(), users , "success");
         }
