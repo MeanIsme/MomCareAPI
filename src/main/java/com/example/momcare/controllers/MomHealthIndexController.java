@@ -87,4 +87,17 @@ public class MomHealthIndexController {
 
         return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Index not found");
     }
+    @GetMapping("/momindex/getall")
+    public Response GetIndex(@RequestParam String userID){
+        User user = service.findAccountByID(userID);
+        if(user == null)
+            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "User not found");
+        List<MomHealthIndex> momHealthIndices = new ArrayList<>();
+        if(user.getMomIndex() != null){
+            momHealthIndices.addAll(user.getMomIndex());
+            return new Response(HttpStatus.OK.getReasonPhrase(), momHealthIndices , "success");
+        }
+        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Index not found");
+    }
+
 }

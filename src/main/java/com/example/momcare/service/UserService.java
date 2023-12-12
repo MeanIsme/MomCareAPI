@@ -17,8 +17,6 @@ public class UserService {
     Encode encode;
 
 
-
-
     public UserService(UserRepository userRepository){
         this.userRepository = userRepository;
         this.encode = new Encode();

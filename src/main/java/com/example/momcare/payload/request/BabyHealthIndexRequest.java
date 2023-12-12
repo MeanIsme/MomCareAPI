@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class BabyHealthIndexRequest {
     private String userID;
-    private Integer index;
+    private int index;
     private Double head;
     private Double biparietal;
     private Double occipitofrontal;

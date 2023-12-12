@@ -78,7 +78,19 @@ public class BabyHealthIndexController {
         return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Index not found");
 
     }
+    @GetMapping("/babyindex/getall")
+    public Response GetIndex(@RequestParam String userID){
+        User user = service.findAccountByID(userID);
+        if(user == null)
+            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "User not found");
+        List<BabyHealthIndex> babyHealthIndices = new ArrayList<>();
+        if(user.getBabyIndex() != null){
+            babyHealthIndices.addAll(user.getBabyIndex());
+            return new Response(HttpStatus.OK.getReasonPhrase(), babyHealthIndices , "success");
+        }
+        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Index not found");
 
+    }
 
 
 }
