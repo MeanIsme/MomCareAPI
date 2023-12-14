@@ -8,6 +8,7 @@ import com.example.momcare.security.Encode;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 @Service
@@ -39,6 +40,16 @@ public class UserService {
     public User findAccountByID(String id){
         ObjectId objectId = new ObjectId(id);
         return this.userRepository.findUserById(objectId);
+    }
+
+    public int gestationalAge(String datePregnant, String dateEnd){
+        LocalDateTime dateStart = LocalDateTime.parse(datePregnant);
+        LocalDateTime dateEndTime = LocalDateTime.parse(dateEnd);
+        int dateAge = dateEndTime.getDayOfYear() - dateStart.getDayOfYear();
+        int weekAge = dateAge/7;
+        if(dateAge %2 !=0)
+            weekAge += 1;
+        return weekAge;
     }
 
 }

@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class MomHealthIndex{
@@ -17,6 +19,7 @@ public class MomHealthIndex{
         private Double GIFull3h;
         private String timeCreate;
         private String timeUpdate;
+        private List<WarningHealth> warningHealths;
 
         public MomHealthIndex(Double height, Double weight, Double HATT, Double HATTr, Double GIHungry, Double GIFull1h, Double GIFull2h, Double GIFull3h, String timeCreate, String timeUpdate) {
                 this.height = height;
