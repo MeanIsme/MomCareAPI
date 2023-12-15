@@ -66,6 +66,7 @@ public class BabyHealthIndexController {
         if(user == null)
             return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "User not found");
         List<BabyHealthIndex> babyHealthIndices = new ArrayList<>();
+        List<BabyHealthIndex> babyHealthResponse = new ArrayList<>();
         if(user.getBabyIndex() != null){
             babyHealthIndices.addAll(user.getBabyIndex());
             babyHealthIndices.get(babyIndex.getIndex()).setHead(babyIndex.getHead());
@@ -88,7 +89,8 @@ public class BabyHealthIndexController {
                 warningHealths.add(babyHealthIndexService.CheckFemur(ga, babyHealthIndices.get(babyIndex.getIndex()).getFemur()));
             babyHealthIndices.get(babyIndex.getIndex()).setWarningHealths(warningHealths);
             userService.update(user);
-            return new Response(HttpStatus.OK.getReasonPhrase(), babyHealthIndices , "success");
+            babyHealthResponse.add(babyHealthIndices.get(babyIndex.getIndex()));
+            return new Response(HttpStatus.OK.getReasonPhrase(), babyHealthResponse , "success");
         }
         return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Index not found");
     }

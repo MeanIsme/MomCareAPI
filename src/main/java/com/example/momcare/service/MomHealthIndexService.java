@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MomHealthIndexService {
-    private WarningHealth CheckBMI(Double height, Double weight){
+    public WarningHealth checkBMI(Double height, Double weight){
         WarningHealth warningHealth = new WarningHealth();
         warningHealth.setName("BMI");
         double BMI = height/Math.pow(weight,2);
@@ -27,7 +27,7 @@ public class MomHealthIndexService {
         }
         return warningHealth;
     }
-    private WarningHealth checkHealthRate(Double HATT, Double HATTr){
+    public WarningHealth checkHealthRate(Double HATT, Double HATTr){
         WarningHealth warningHealth = new WarningHealth();
         warningHealth.setName("HealthRate");
         if(HATT < 85 || HATTr <60){
@@ -60,6 +60,28 @@ public class MomHealthIndexService {
         }
 
 
+        return warningHealth;
+    }
+    public WarningHealth checkGlycemicIndex(Double GIHungry, Double GIFull1h, Double GIFull2h, Double GIFull3h){
+        WarningHealth warningHealth = new WarningHealth();
+        warningHealth.setName("GlycemicIndex");
+        int count = 0;
+        if(GIHungry >= 95)
+            count++;
+        if(GIFull1h >= 180)
+            count++;
+        if(GIFull2h >= 155 )
+            count++;
+        if(GIFull3h >= 140)
+            count++;
+        if(count > 2){
+            warningHealth.setType("over");
+            warningHealth.setLevel(1);
+        }
+        else {
+            warningHealth.setType("normal");
+            warningHealth.setLevel(0);
+        }
         return warningHealth;
     }
 }
