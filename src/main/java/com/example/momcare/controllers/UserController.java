@@ -70,7 +70,7 @@ public class UserController {
 
         if (Objects.equals(user.getUserName(), check.getUserName())){
             if(Objects.equals(encode.encoderPassword(user.getPassWord()), check.getPassWord()))
-                if(!check.getEnabled()){
+                if(check.getEnabled()){
                     List<UserResponse> users = new ArrayList<>();
                     UserResponse userResponse = new UserResponse(check.getId(),check.getUserName(),check.getEmail(),check.getDatePregnant(),check.getPremium());
                     users.add(userResponse);
