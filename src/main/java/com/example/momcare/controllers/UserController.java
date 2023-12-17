@@ -64,13 +64,18 @@ public class UserController {
     @PostMapping("/login")
     public Response loginAccount(@RequestBody User user) {
         User check = userService.findAccountByUserName(user.getUserName());
-        List<User> users = new ArrayList<>();
-        users.add(check);
+
+
 
         if (Objects.equals(user.getUserName(), check.getUserName())){
             if(Objects.equals(encode.encoderPassword(user.getPassWord()), check.getPassWord()))
-                if(!check.getEnabled())
+                if(!check.getEnabled()){
+                    List<UserResponse> users = new ArrayList<>();
+                    UserResponse userResponse = new UserResponse(check.getId(),check.getUserName(),check.getEmail(),check.getDatePregnant(),check.getPremium());
+                    users.add(userResponse);
                     return new Response(HttpStatus.OK.getReasonPhrase(), users , "success");
+                }
+
                 else
                     return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Email not verify");
         }
