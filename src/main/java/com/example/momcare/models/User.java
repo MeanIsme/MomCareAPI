@@ -35,6 +35,7 @@ public class User   {
     private Boolean premium;
     private List<MomHealthIndex> momIndex;
     private List<BabyHealthIndex> babyIndex;
-
+    private Boolean enabled;
+    private String token;
 
 }

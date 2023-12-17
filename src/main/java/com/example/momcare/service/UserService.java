@@ -41,7 +41,9 @@ public class UserService {
         ObjectId objectId = new ObjectId(id);
         return this.userRepository.findUserById(objectId);
     }
-
+    public User findAccountByToken(String token){
+        return this.userRepository.findUserByToken(token);
+    }
     public int gestationalAge(String datePregnant, String dateEnd){
         LocalDateTime dateStart = LocalDateTime.parse(datePregnant);
         LocalDateTime dateEndTime = LocalDateTime.parse(dateEnd);

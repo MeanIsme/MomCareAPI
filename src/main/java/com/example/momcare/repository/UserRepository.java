@@ -12,6 +12,7 @@ public interface UserRepository extends MongoRepository<User,String> {
     User findUserByUserName(String userName);
     @Query("{_id : ?0}")
     User findUserById(ObjectId id);
-
+    @Query("{token : ?0}")
+    User findUserByToken(String token);
 
 }
