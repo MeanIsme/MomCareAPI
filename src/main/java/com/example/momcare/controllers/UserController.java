@@ -64,7 +64,8 @@ public class UserController {
     @PostMapping("/login")
     public Response loginAccount(@RequestBody User user) {
         User check = userService.findAccountByUserName(user.getUserName());
-
+        if(check == null)
+            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "User not found");
 
 
         if (Objects.equals(user.getUserName(), check.getUserName())){
