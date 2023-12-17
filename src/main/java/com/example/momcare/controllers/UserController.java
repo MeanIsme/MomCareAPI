@@ -66,9 +66,13 @@ public class UserController {
         User check = userService.findAccountByUserName(user.getUserName());
         List<User> users = new ArrayList<>();
         users.add(check);
+
         if (Objects.equals(user.getUserName(), check.getUserName())){
             if(Objects.equals(encode.encoderPassword(user.getPassWord()), check.getPassWord()))
-                return new Response(HttpStatus.OK.getReasonPhrase(), users , "success");
+                if(!check.getEnabled())
+                    return new Response(HttpStatus.OK.getReasonPhrase(), users , "success");
+                else
+                    return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Email not verify");
         }
         return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "failure");
     }
