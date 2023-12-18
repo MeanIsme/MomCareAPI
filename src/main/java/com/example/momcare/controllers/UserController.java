@@ -84,11 +84,22 @@ public class UserController {
     }
     @PutMapping("/user/update")
     public Response updateAccount(@RequestBody User user) {
-        User check = userService.findAccountByUserName(user.getUserName());
+        User check = userService.findAccountByID(user.getId());
         if(check!=null){
-            List<User> users = new ArrayList<>();
-            check.setDatePregnant(user.getDatePregnant());
-            users.add(check);
+
+            if(user.getDatePregnant()!=null)
+                check.setDatePregnant(user.getDatePregnant());
+            if(user.getPremium()!=null)
+                check.setPremium(user.getPremium());
+            if(user.getBabyIndex()!=null)
+                check.setBabyIndex(user.getBabyIndex());
+            if(user.getMomIndex()!=null)
+                check.setMomIndex(user.getMomIndex());
+
+
+            List<UserResponse> users = new ArrayList<>();
+            UserResponse userResponse = new UserResponse(check.getId(),check.getUserName(),check.getEmail(),check.getDatePregnant(),check.getPremium());
+            users.add(userResponse);
             userService.update(user);
             return new Response(HttpStatus.OK.getReasonPhrase(), users , "success");
         }
