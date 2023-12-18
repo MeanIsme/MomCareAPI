@@ -15,7 +15,7 @@ public class MomHealthIndexService {
         }
         else if(18.5 <= BMI && BMI < 23) {
             warningHealth.setType("normal");
-            warningHealth.setLevel(1);
+            warningHealth.setLevel(0);
         }
         else if(23 <= BMI && BMI <= 24.9){
             warningHealth.setType("over");

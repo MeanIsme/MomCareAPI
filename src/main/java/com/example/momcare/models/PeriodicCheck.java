@@ -2,23 +2,21 @@ package com.example.momcare.models;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
-
 @Getter
 @Setter
-@ToString
-@Document(collection = "TrackingPregnancy")
-public class Tracking {
+@Document(collection = "PeriodicCheck")
+public class PeriodicCheck {
     @Id
     private String id;
-    private int week;
+    private int weekFrom;
+    private int weekEnd;
     private List<String> thumbnails;
-    private String baby;
-    private String mom;
+    private String title;
+    private String obligatory;
     private String advice;
-
+    private String note;
 }
