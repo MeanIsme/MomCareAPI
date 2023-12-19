@@ -98,9 +98,16 @@ public class UserController {
 
 
             List<UserResponse> users = new ArrayList<>();
-            UserResponse userResponse = new UserResponse(check.getId(),check.getUserName(),check.getEmail(),check.getDatePregnant(),check.getPremium());
+            UserResponse userResponse = new UserResponse(
+                    check.getId(),
+                    check.getUserName(),
+                    check.getEmail(),
+                    check.getDatePregnant(),
+                    check.getPremium(),
+                    check.getMomIndex(),
+                    check.getBabyIndex());
             users.add(userResponse);
-            userService.update(user);
+            userService.update(check);
             return new Response(HttpStatus.OK.getReasonPhrase(), users , "success");
         }
 
