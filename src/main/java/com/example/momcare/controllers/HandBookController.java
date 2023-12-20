@@ -28,4 +28,13 @@ public class HandBookController {
         handBooks.add(service.findHandBookByID(id));
         return new Response(HttpStatus.OK.getReasonPhrase(), handBooks, "success");
     }
+
+    @GetMapping("/handbook/newest")
+    public Response Top8Newest(){
+        return new Response(HttpStatus.OK.getReasonPhrase(), service.Top8Newest(), "success");
+    }
+    @GetMapping("/handbook/random")
+    public Response Random(){
+        return new Response(HttpStatus.OK.getReasonPhrase(), service.Top8Random(), "success");
+    }
 }

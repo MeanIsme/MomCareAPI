@@ -2,9 +2,11 @@ package com.example.momcare.service;
 
 import com.example.momcare.models.Diary;
 import com.example.momcare.repository.DiaryRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DiaryService {
@@ -39,4 +41,13 @@ public class DiaryService {
             return false;
         }
     }
+
+    public List<Diary> Top8Newest(){
+        Sort sort = Sort.by(Sort.Direction.DESC, "timeUpdate");
+        return diaryRepository.findAll(sort).stream()
+                .limit(8)
+                .collect(Collectors.toList());
+    }
+
+
 }

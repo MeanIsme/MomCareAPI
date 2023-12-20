@@ -20,5 +20,5 @@ public class HandBook {
     private String title;
     private String content;
     private String thumbnail;
-    private Date time;
+    private String time;
 }

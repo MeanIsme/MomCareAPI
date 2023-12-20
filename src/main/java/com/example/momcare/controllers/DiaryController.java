@@ -68,4 +68,13 @@ public class DiaryController {
         else
             return new Response((HttpStatus.NOT_FOUND.getReasonPhrase()), new ArrayList<>(), "failure");
     }
+    @GetMapping("/diary/newest")
+    public Response Top8Newest(){
+        return new Response((HttpStatus.OK.getReasonPhrase()), service.Top8Newest(), "success");
+    }
+
+    @GetMapping("/diary/random")
+    public Response Random(){
+        return new Response((HttpStatus.OK.getReasonPhrase()), service.Top8Newest(), "success");
+    }
 }
