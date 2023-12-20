@@ -15,8 +15,7 @@ public class UserResponse {
     private String email;
     private String datePregnant;
     private Boolean premium;
-    private List<MomHealthIndex> momIndex;
-    private List<BabyHealthIndex> babyIndex;
+
     public UserResponse(String id, String userName, String email, String datePregnant, Boolean premium) {
         this.id = id;
         this.userName = userName;
@@ -25,13 +24,5 @@ public class UserResponse {
         this.premium = premium;
     }
 
-    public UserResponse(String id, String userName, String email, String datePregnant, Boolean premium, List<MomHealthIndex> momIndex, List<BabyHealthIndex> babyIndex) {
-        this.id = id;
-        this.userName = userName;
-        this.email = email;
-        this.datePregnant = datePregnant;
-        this.premium = premium;
-        this.momIndex = momIndex;
-        this.babyIndex = babyIndex;
-    }
+
 }
