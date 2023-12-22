@@ -94,7 +94,7 @@ public class BabyHealthIndexController {
         }
         return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Index not found");
     }
-    @DeleteMapping("/babyindex/delete")
+    @PutMapping("/babyindex/delete")
     public Response DeleteIndex(@RequestBody BabyHealthIndexRequest babyIndex){
         User user = userService.findAccountByID(babyIndex.getUserID());
         if(user == null)

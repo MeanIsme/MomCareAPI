@@ -96,7 +96,7 @@ public class MomHealthIndexController {
         return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Index not found");
     }
 
-    @DeleteMapping("/momindex/delete")
+    @PutMapping("/momindex/delete")
     public Response DeleteIndex(@RequestBody MomHealthIndexRequest momIndex) {
         User user = userService.findAccountByID(momIndex.getUserID());
         if (user == null)
