@@ -38,6 +38,9 @@ public class UserService {
     public User findAccountByUserName(String user){
         return this.userRepository.findUserByUserName(user);
     }
+
+    public User findAccountByEmail(String email){ return this.userRepository.findUserByEmail(email);}
+
     public User findAccountByID(String id){
         ObjectId objectId = new ObjectId(id);
         return this.userRepository.findUserById(objectId);

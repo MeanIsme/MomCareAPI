@@ -36,7 +36,7 @@ public class UserController {
         switch (checkAccount.checkSignup(user, userService)) {
             case (0):
                 return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "User name has been used");
-            case (1):
+            case (3):
                 List<MomHealthIndex> momHealthIndices = new ArrayList<>();
                 List<BabyHealthIndex> babyHealthIndices = new ArrayList<>();
                 user.setPremium(false);
@@ -59,6 +59,8 @@ public class UserController {
                 return new Response(HttpStatus.OK.getReasonPhrase(), users, "success");
             case (2):
                 return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Password not strength");
+            case (1):
+                return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Email has been used");
         }
         return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "failure");
     }

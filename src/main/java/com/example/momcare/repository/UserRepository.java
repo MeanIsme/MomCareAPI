@@ -14,5 +14,7 @@ public interface UserRepository extends MongoRepository<User,String> {
     User findUserById(ObjectId id);
     @Query("{token : ?0}")
     User findUserByToken(String token);
+    @Query("{email : ?0}")
+    User findUserByEmail(String email);
 
 }

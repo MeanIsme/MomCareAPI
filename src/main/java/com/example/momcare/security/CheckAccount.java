@@ -5,10 +5,14 @@ import com.example.momcare.service.UserService;
 
 public class CheckAccount {
     public int checkSignup(User user, UserService service){
+        User user1 = service.findAccountByEmail(user.getEmail());
+        if(service.findAccountByEmail(user.getEmail()) != null)
+            return 1;
         if (!checkPassWordstrength(user.getPassWord()))
             return 2;
         if( service.findAccountByUserName(user.getUserName()) == null)
-            return 1;
+            return 3;
+
         else
             return 0;
 
