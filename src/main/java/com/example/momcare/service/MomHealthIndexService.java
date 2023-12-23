@@ -1,7 +1,12 @@
 package com.example.momcare.service;
 
+import com.example.momcare.models.StandardsIndex;
 import com.example.momcare.models.WarningHealth;
+import com.example.momcare.payload.response.StandardsMomIndexResponse;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class MomHealthIndexService {
@@ -83,5 +88,17 @@ public class MomHealthIndexService {
             warningHealth.setLevel(0);
         }
         return warningHealth;
+    }
+
+    public StandardsMomIndexResponse GetStandardMomIndex(){
+        StandardsMomIndexResponse standardsIndex = new StandardsMomIndexResponse();
+        standardsIndex.setBMI(new StandardsIndex(18.5, 23.0));
+        standardsIndex.setHATT(new StandardsIndex(90.0,130.0));
+        standardsIndex.setHATTr(new StandardsIndex(60.0,90.0));
+        standardsIndex.setGIHungry(new StandardsIndex(95.0));
+        standardsIndex.setGIFull1h(new StandardsIndex(180.0));
+        standardsIndex.setGIFull2h(new StandardsIndex(155.0));
+        standardsIndex.setGIFull3h(new StandardsIndex(140.0));
+        return standardsIndex;
     }
 }

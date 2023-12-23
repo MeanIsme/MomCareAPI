@@ -6,6 +6,8 @@ import com.example.momcare.models.WarningHealth;
 import com.example.momcare.payload.request.BabyHealthIndexRequest;
 import com.example.momcare.payload.request.MomHealthIndexRequest;
 import com.example.momcare.payload.response.Response;
+import com.example.momcare.payload.response.StandardsBabyIndexResponse;
+import com.example.momcare.payload.response.StandardsMomIndexResponse;
 import com.example.momcare.service.MomHealthIndexService;
 import com.example.momcare.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,6 +128,13 @@ public class MomHealthIndexController {
             return new Response(HttpStatus.OK.getReasonPhrase(), momHealthIndices, "success");
         }
         return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Index not found");
+    }
+
+    @GetMapping("/momindex/standardsindex")
+    public Response GetIndex() {
+        List<StandardsMomIndexResponse> list = new ArrayList<>();
+        list.add(momHealthIndexService.GetStandardMomIndex());
+        return new Response((HttpStatus.OK.getReasonPhrase()), list, "success");
     }
 
 }
