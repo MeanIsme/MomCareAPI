@@ -23,7 +23,8 @@ public class CheckAccount {
         int special=0, digits=0;
         char ch;
         int total = passWord.length();
-
+        if(total < 8)
+            return false;
         for(int i=0; i<total; i++)
         {
             ch = passWord.charAt(i);
