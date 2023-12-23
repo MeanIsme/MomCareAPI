@@ -14,7 +14,7 @@ public class CheckAccount {
 
     }
 
-    private boolean checkPassWordstrength(String passWord){
+    public boolean checkPassWordstrength(String passWord){
         int upChars=0, lowChars=0;
         int special=0, digits=0;
         char ch;

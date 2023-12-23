@@ -37,5 +37,7 @@ public class User   {
     private List<BabyHealthIndex> babyIndex;
     private Boolean enabled;
     private String token;
+    private String otp;
+    private String passwordToken;
 
 }

@@ -400,7 +400,7 @@ public class EmailService {
 
         mailSender.send(mimeMessage);
     }
-    public void sendGetPasswordEmail(String to, String newPassword) throws MessagingException {
+    public void sendOTPEmail(String to, String OTP) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
         String body = "<!DOCTYPE html>\n" +
@@ -548,7 +548,7 @@ public class EmailService {
                 "          <!-- start copy -->\n" +
                 "          <tr>\n" +
                 "            <td align=\"left\" bgcolor=\"#ffffff\" style=\"padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;\">\n" +
-                "              <p style=\"margin: 0;\">This is your new password: "+newPassword+"</a>, you can login your account with this password. Remember change it for security</p>\n" +
+                "              <p style=\"margin: 0;\">This is your OPT: "+OTP+"</a>, you can login your account with this password. Remember change it for security</p>\n" +
                 "            </td>\n" +
                 "          </tr>\n" +
                 "          <!-- end copy -->\n" +
