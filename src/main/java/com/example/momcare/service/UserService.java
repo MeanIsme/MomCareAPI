@@ -49,6 +49,8 @@ public class UserService {
         return this.userRepository.findUserByToken(token);
     }
     public int gestationalAge(String datePregnant, String dateEnd){
+        if(datePregnant.isEmpty())
+            return 0;
         LocalDateTime dateStart = LocalDateTime.parse(datePregnant);
         LocalDateTime dateEndTime = LocalDateTime.parse(dateEnd);
         int dateAge = dateEndTime.getDayOfYear() - dateStart.getDayOfYear();
