@@ -13,7 +13,7 @@ public class MomHealthIndexService {
     public WarningHealth checkBMI(Double height, Double weight){
         WarningHealth warningHealth = new WarningHealth();
         warningHealth.setName("BMI");
-        double BMI = weight/Math.pow(height,2);
+        double BMI = weight/Math.pow(height/100,2);
         if(BMI < 18.5){
             warningHealth.setType("less");
             warningHealth.setLevel(1);
