@@ -1,5 +1,6 @@
 package com.example.momcare.controllers;
 
+import com.example.momcare.models.Category;
 import com.example.momcare.payload.response.Response;
 import com.example.momcare.service.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +16,16 @@ import java.util.ArrayList;
 public class VideoController {
     @Autowired
     private VideoService videoService;
-    @GetMapping("video/all")
-    public Response GetAllVideo(){
-        return new Response((HttpStatus.OK.getReasonPhrase()), videoService.findall(), "success");
+    @GetMapping("video/random")
+    public Response GetRandomVideo(){
+        return new Response((HttpStatus.OK.getReasonPhrase()), videoService.Top8Random(), "success");
     }
     @GetMapping("video/category")
-    public Response GetVideoByCategory(@RequestParam String category){
+    public Response GetVideoByCategory(@RequestBody Category category){
         return new Response((HttpStatus.OK.getReasonPhrase()), videoService.findByCategory(category), "success");
+    }
+    @GetMapping("video/allcategory")
+    public Response GetCategory(){
+        return new Response((HttpStatus.OK.getReasonPhrase()), videoService.getAllCategories(), "success");
     }
 }

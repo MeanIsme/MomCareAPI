@@ -16,5 +16,5 @@ public class Video {
     private String link;
     private String content;
     private String thumbnail;
-    private List<String> category;
+    private List<Category> category;
 }
