@@ -42,7 +42,7 @@ public class BabyHealthIndexController {
                 LocalDateTime.now().toString(),
                 LocalDateTime.now().toString());
         List<WarningHealth> warningHealths = new ArrayList<>();
-        int ga = userService.gestationalAge(user.getDatePregnant(), LocalDateTime.now().toString());
+        int ga = userService.gestationalAge(user.getDatePregnant(), babyHealthIndex.getTimeCreate());
         if (babyHealthIndex.getHead() != null)
             warningHealths.add(babyHealthIndexService.CheckHead(ga, babyHealthIndex.getHead()));
         if (babyHealthIndex.getBiparietal() != null)
