@@ -4,10 +4,6 @@ import com.example.momcare.models.WarningHealth;
 import com.example.momcare.models.StandardsIndex;
 import com.example.momcare.payload.response.StandardsBabyIndexResponse;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-
 @Service
 public class BabyHealthIndexService {
     private StandardsIndex HeadIndex(int ga){
