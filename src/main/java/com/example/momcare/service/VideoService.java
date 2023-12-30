@@ -50,6 +50,7 @@ public class VideoService {
                     for (Category ucategory : unCategories) {
                         if (category.getTitle().equals(ucategory.getTitle())) {
                             flag = true;
+                            break;
                         }
                     }
                     if(!flag)
