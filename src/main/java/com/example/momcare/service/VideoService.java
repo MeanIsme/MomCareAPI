@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 @Service
 public class VideoService {
     VideoRepository videoRepository;
-
     public VideoService(VideoRepository videoRepository) {
         this.videoRepository = videoRepository;
     }
@@ -26,12 +25,10 @@ public class VideoService {
         }
         Random random = new Random();
         int[] indexes = random.ints(0, totalVideo).distinct().limit(8).toArray();
-
         List<Video> randomDocuments = new ArrayList<>();
         for (int index : indexes) {
             randomDocuments.add(allVideo.get(index));
         }
-
         return randomDocuments;
     }
 
@@ -55,7 +52,7 @@ public class VideoService {
                             flag = true;
                         }
                     }
-                    if(flag!=true)
+                    if(!flag)
                         uniqueCategories.add(category);
                 }
             }
