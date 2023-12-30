@@ -41,7 +41,7 @@ public class BabyHealthIndexController {
                 LocalDateTime.now().toString(),
                 LocalDateTime.now().toString());
         List<WarningHealth> warningHealths = new ArrayList<>();
-        int ga = userService.gestationalAge(user.getDatePregnant(), babyHealthIndex.getTimeCreate());
+        int ga = userService.gestationalAge(user.getDatePregnant(), LocalDateTime.now().toString());
         if (babyHealthIndex.getHead() != null)
             warningHealths.add(babyHealthIndexService.CheckHead(ga, babyHealthIndex.getHead()));
         if (babyHealthIndex.getBiparietal() != null)
@@ -132,7 +132,8 @@ public class BabyHealthIndexController {
     }
 
     @GetMapping("/babyindex/standardsindex")
-    public Response GetIndex(@RequestParam int ga) {
+    public Response GetstandardIndex(@RequestParam String datePregnant) {
+        int ga = userService.gestationalAge(datePregnant, LocalDateTime.now().toString());
         List<StandardsBabyIndexResponse> list = new ArrayList<>();
         list.add(babyHealthIndexService.GetStandardBabyIndex(ga));
         return new Response((HttpStatus.OK.getReasonPhrase()), list, "success");
