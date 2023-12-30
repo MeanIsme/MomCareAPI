@@ -5,6 +5,7 @@ import com.example.momcare.models.Diary;
 import com.example.momcare.models.User;
 import com.example.momcare.models.WarningHealth;
 import com.example.momcare.payload.request.BabyHealthIndexRequest;
+import com.example.momcare.payload.request.StandIndexRequest;
 import com.example.momcare.payload.response.Response;
 import com.example.momcare.payload.response.StandardsBabyIndexResponse;
 import com.example.momcare.service.BabyHealthIndexService;
@@ -132,8 +133,8 @@ public class BabyHealthIndexController {
     }
 
     @GetMapping("/babyindex/standardsindex")
-    public Response GetstandardIndex(@RequestParam String datePregnant) {
-        int ga = userService.gestationalAge(datePregnant, LocalDateTime.now().toString());
+    public Response GetstandardIndex(@RequestBody StandIndexRequest request) {
+        int ga = userService.gestationalAge(request.getDatePregnant(), request.getDateEnd());
         List<StandardsBabyIndexResponse> list = new ArrayList<>();
         list.add(babyHealthIndexService.GetStandardBabyIndex(ga));
         return new Response((HttpStatus.OK.getReasonPhrase()), list, "success");
