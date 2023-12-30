@@ -14,7 +14,6 @@ public class PeriodicCheck {
     private String id;
     private int weekFrom;
     private int weekEnd;
-    private List<String> thumbnails;
     private String title;
     private String obligatory;
     private String advice;
