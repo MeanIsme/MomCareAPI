@@ -57,7 +57,6 @@ public class BabyHealthIndexService {
         Double sd = Math.abs(-0.880034 + 0.0631165 * Math.pow(ga,2) - 0.0317136 * Math.pow(ga,2) * Math.log(ga) + 0.00408302 * Math.pow(ga,2) *  Math.pow(Math.log(ga),2));
         return new StandardsIndex(mean - sd, mean +sd);
     }
-
     public WarningHealth CheckOccipitofrontal(int ga, Double occipitofrontal){
         StandardsIndex occipitofrontalIndex = OccipitofrontalIndex(ga);
         WarningHealth warningHealth = new WarningHealth();
@@ -81,8 +80,6 @@ public class BabyHealthIndexService {
         Double sd = -4.36302 + 0.121445 * Math.pow(ga,2) - 0.0130256 * Math.pow(ga,3) + 0.00282143  * Math.pow(ga,3) * Math.log(ga);
         return new StandardsIndex(mean - sd, mean +sd);
     }
-
-
     public WarningHealth CheckAbdominal(int ga,  Double abdominal){
         StandardsIndex abdominalIndex = AbdominalIndex(ga);
         WarningHealth warningHealth = new WarningHealth();
@@ -106,8 +103,6 @@ public class BabyHealthIndexService {
         Double sd = Math.abs(0.605843 - 42.0014 * Math.pow(ga,-2) + 0.00000917972 * Math.pow(ga,3));
         return new StandardsIndex(mean - sd, mean +sd);
     }
-
-
     public WarningHealth CheckFemur(int ga, Double femur){
         StandardsIndex femurIndex = FemurIndex(ga);
         WarningHealth warningHealth = new WarningHealth();
@@ -126,7 +121,6 @@ public class BabyHealthIndexService {
         }
         return warningHealth;
     }
-
     public StandardsBabyIndexResponse GetStandardBabyIndex(int ga){
         StandardsBabyIndexResponse standardsIndex = new StandardsBabyIndexResponse();
         standardsIndex.setHead(HeadIndex(ga));
@@ -135,7 +129,5 @@ public class BabyHealthIndexService {
         standardsIndex.setBiparietal(BiparietalIndex(ga));
         standardsIndex.setFemur(FemurIndex(ga));
         return standardsIndex;
-
     }
-
 }
