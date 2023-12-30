@@ -132,7 +132,7 @@ public class BabyHealthIndexController {
 
     }
 
-    @GetMapping("/babyindex/standardsindex")
+    @PutMapping("/babyindex/standardsindex")
     public Response GetstandardIndex(@RequestBody StandIndexRequest request) {
         int ga = userService.gestationalAge(request.getDatePregnant(), request.getDateEnd());
         List<StandardsBabyIndexResponse> list = new ArrayList<>();
