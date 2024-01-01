@@ -21,7 +21,7 @@ public class VideoController {
         return new Response((HttpStatus.OK.getReasonPhrase()), videoService.Top8Random(), "success");
     }
     @GetMapping("video/category")
-    public Response GetVideoByCategory(@RequestBody Category category){
+    public Response GetVideoByCategory(@RequestParam String category){
         return new Response((HttpStatus.OK.getReasonPhrase()), videoService.findByCategory(category), "success");
     }
     @GetMapping("video/allcategory")

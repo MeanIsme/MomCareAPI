@@ -22,7 +22,7 @@ public class MusicController {
         return new Response((HttpStatus.OK.getReasonPhrase()), musicService.Top8Random(), "success");
     }
     @GetMapping("music/category")
-    public Response GetMusicByCategory(@RequestBody Category category){
+    public Response GetMusicByCategory(@RequestParam String category){
         return new Response((HttpStatus.OK.getReasonPhrase()), musicService.findMusicByCategory(category), "success");
     }
     @GetMapping("music/allcategory")

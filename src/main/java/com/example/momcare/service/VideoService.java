@@ -3,6 +3,9 @@ package com.example.momcare.service;
 import com.example.momcare.models.Category;
 import com.example.momcare.models.HandBook;
 import com.example.momcare.models.Video;
+import com.example.momcare.models.VideoCategory;
+import com.example.momcare.repository.MusicCategoryRepository;
+import com.example.momcare.repository.VideoCategoryRepository;
 import com.example.momcare.repository.VideoRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -13,8 +16,11 @@ import java.util.stream.Collectors;
 @Service
 public class VideoService {
     VideoRepository videoRepository;
-    public VideoService(VideoRepository videoRepository) {
+    VideoCategoryRepository videoCategoryRepository;
+
+    public VideoService(VideoRepository videoRepository, VideoCategoryRepository videoCategoryRepository) {
         this.videoRepository = videoRepository;
+        this.videoCategoryRepository = videoCategoryRepository;
     }
 
     public List<Video> Top8Random(){
@@ -32,32 +38,10 @@ public class VideoService {
         return randomDocuments;
     }
 
-    public List<Video> findByCategory(Category category){
-        return videoRepository.findVideosByCategoryIn(category);
+    public List<Video> findByCategory(String category){
+        return videoRepository.findVideosByCategory(category);
     }
-    public List<Category> getAllCategories() {
-        List<Video> videos = videoRepository.findAll();
-        List<Category> uniqueCategories = new ArrayList<>();
-        boolean flag;
-        for (Video video : videos) {
-            for (Category category : video.getCategory()) {
-                if(uniqueCategories.isEmpty())
-                    uniqueCategories.add(category);
-                else {
-                    flag = false;
-                    List<Category> unCategories = new ArrayList<>();
-                    unCategories.addAll(uniqueCategories);
-                    for (Category ucategory : unCategories) {
-                        if (category.getTitle().equals(ucategory.getTitle())) {
-                            flag = true;
-                            break;
-                        }
-                    }
-                    if(!flag)
-                        uniqueCategories.add(category);
-                }
-            }
-        }
-        return uniqueCategories;
+    public List<VideoCategory> getAllCategories() {
+        return this.videoCategoryRepository.findAll();
     }
 }

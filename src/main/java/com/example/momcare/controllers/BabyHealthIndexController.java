@@ -25,7 +25,6 @@ public class BabyHealthIndexController {
     private UserService userService;
     @Autowired
     private BabyHealthIndexService babyHealthIndexService;
-
     @PostMapping("/babyindex/new")
     public Response CreateIndex(@RequestBody BabyHealthIndexRequest babyIndex) {
         User user = userService.findAccountByID(babyIndex.getUserID());
@@ -63,7 +62,6 @@ public class BabyHealthIndexController {
         babyHealthResponse.add(babyHealthIndex);
         return new Response(HttpStatus.OK.getReasonPhrase(), babyHealthResponse, "success");
     }
-
     @PutMapping("/babyindex/update")
     public Response UpdateIndex(@RequestBody BabyHealthIndexRequest babyIndex) {
         User user = userService.findAccountByID(babyIndex.getUserID());
@@ -114,9 +112,7 @@ public class BabyHealthIndexController {
             return new Response(HttpStatus.OK.getReasonPhrase(), babyHealthIndices, "success");
         }
         return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Index not found");
-
     }
-
     @GetMapping("/babyindex/getall")
     public Response GetIndex(@RequestParam String userID) {
         User user = userService.findAccountByID(userID);
@@ -128,10 +124,7 @@ public class BabyHealthIndexController {
             return new Response(HttpStatus.OK.getReasonPhrase(), babyHealthIndices, "success");
         }
         return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Index not found");
-
-
     }
-
     @PutMapping("/babyindex/standardsindex")
     public Response GetstandardIndex(@RequestBody StandIndexRequest request) {
         int ga = userService.gestationalAge(request.getDatePregnant(), request.getDateEnd());
@@ -139,5 +132,4 @@ public class BabyHealthIndexController {
         list.add(babyHealthIndexService.GetStandardBabyIndex(ga));
         return new Response((HttpStatus.OK.getReasonPhrase()), list, "success");
     }
-
 }

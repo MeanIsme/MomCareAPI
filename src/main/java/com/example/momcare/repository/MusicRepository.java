@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface MusicRepository extends MongoRepository<Music, String> {
     @Query("{'category': ?0}")
-    List<Music> findMusicByCategoryIn(Category category);
+    List<Music> findMusicByCategory(String category);
 
     @Query(value = "{}", fields = "{ 'category' : 1 }")
     List<Music> findAllCategories();

@@ -10,7 +10,7 @@ import java.util.Set;
 
 public interface VideoRepository extends MongoRepository<Video, String> {
     @Query("{'category': ?0}")
-    List<Video> findVideosByCategoryIn(Category category);
+    List<Video> findVideosByCategory(String category);
 
     @Query(value = "{}", fields = "{ 'category' : 1 }")
     List<Video> findAllCategories();

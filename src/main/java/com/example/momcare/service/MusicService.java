@@ -2,7 +2,8 @@ package com.example.momcare.service;
 
 import com.example.momcare.models.Category;
 import com.example.momcare.models.Music;
-import com.example.momcare.models.Video;
+import com.example.momcare.models.MusicCategory;
+import com.example.momcare.repository.MusicCategoryRepository;
 import com.example.momcare.repository.MusicRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +14,12 @@ import java.util.Random;
 @Service
 public class MusicService {
     MusicRepository musicRepository;
+    MusicCategoryRepository musicCategoryRepository;
 
-    public MusicService(MusicRepository musicRepository) {
+    public MusicService(MusicRepository musicRepository, MusicCategoryRepository musicCategoryRepository) {
         this.musicRepository = musicRepository;
+        this.musicCategoryRepository = musicCategoryRepository;
     }
-
-
 
     public List<Music> Top8Random() {
         List<Music> allMusic= musicRepository.findAll();
@@ -36,32 +37,11 @@ public class MusicService {
 
         return randomDocuments;
     }
-    public List<Music> findMusicByCategory(Category category) {
-        return this.musicRepository.findMusicByCategoryIn(category);
+    public List<Music> findMusicByCategory(String category) {
+        return this.musicRepository.findMusicByCategory(category);
     }
 
-    public List<Category> getAllCategories() {
-        List<Music> musics = musicRepository.findAll();
-        List<Category> uniqueCategories = new ArrayList<>();
-        boolean flag;
-        for (Music music : musics) {
-            for (Category category : music.getCategory()) {
-                if(uniqueCategories.isEmpty())
-                    uniqueCategories.add(category);
-                else {
-                    flag = false;
-                    List<Category> unCategories = new ArrayList<>();
-                    unCategories.addAll(uniqueCategories);
-                    for (Category ucategory : unCategories) {
-                        if (category.getTitle().equals(ucategory.getTitle())) {
-                            flag = true;
-                        }
-                    }
-                    if(flag!=true)
-                        uniqueCategories.add(category);
-                }
-            }
-        }
-        return uniqueCategories;
+    public List<MusicCategory> getAllCategories() {
+        return this.musicCategoryRepository.findAll();
     }
 }
