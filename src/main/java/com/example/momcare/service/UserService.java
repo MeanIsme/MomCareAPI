@@ -54,11 +54,7 @@ public class UserService {
             return 0;
         LocalDateTime dateStart = LocalDateTime.parse(datePregnant);
         LocalDateTime dateEndTime = LocalDateTime.parse(dateEnd);
-        int dateAge = (int) ChronoUnit.DAYS.between(dateStart,dateEndTime);
-        int weekAge = dateAge/7;
-        if(dateAge %2 !=0)
-            weekAge += 1;
-        return weekAge;
+        return (int) ChronoUnit.WEEKS.between(dateStart,dateEndTime);
     }
 
     public String OTP(){
