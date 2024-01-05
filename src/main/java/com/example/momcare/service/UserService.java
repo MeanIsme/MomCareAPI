@@ -9,6 +9,7 @@ import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -53,7 +54,7 @@ public class UserService {
             return 0;
         LocalDateTime dateStart = LocalDateTime.parse(datePregnant);
         LocalDateTime dateEndTime = LocalDateTime.parse(dateEnd);
-        int dateAge = dateEndTime.getDayOfYear() - dateStart.getDayOfYear();
+        int dateAge = (int) ChronoUnit.DAYS.between(dateStart,dateEndTime);
         int weekAge = dateAge/7;
         if(dateAge %2 !=0)
             weekAge += 1;
