@@ -1,11 +1,20 @@
 package com.example.momcare.service;
 
+import com.example.momcare.models.BabyHealthIndex;
+import com.example.momcare.models.User;
 import com.example.momcare.models.WarningHealth;
 import com.example.momcare.models.StandardsIndex;
 import com.example.momcare.payload.response.StandardsBabyIndexResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class BabyHealthIndexService {
+    @Autowired
+    private UserService userService;
     private StandardsIndex HeadIndex(int ga){
         Double mean = -28.2849 + 1.69267 * Math.pow(ga,2) - 0.397485 * Math.pow(ga,2) * Math.log(ga);
         Double sd = 1.98735 + 0.0136772 * Math.pow(ga,3) - 0.00726264 * Math.pow(ga,3) * Math.log(ga) + 0.000976253 * Math.pow(ga,3) *  Math.pow(Math.log(ga),2) ;
@@ -129,5 +138,26 @@ public class BabyHealthIndexService {
         standardsIndex.setBiparietal(BiparietalIndex(ga));
         standardsIndex.setFemur(FemurIndex(ga));
         return standardsIndex;
+    }
+
+    public List<BabyHealthIndex> updateDatePregnant(User user) {
+        List<WarningHealth> warningHealths = new ArrayList<>();
+        List<BabyHealthIndex> babyHealthIndices = new ArrayList<>();
+        for (BabyHealthIndex babyHealthIndex : user.getBabyIndex()) {
+            int ga = userService.gestationalAge(user.getDatePregnant(), babyHealthIndex.getTimeCreate());
+            if (babyHealthIndex.getHead() != null)
+                warningHealths.add(CheckHead(ga, babyHealthIndex.getHead()));
+            if (babyHealthIndex.getBiparietal() != null)
+                warningHealths.add(CheckBiparietal(ga, babyHealthIndex.getBiparietal()));
+            if (babyHealthIndex.getOccipitofrontal() != null)
+                warningHealths.add(CheckOccipitofrontal(ga, babyHealthIndex.getOccipitofrontal()));
+            if (babyHealthIndex.getAbdominal() != null)
+                warningHealths.add(CheckAbdominal(ga, babyHealthIndex.getAbdominal()));
+            if (babyHealthIndex.getFemur() != null)
+                warningHealths.add(CheckFemur(ga, babyHealthIndex.getFemur()));
+            babyHealthIndex.setWarningHealths(warningHealths);
+            babyHealthIndices.add(babyHealthIndex);
+        }
+        return babyHealthIndices;
     }
 }

@@ -10,6 +10,7 @@ import com.example.momcare.payload.response.Response;
 import com.example.momcare.payload.response.UserResponse;
 import com.example.momcare.security.CheckAccount;
 import com.example.momcare.security.Encode;
+import com.example.momcare.service.BabyHealthIndexService;
 import com.example.momcare.service.EmailService;
 import com.example.momcare.service.UserService;
 import jakarta.mail.MessagingException;
@@ -26,6 +27,9 @@ import java.util.*;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private BabyHealthIndexService babyHealthIndexService;
+
     @Autowired
     private EmailService emailService;
     private CheckAccount checkAccount = new CheckAccount();
@@ -90,8 +94,10 @@ public class UserController {
         User check = userService.findAccountByID(user.getId());
         if (check != null) {
 
-            if (user.getDatePregnant() != null)
+            if (user.getDatePregnant() != null) {
                 check.setDatePregnant(user.getDatePregnant());
+                check.setBabyIndex(babyHealthIndexService.updateDatePregnant(check));
+            }
             if (user.getPremium() != null)
                 check.setPremium(user.getPremium());
             if (user.getBabyIndex() != null)
@@ -111,7 +117,6 @@ public class UserController {
             userService.update(check);
             return new Response(HttpStatus.OK.getReasonPhrase(), users, "success");
         }
-
 
         return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "failure");
     }
