@@ -37,4 +37,10 @@ public class HandBookController {
     public Response Random(){
         return new Response(HttpStatus.OK.getReasonPhrase(), service.Top8Random(), "success");
     }
+
+    @GetMapping("/handbook/search")
+    public Response Search(@RequestParam("key") String key){
+        return new Response(HttpStatus.OK.getReasonPhrase(), service.searchHandBook(key), "success");
+    }
+
 }

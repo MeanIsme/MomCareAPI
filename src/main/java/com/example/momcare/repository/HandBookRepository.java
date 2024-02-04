@@ -10,4 +10,7 @@ public interface HandBookRepository extends MongoRepository<HandBook,String> {
     List<HandBook> findAllByCategory(String categoryId);
 
     HandBook getHandBookById(String id);
+
+    @Query("{'title': {$regex : ?0, $options: 'i'}}")
+    List<HandBook> findByTitleLike(String keyWord);
 }

@@ -36,6 +36,11 @@ public class HandBookService {
                 .collect(Collectors.toList());
     }
 
+    public List<HandBook> searchHandBook(String keyWord)
+    {
+        return this.handBookRepository.findByTitleLike(keyWord);
+    }
+
 
     public List<HandBook> Top8Random() {
         List<HandBook> allHandBook = handBookRepository.findAll();
