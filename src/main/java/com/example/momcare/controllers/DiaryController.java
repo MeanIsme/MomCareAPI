@@ -13,10 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+
+@RequestMapping("/diary")
 public class DiaryController {
     @Autowired
     private DiaryService service;
-    @PostMapping ("/diary/new")
+    @PostMapping ("/new")
     public Response CreateDiary(@RequestBody Diary diaryRequest){
         Diary diary = new Diary(diaryRequest.getIdUser(),diaryRequest.getTitle(), diaryRequest.getContent(), diaryRequest.getThumbnail(), diaryRequest.getReaction(), LocalDateTime.now().toString(),LocalDateTime.now().toString());
         if(service.save(diary))
@@ -25,11 +27,11 @@ public class DiaryController {
             return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "failure");
     }
 
-    @GetMapping("/diary/all")
+    @GetMapping("/all")
     public Response FindAllDiaryByUser(@RequestParam String idUser){
         return new Response((HttpStatus.OK.getReasonPhrase()), service.findDiaryByIdUser(idUser), "success");
     }
-    @GetMapping("/diary")
+    @GetMapping()
     public Response FindDiaryById(@RequestParam String id){
         List<Diary> diaries = new ArrayList<>();
         diaries.add(service.findDiaryById(id));
@@ -37,7 +39,7 @@ public class DiaryController {
     }
 
 
-    @PutMapping("/diary/update")
+    @PutMapping("/update")
     public Response UpdateDiary(@RequestBody Diary diaryRequest){
         Diary diary = service.findDiaryById(diaryRequest.getId());
         if (diary != null)
@@ -54,7 +56,7 @@ public class DiaryController {
         else
             return new Response((HttpStatus.NOT_FOUND.getReasonPhrase()), new ArrayList<>(), "failure");
     }
-    @DeleteMapping("/diary/delete")
+    @DeleteMapping("/delete")
     public Response DeleteDiary(@RequestParam String id){
         Diary diary = service.findDiaryById(id);
         if (diary != null)
@@ -68,12 +70,12 @@ public class DiaryController {
         else
             return new Response((HttpStatus.NOT_FOUND.getReasonPhrase()), new ArrayList<>(), "failure");
     }
-    @GetMapping("/diary/newest")
+    @GetMapping("/newest")
     public Response Top8Newest(){
         return new Response((HttpStatus.OK.getReasonPhrase()), service.Top8Newest(), "success");
     }
 
-    @GetMapping("/diary/random")
+    @GetMapping("/random")
     public Response Random(){
         return new Response((HttpStatus.OK.getReasonPhrase()), service.Top8Newest(), "success");
     }

@@ -20,12 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@RequestMapping("/babyindex")
 public class BabyHealthIndexController {
     @Autowired
     private UserService userService;
     @Autowired
     private BabyHealthIndexService babyHealthIndexService;
-    @PostMapping("/babyindex/new")
+    @PostMapping("/new")
     public Response CreateIndex(@RequestBody BabyHealthIndexRequest babyIndex) {
         User user = userService.findAccountByID(babyIndex.getUserID());
         if (user == null)
@@ -62,7 +63,7 @@ public class BabyHealthIndexController {
         babyHealthResponse.add(babyHealthIndex);
         return new Response(HttpStatus.OK.getReasonPhrase(), babyHealthResponse, "success");
     }
-    @PutMapping("/babyindex/update")
+    @PutMapping("/update")
     public Response UpdateIndex(@RequestBody BabyHealthIndexRequest babyIndex) {
         User user = userService.findAccountByID(babyIndex.getUserID());
         if (user == null)
@@ -97,7 +98,7 @@ public class BabyHealthIndexController {
         return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Index not found");
     }
 
-    @PutMapping("/babyindex/delete")
+    @PutMapping("/delete")
     public Response DeleteIndex(@RequestBody BabyHealthIndexRequest babyIndex) {
         User user = userService.findAccountByID(babyIndex.getUserID());
         if (user == null)
@@ -113,7 +114,7 @@ public class BabyHealthIndexController {
         }
         return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Index not found");
     }
-    @GetMapping("/babyindex/getall")
+    @GetMapping("/getall")
     public Response GetIndex(@RequestParam String userID) {
         User user = userService.findAccountByID(userID);
         if (user == null)
@@ -125,7 +126,7 @@ public class BabyHealthIndexController {
         }
         return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Index not found");
     }
-    @PutMapping("/babyindex/standardsindex")
+    @PutMapping("/standardsindex")
     public Response GetstandardIndex(@RequestBody StandIndexRequest request) {
         int ga = userService.gestationalAge(request.getDatePregnant(), request.getDateEnd());
         List<StandardsBabyIndexResponse> list = new ArrayList<>();
