@@ -39,8 +39,12 @@ public class SocialPostController
     @PostMapping("/new")
     public Response create(@RequestBody SocialPostNewRequest request){
         SocialPost socialPost = new SocialPost(request.getDescription(), request.getUserId(), request.getImages(), LocalDateTime.now().toString());
-        if(socialPostService.save(socialPost))
-            return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");
+        if(socialPostService.save(socialPost)) {
+            List<SocialPost> socialPosts = new ArrayList<>();
+            socialPosts.add(socialPost);
+            return new Response((HttpStatus.OK.getReasonPhrase()), socialPosts, "success");
+        }
+
         else
             return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "failure");
     }
