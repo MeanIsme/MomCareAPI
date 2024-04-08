@@ -66,12 +66,17 @@ public class SocialPostController
             if(socialPostService.delete(socialPost.getId())) {
                 Set<String> setComment = socialPost.getComments();
                 Set<String> setReaction = socialPost.getReactions();
-                for (String id : setComment) {
-                    socialCommentService.delete(id);
+                if(setComment != null){
+                    for (String id : setComment) {
+                        socialCommentService.delete(id);
+                    }
                 }
-                for (String id : setReaction) {
-                    socialReactionService.delete(id);
+                if(setReaction != null){
+                    for (String id : setReaction) {
+                        socialReactionService.delete(id);
+                    }
                 }
+
                 return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");
             }
             else

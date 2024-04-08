@@ -8,7 +8,7 @@ import java.util.Set;
 @Setter
 public class SocialPostNewRequest
 {
-    private String description;
+        private String description;
     private String userId;
-    Set<String> images;
+        Set<String> images;
 }
