@@ -34,13 +34,15 @@ public class SocialCommentController {
     public Response create(@RequestBody SocialCommentNewRequest request){
         SocialComment socialComment = new SocialComment(request.getUserId(), request.getDescription(), LocalDateTime.now().toString());
         SocialPost socialPost = socialPostService.findById(request.getPostId());
-        if(socialPost!=null){
+        if(socialPost!=null && socialComment !=null){
             if(socialCommentService.save(socialComment)){
                 Set<String> setComment = socialPost.getComments();
                 setComment.add(socialComment.getId());
                 socialPost.setComments(setComment);
                 if(socialPostService.save(socialPost))
-                    return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");
+                    List<SocialComment> socialComments = new ArrayList<>();
+                    socialComments.add(socialComment);
+                    return new Response((HttpStatus.OK.getReasonPhrase()), socialComments, "success");
                 else {
                     socialCommentService.delete(socialComment.getId());
                     return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "failure");
