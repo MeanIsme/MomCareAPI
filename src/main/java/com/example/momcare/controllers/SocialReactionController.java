@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -36,6 +37,8 @@ public class SocialReactionController {
         if(socialPost!=null){
             if(socialReactionService.save(socialReaction)){
                 Set<String> setReaction = socialPost.getReactions();
+                if(setReaction != null)
+                    setReaction = new HashSet<>();
                 setReaction.add(socialReaction.getId());
                 socialPost.setReactions(setReaction);
                 if(socialPostService.save(socialPost))
