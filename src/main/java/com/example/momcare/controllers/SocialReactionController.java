@@ -71,7 +71,7 @@ public class SocialReactionController {
         else
             return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Post not found");
     }
-    @DeleteMapping("/delete")
+    @PutMapping("/delete")
     public Response delete (@RequestBody SocialReactionDeleteRequest socialReactionDeleteRequest){
         SocialReaction socialReaction = socialReactionService.findById(socialReactionDeleteRequest.getId());
         if(socialReaction!=null)

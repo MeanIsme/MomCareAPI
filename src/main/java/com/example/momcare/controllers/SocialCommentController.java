@@ -79,7 +79,7 @@ public class SocialCommentController {
         else
             return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Post not found");
     }
-    @DeleteMapping("/delete")
+    @PutMapping("/delete")
     public Response delete (@RequestBody SocialCommentDeleteRequest socialCommentDeleteRequest){
         SocialComment socialComment = socialCommentService.findById(socialCommentDeleteRequest.getId());
         if(socialComment!=null)
