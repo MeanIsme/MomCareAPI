@@ -37,19 +37,24 @@ public class SocialCommentController {
     }
     @PostMapping("/new")
     public Response create(@RequestBody SocialCommentNewRequest request){
-        SocialComment socialComment = new SocialComment(request.getUserId(), request.getPostId(), request.getDescription(),
+        SocialComment socialComment = new SocialComment(request.getUserId(), request.getPostId(), request.getCommentId(),
                 request.getDescription(), LocalDateTime.now().toString());
         SocialPost socialPost = socialPostService.findById(request.getPostId());
         if(socialPost!=null){
-            if(socialCommentService.save(socialComment)){
+            SocialComment comment = socialCommentService.save(socialComment);
+            if(comment!=null){
                 Set<String> setComment = socialPost.getComments();
                 if (setComment == null) {
                     setComment = new HashSet<>();
                 }
                 setComment.add(socialComment.getId());
                 socialPost.setComments(setComment);
-                if(socialPostService.save(socialPost))
-                    return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");
+                if(socialPostService.save(socialPost)){
+                    List<SocialComment> socialComments = new ArrayList<>();
+                    socialComments.add(comment);
+                    return new Response((HttpStatus.OK.getReasonPhrase()), socialComments, "success");
+                }
+
                 else {
                     socialCommentService.delete(socialComment.getId());
                     return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "failure");

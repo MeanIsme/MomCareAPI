@@ -13,13 +13,13 @@ public class SocialReactionService {
     public SocialReactionService(SocialReactionRepository socialReactionRepository) {
         this.socialReactionRepository = socialReactionRepository;
     }
-    public boolean save(SocialReaction socialReaction) {
+    public SocialReaction save(SocialReaction socialReaction) {
         try {
-            this.socialReactionRepository.save(socialReaction);
-            return true;
+            SocialReaction reaction = this.socialReactionRepository.save(socialReaction);
+            return reaction;
         }
         catch (Exception e){
-            return false;
+            return null;
         }
     }
     public boolean delete(String id){

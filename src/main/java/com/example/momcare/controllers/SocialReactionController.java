@@ -35,14 +35,19 @@ public class SocialReactionController {
         SocialReaction socialReaction = new SocialReaction(request.getUserId(), request.getReaction());
         SocialPost socialPost = socialPostService.findById(request.getPostId());
         if(socialPost!=null){
-            if(socialReactionService.save(socialReaction)){
+            SocialReaction reaction = socialReactionService.save(socialReaction);
+            if(reaction!=null){
                 Set<String> setReaction = socialPost.getReactions();
                 if(setReaction != null)
                     setReaction = new HashSet<>();
                 setReaction.add(socialReaction.getId());
                 socialPost.setReactions(setReaction);
-                if(socialPostService.save(socialPost))
-                    return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");
+                if(socialPostService.save(socialPost)){
+                    List<SocialReaction> socialReactions = new ArrayList<>();
+                    socialReactions.add(reaction);
+                    return new Response((HttpStatus.OK.getReasonPhrase()), socialReactions, "success");
+                }
+
                 else {
                     socialReactionService.delete(socialReaction.getId());
                     return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "failure");

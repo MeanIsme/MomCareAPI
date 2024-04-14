@@ -18,13 +18,13 @@ public class SocialCommentService {
     public List<SocialComment> findAll(){
         return this.socialCommentRepository.findAll();
     }
-    public boolean save(SocialComment socialComment) {
+    public SocialComment save(SocialComment socialComment) {
         try {
-            this.socialCommentRepository.save(socialComment);
-            return true;
+            SocialComment savedComment = this.socialCommentRepository.save(socialComment);
+            return savedComment;
         }
         catch (Exception e){
-            return false;
+            return null;
         }
     }
     public List<SocialComment> findAllById(String id){
