@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -37,6 +38,9 @@ public class SocialCommentController {
         if(socialPost!=null){
             if(socialCommentService.save(socialComment)){
                 Set<String> setComment = socialPost.getComments();
+                if (setComment == null) {
+                    setComment = new HashSet<>();
+                }
                 setComment.add(socialComment.getId());
                 socialPost.setComments(setComment);
                 if(socialPostService.save(socialPost))
