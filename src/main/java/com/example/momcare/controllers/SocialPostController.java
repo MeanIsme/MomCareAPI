@@ -32,10 +32,20 @@ public class SocialPostController
     public Response getAllByUser(@RequestParam String userId){
         return new Response((HttpStatus.OK.getReasonPhrase()), (List<?>) socialPostService.getAllByUser(userId), "success");
     }
+
+    @GetMapping("/pagebyuser")
+    public Response getAllByUser(@RequestParam String userId, int time){
+        return new Response((HttpStatus.OK.getReasonPhrase()), (List<?>) socialPostService.PostPerPageByUser(   userId, time), "success");
+    }
     @GetMapping("/getall")
     public Response getAll(){
         return new Response((HttpStatus.OK.getReasonPhrase()), (List<?>) socialPostService.getAll(), "success");
     }
+    @GetMapping("/page")
+    public Response PostPerPage(@RequestParam int time){
+        return new Response((HttpStatus.OK.getReasonPhrase()), (List<?>) socialPostService.PostPerPage(time), "success");
+    }
+
     @PostMapping("/new")
     public Response create(@RequestBody SocialPostNewRequest request){
         SocialPost socialPost = new SocialPost(request.getDescription(), request.getUserId(), request.getImages(), LocalDateTime.now().toString());

@@ -33,6 +33,11 @@ public class HandBookController {
     public Response Top8Newest(){
         return new Response(HttpStatus.OK.getReasonPhrase(), service.Top8Newest(), "success");
     }
+    @GetMapping("/handbook/page")
+    public Response HandBookPerPage(@RequestParam int time){
+        List<HandBook> list = service.HandBookPerTime(time);
+        return new Response(HttpStatus.OK.getReasonPhrase(), service.HandBookPerTime(time), "success");
+    }
     @GetMapping("/handbook/random")
     public Response Random(){
         return new Response(HttpStatus.OK.getReasonPhrase(), service.Top8Random(), "success");

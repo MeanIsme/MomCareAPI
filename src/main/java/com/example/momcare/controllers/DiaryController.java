@@ -74,7 +74,10 @@ public class DiaryController {
     public Response Top8Newest(){
         return new Response((HttpStatus.OK.getReasonPhrase()), service.Top8Newest(), "success");
     }
-
+    @GetMapping("/page")
+    public Response DiaryPerPage(int time){
+        return new Response((HttpStatus.OK.getReasonPhrase()), service.DiaryPerPage(time), "success");
+    }
     @GetMapping("/random")
     public Response Random(){
         return new Response((HttpStatus.OK.getReasonPhrase()), service.Top8Newest(), "success");

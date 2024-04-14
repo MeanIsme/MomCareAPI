@@ -30,10 +30,15 @@ public class SocialCommentController {
         List<SocialComment> socialComments = socialCommentService.findAll();
         return new Response(HttpStatus.OK.getReasonPhrase(), socialComments , "success");
     }
-
+    @GetMapping("/allByPostId")
+    public Response GetAllByPostId (@RequestParam String id){
+        List<SocialComment> socialComments = socialCommentService.findAllById(id);
+        return new Response(HttpStatus.OK.getReasonPhrase(), socialComments , "success");
+    }
     @PostMapping("/new")
     public Response create(@RequestBody SocialCommentNewRequest request){
-        SocialComment socialComment = new SocialComment(request.getUserId(), request.getDescription(), LocalDateTime.now().toString());
+        SocialComment socialComment = new SocialComment(request.getUserId(), request.getPostId(), request.getDescription(),
+                request.getDescription(), LocalDateTime.now().toString());
         SocialPost socialPost = socialPostService.findById(request.getPostId());
         if(socialPost!=null){
             if(socialCommentService.save(socialComment)){

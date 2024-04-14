@@ -49,5 +49,11 @@ public class DiaryService {
                 .collect(Collectors.toList());
     }
 
+    public List<Diary> DiaryPerPage(int time){
+        Sort sort = Sort.by(Sort.Direction.DESC, "timeUpdate");
+        return diaryRepository.findAll(sort).stream()
+                .skip(time*20L)
+                .collect(Collectors.toList());
+    }
 
 }

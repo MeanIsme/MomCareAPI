@@ -27,6 +27,10 @@ public class SocialCommentService {
             return false;
         }
     }
+    public List<SocialComment> findAllById(String id){
+        return this.socialCommentRepository.findSocialCommentByPostId(id);
+    }
+
 
     public boolean delete(String id){
         try {

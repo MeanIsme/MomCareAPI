@@ -30,12 +30,17 @@ public class HandBookService {
     }
 
     public List<HandBook> Top8Newest(){
+            Sort sort = Sort.by(Sort.Direction.DESC, "time");
+            return handBookRepository.findAll(sort).stream()
+                    .limit(8)
+                    .collect(Collectors.toList());
+    }
+    public List<HandBook> HandBookPerTime(int time){
         Sort sort = Sort.by(Sort.Direction.DESC, "time");
         return handBookRepository.findAll(sort).stream()
-                .limit(8)
+                .skip(time* 20L)
                 .collect(Collectors.toList());
     }
-
     public List<HandBook> searchHandBook(String keyWord)
     {
         return this.handBookRepository.findByTitleLike(keyWord);
