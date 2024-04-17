@@ -3,6 +3,7 @@ package com.example.momcare.controllers;
 import com.example.momcare.models.BabyHealthIndex;
 import com.example.momcare.models.MomHealthIndex;
 import com.example.momcare.models.User;
+import com.example.momcare.payload.request.AddUserFollowerRequest;
 import com.example.momcare.payload.request.ChangePasswordRequest;
 import com.example.momcare.payload.request.CreatePasswordRequest;
 import com.example.momcare.payload.request.OPTRequest;
@@ -14,13 +15,11 @@ import com.example.momcare.service.BabyHealthIndexService;
 import com.example.momcare.service.EmailService;
 import com.example.momcare.service.UserService;
 import jakarta.mail.MessagingException;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.charset.Charset;
 import java.util.*;
 
 @RestController
@@ -104,6 +103,8 @@ public class UserController {
                 check.setBabyIndex(user.getBabyIndex());
             if (user.getMomIndex() != null)
                 check.setMomIndex(user.getMomIndex());
+            if (user.getAvtUrl() != null)
+                check.setAvtUrl(user.getAvtUrl());
 
 
             List<UserResponse> users = new ArrayList<>();
@@ -112,7 +113,8 @@ public class UserController {
                     check.getUserName(),
                     check.getEmail(),
                     check.getDatePregnant(),
-                    check.getPremium());
+                    check.getPremium(),
+                    check.getAvtUrl());
             users.add(userResponse);
             userService.update(check);
             return new Response(HttpStatus.OK.getReasonPhrase(), users, "success");
@@ -195,6 +197,16 @@ public class UserController {
         return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "User not found");
     }
 
+    @PutMapping("user/follow")
+    public Response addFollower(@RequestBody AddUserFollowerRequest userFollower){
+        User user = userService.findAccountByID(userFollower.getIdFollowerUser());
+        if (user != null) {
+            Set<String> ids= user.getFollower();
+            ids.add(userFollower.getIdUser());
+            user.setFollower(ids);
+        }
+        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "User not found");
+    }
     @GetMapping(value = "/verifyemail", produces = MediaType.TEXT_HTML_VALUE)
     public String VerifyEmail(@RequestParam String token) {
         User user = userService.findAccountByToken(token);

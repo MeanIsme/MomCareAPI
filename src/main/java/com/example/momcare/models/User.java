@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -30,7 +31,10 @@ public class User   {
     @Size(max = 50)
     @Email
     private String email;
-
+    private String avtUrl;
+    private String nameDisplay;
+    private Set<String> follower;
+    private Set<String> shared;
     private String datePregnant;
     private Boolean premium;
     private List<MomHealthIndex> momIndex;

@@ -15,6 +15,16 @@ public class UserResponse {
     private String email;
     private String datePregnant;
     private Boolean premium;
+    private String avtUrl;
+
+    public UserResponse(String id, String userName, String email, String datePregnant, Boolean premium, String avtUrl) {
+        this.id = id;
+        this.userName = userName;
+        this.email = email;
+        this.datePregnant = datePregnant;
+        this.premium = premium;
+        this.avtUrl = avtUrl;
+    }
 
     public UserResponse(String id, String userName, String email, String datePregnant, Boolean premium) {
         this.id = id;
