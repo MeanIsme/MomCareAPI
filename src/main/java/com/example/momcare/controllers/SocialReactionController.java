@@ -42,7 +42,7 @@ public class SocialReactionController {
                     setReaction = new HashSet<>();
                 setReaction.add(socialReaction.getId());
                 socialPost.setReactions(setReaction);
-                socialPost.setCountReactions(socialPost.getCountReactions()+1);
+                socialPost.setCountReactions(socialPost.getReactions().size());
                 if(socialPostService.save(socialPost)){
                     List<SocialReaction> socialReactions = new ArrayList<>();
                     socialReactions.add(reaction);
@@ -83,7 +83,7 @@ public class SocialReactionController {
                     Set<String> setReaction = socialPost.getReactions();
                     setReaction.remove(socialReaction.getId());
                     socialPost.setReactions(setReaction);
-                    socialPost.setCountReactions(socialPost.getCountReactions()-1);
+                    socialPost.setCountReactions(socialPost.getReactions().size());
                     if(socialPostService.save(socialPost))
                         return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");
                     else{

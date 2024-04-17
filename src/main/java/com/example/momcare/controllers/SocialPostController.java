@@ -94,7 +94,7 @@ public class SocialPostController {
                 Set<String> sharesPost = new HashSet<>(socialPost.getShare());
                 sharesPost.add(user.getId());
                 socialPost.setShare(sharesPost);
-                socialPost.setCountShare(socialPost.getCountShare() + 1);
+                socialPost.setCountShare(socialPost.getShare().size());
                 userService.save(user);
                 if (socialPostService.save(socialPost))
                     return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");
@@ -118,7 +118,7 @@ public class SocialPostController {
                 Set<String> sharesPost = new HashSet<>(socialPost.getShare());
                 sharesPost.remove(user.getId());
                 socialPost.setShare(sharesPost);
-                socialPost.setCountShare(socialPost.getCountShare() + 1);
+                socialPost.setCountShare(socialPost.getShare().size());
                 userService.save(user);
                 if (socialPostService.save(socialPost))
                     return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");

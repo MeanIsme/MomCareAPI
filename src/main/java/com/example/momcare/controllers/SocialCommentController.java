@@ -52,7 +52,7 @@ public class SocialCommentController {
                 }
                 setComment.add(socialComment.getId());
                 socialPost.setComments(setComment);
-                socialPost.setCountComments(socialPost.getCountComments() + 1);
+                socialPost.setCountComments(socialPost.getComments().size());
                 if (socialPostService.save(socialPost)) {
                     List<SocialComment> socialComments = new ArrayList<>();
                     socialComments.add(comment);
@@ -89,7 +89,7 @@ public class SocialCommentController {
                     Set<String> setComment = socialPost.getComments();
                     setComment.remove(socialComment.getId());
                     socialPost.setComments(setComment);
-                    socialPost.setCountComments(socialPost.getCountComments() - 1);
+                    socialPost.setCountComments(socialPost.getComments().size());
                     if (socialPostService.save(socialPost)) {
                         return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");
                     } else {
