@@ -37,6 +37,19 @@ public class SocialPost {
         this.time = time;
     }
 
+    public SocialPost(String description, String userId, Set<String> reactions, int countReactions, Set<String> comments, int countComments, Set<String> share, int countShare, List<Media> media, String time) {
+        this.description = description;
+        this.userId = userId;
+        this.reactions = reactions;
+        this.countReactions = countReactions;
+        this.comments = comments;
+        this.countComments = countComments;
+        this.share = share;
+        this.countShare = countShare;
+        this.media = media;
+        this.time = time;
+    }
+
     public SocialPost(String description, String userId, List<Media> media, String time) {
         this.description = description;
         this.userId = userId;
