@@ -3,13 +3,10 @@ package com.example.momcare.service;
 import com.example.momcare.models.HandBook;
 import com.example.momcare.repository.HandBookRepository;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,7 +38,7 @@ public class HandBookService {
                 .skip(time* 20L)
                 .collect(Collectors.toList());
     }
-    public List<HandBook> searchHandBook(String keyWord)
+    public List<HandBook>  searchHandBook(String keyWord)
     {
         return this.handBookRepository.findByTitleLike(keyWord);
     }

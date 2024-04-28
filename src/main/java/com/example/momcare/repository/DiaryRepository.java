@@ -1,6 +1,7 @@
 package com.example.momcare.repository;
 
 import com.example.momcare.models.Diary;
+import com.example.momcare.models.HandBook;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
@@ -12,4 +13,7 @@ public interface DiaryRepository extends MongoRepository<Diary, String> {
     List<Diary> findAllByIdUser(String idUser);
 
     Diary getDiaryById(String id);
+
+    @Query("{'title': {$regex : ?0, $options: 'i'}}")
+    List<Diary> findByTitleLike(String keyWord);
 }

@@ -1,6 +1,7 @@
 package com.example.momcare.service;
 
 import com.example.momcare.models.User;
+import com.example.momcare.payload.response.UserResponse;
 import com.example.momcare.repository.UserRepository;
 
 
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -34,6 +36,13 @@ public class UserService {
         this.userRepository.save(user);
     }
 
+    public List<UserResponse> searchUserByUserName(String keyWord){
+        List<UserResponse> userResponses = new ArrayList<>();
+        List<User> users = userRepository.findByUserNameLike(keyWord);
+        for (User user : users)
+            userResponses.add(new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getDatePregnant(), user.getPremium()));
+        return userResponses;
+    }
 
 
     public User findAccountByUserName(String user){

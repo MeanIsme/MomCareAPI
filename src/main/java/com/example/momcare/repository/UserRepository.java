@@ -1,10 +1,12 @@
 package com.example.momcare.repository;
 
+import com.example.momcare.models.Diary;
 import com.example.momcare.models.User;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
+import java.util.List;
 import java.util.Objects;
 
 public interface UserRepository extends MongoRepository<User,String> {
@@ -16,5 +18,7 @@ public interface UserRepository extends MongoRepository<User,String> {
     User findUserByToken(String token);
     @Query("{email : ?0}")
     User findUserByEmail(String email);
+    @Query("{'userName': {$regex : ?0, $options: 'i'}}")
+    List<User> findByUserNameLike(String keyWord);
 
 }

@@ -24,6 +24,9 @@ public class SocialPost {
     private List<Media> media;
     private String time;
 
+    public SocialPost() {
+    }
+
     public SocialPost(String id, String description, String userId, Set<String> reactions, Set<String> comments, List<Media> media, String time) {
         this.id = id;
         this.description = description;
