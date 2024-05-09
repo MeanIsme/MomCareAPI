@@ -1,12 +1,14 @@
 package com.example.momcare.models;
 
 public enum Reaction {
-    LIKE,
+    LIKE(1),
+    LOVE(2),
+    CARE(3),
+    SMILE(4),
+    WOW(5),
+    CRY(6),
+    ANGRY(7);
 
-    lOVE,
-    CARE,
-    SMILE,
-    WOW,
-    CRY,
-    ANGRY
+    Reaction(int i) {
+    }
 }

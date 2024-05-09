@@ -1,12 +1,10 @@
 package com.example.momcare.models;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -15,7 +13,7 @@ public class SocialPost {
     private String id;
     private String description;
     private String userId;
-    private Set<String> reactions;
+    private Map<String, SocialReaction> reactions;
     private int countReactions;
     private Set<String> comments;
     private int countComments;
@@ -27,7 +25,7 @@ public class SocialPost {
     public SocialPost() {
     }
 
-    public SocialPost(String id, String description, String userId, Set<String> reactions, Set<String> comments, List<Media> media, String time) {
+    public SocialPost(String id, String description, String userId, Map<String, SocialReaction> reactions, Set<String> comments, List<Media> media, String time) {
         this.id = id;
         this.description = description;
         this.userId = userId;
@@ -37,7 +35,17 @@ public class SocialPost {
         this.time = time;
     }
 
-    public SocialPost(String description, String userId, Set<String> reactions, int countReactions, Set<String> comments, int countComments, Set<String> share, int countShare, List<Media> media, String time) {
+    public SocialPost(String id, String description, String userId, int countReactions, int countComments, int countShare, String time) {
+        this.id = id;
+        this.description = description;
+        this.userId = userId;
+        this.countReactions = countReactions;
+        this.countComments = countComments;
+        this.countShare = countShare;
+        this.time = time;
+    }
+
+    public SocialPost(String description, String userId, Map<String, SocialReaction>  reactions, int countReactions, Set<String> comments, int countComments, Set<String> share, int countShare, List<Media> media, String time) {
         this.description = description;
         this.userId = userId;
         this.reactions = reactions;
@@ -53,7 +61,10 @@ public class SocialPost {
     public SocialPost(String description, String userId, List<Media> media, String time) {
         this.description = description;
         this.userId = userId;
-        this.media = media;
+        this.media = Objects.requireNonNullElse(media, Collections.emptyList());
         this.time = time;
+        this.reactions = Collections.emptyMap();
+        this.comments = Collections.emptySet();
+        this.share = Collections.emptySet();
     }
 }

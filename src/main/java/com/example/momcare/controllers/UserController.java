@@ -105,6 +105,8 @@ public class UserController {
                 check.setMomIndex(user.getMomIndex());
             if (user.getAvtUrl() != null)
                 check.setAvtUrl(user.getAvtUrl());
+            if(user.getNameDisplay() != null)
+                check.setNameDisplay(user.getNameDisplay());
 
 
             List<UserResponse> users = new ArrayList<>();

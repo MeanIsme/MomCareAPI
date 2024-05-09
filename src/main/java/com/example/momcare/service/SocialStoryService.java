@@ -4,6 +4,7 @@ import com.example.momcare.models.SocialStory;
 import com.example.momcare.repository.StoryRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -31,7 +32,12 @@ public class SocialStoryService {
     }
 
     public List<SocialStory> getAllByUser(String id){
-        return storyRepository.getSocialStoriesByUserId(id);
+        return storyRepository.getById(id);
+    }
+    public List<SocialStory> getAll(){
+        List<SocialStory> socialStories = new ArrayList<>();
+        socialStories = this.storyRepository.findAll();
+        return socialStories;
     }
 
 

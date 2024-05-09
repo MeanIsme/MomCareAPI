@@ -8,5 +8,5 @@ import java.util.List;
 public interface StoryRepository extends MongoRepository<SocialStory, String> {
 
     List<SocialStory> getSocialStoriesByUserId(String id);
-
+    List<SocialStory> getById(String id);
 }

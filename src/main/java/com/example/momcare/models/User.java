@@ -43,5 +43,4 @@ public class User   {
     private String token;
     private String otp;
     private String passwordToken;
-
 }

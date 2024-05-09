@@ -6,14 +6,23 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Getter
 @Setter
-@Document(collection = "SocialReaction")
 public class SocialReaction {
-    private String id;
-    private String userId;
+    private String userName;
+    private String urlAvt;
+    private String time;
     private Reaction reaction;
 
-    public SocialReaction(String userId, Reaction reaction) {
-        this.userId = userId;
+    public SocialReaction() {
+    }
+
+    public SocialReaction( Reaction reaction) {
+        this.reaction = reaction;
+    }
+
+    public SocialReaction(String userName, String urlAvt, String time, Reaction reaction) {
+        this.userName = userName;
+        this.urlAvt = urlAvt;
+        this.time = time;
         this.reaction = reaction;
     }
 }

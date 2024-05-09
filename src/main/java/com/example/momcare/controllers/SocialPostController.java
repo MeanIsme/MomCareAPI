@@ -1,6 +1,7 @@
 package com.example.momcare.controllers;
 
 import com.example.momcare.models.SocialPost;
+import com.example.momcare.models.SocialReaction;
 import com.example.momcare.models.User;
 import com.example.momcare.payload.request.ShareResquest;
 import com.example.momcare.payload.request.SocialPostNewRequest;
@@ -8,17 +9,13 @@ import com.example.momcare.payload.request.SocialPostUpdateResquest;
 import com.example.momcare.payload.response.Response;
 import com.example.momcare.service.SocialCommentService;
 import com.example.momcare.service.SocialPostService;
-import com.example.momcare.service.SocialReactionService;
 import com.example.momcare.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping("/socialpost")
@@ -28,8 +25,6 @@ public class SocialPostController {
     SocialPostService socialPostService;
     @Autowired
     SocialCommentService socialCommentService;
-    @Autowired
-    SocialReactionService socialReactionService;
     @Autowired
     UserService userService;
 
@@ -77,6 +72,9 @@ public class SocialPostController {
                 socialPost.setDescription(request.getDescription());
             if (request.getMedia() != null)
                 socialPost.setMedia(request.getMedia());
+            if (request.getReaction() != null)
+                socialPost.setReactions(request.getReaction());
+            socialPostService.save(socialPost);
             return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");
         } else
             return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Post not found");
@@ -136,15 +134,10 @@ public class SocialPostController {
         if (socialPost != null) {
             if (socialPostService.delete(socialPost.getId())) {
                 Set<String> setComment = socialPost.getComments();
-                Set<String> setReaction = socialPost.getReactions();
+                Map<String, SocialReaction> setReaction = socialPost.getReactions();
                 if (setComment != null) {
                     for (String id : setComment) {
                         socialCommentService.delete(id);
-                    }
-                }
-                if (setReaction != null) {
-                    for (String id : setReaction) {
-                        socialReactionService.delete(id);
                     }
                 }
 
