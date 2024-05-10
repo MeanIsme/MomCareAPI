@@ -1,14 +1,14 @@
 package com.example.momcare.payload.request;
 
-import com.example.momcare.models.Media;
+import com.example.momcare.models.SocialStory;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+
 @Setter
 @Getter
-public class SocialStoryNewRequest {
-    private String description;
+public class UserStoryDeleteRequest {
     private String userId;
-    private String media;
+    private List<SocialStory> socialStories;
 }

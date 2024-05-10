@@ -55,7 +55,7 @@ public class SocialPostController {
 
     @PostMapping("/new")
     public Response create(@RequestBody SocialPostNewRequest request) {
-        SocialPost socialPost = new SocialPost(request.getDescription(), request.getUserId(), request.getMedia(), LocalDateTime.now().toString());
+        SocialPost socialPost = new SocialPost(request.getDescription(), request.getUserId(),request.getUserName(), request.getDisplayName(), request.getAvtUrl(), request.getMedia(), LocalDateTime.now().toString());
         if (socialPostService.save(socialPost)) {
             List<SocialPost> socialPosts = new ArrayList<>();
             socialPosts.add(socialPost);
@@ -75,7 +75,9 @@ public class SocialPostController {
             if (request.getReaction() != null)
                 socialPost.setReactions(request.getReaction());
             socialPostService.save(socialPost);
-            return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");
+            List<SocialPost> socialPosts = new ArrayList<>();
+            socialPosts.add(socialPost);
+            return new Response((HttpStatus.OK.getReasonPhrase()), socialPosts, "success");
         } else
             return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Post not found");
     }
