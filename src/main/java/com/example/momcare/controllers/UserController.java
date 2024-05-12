@@ -1,19 +1,16 @@
 package com.example.momcare.controllers;
 
-import com.example.momcare.models.BabyHealthIndex;
-import com.example.momcare.models.MomHealthIndex;
-import com.example.momcare.models.User;
+import com.example.momcare.models.*;
 import com.example.momcare.payload.request.AddUserFollowerRequest;
 import com.example.momcare.payload.request.ChangePasswordRequest;
 import com.example.momcare.payload.request.CreatePasswordRequest;
 import com.example.momcare.payload.request.OPTRequest;
 import com.example.momcare.payload.response.Response;
+import com.example.momcare.payload.response.UserProfile;
 import com.example.momcare.payload.response.UserResponse;
 import com.example.momcare.security.CheckAccount;
 import com.example.momcare.security.Encode;
-import com.example.momcare.service.BabyHealthIndexService;
-import com.example.momcare.service.EmailService;
-import com.example.momcare.service.UserService;
+import com.example.momcare.service.*;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +23,10 @@ import java.util.*;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private SocialPostService socialPostService;
+    @Autowired
+    private UserStoryService userStoryService;
     @Autowired
     private BabyHealthIndexService babyHealthIndexService;
 
@@ -48,7 +49,7 @@ public class UserController {
                 user.setBabyIndex(babyHealthIndices);
                 user.setEnabled(false);
                 userService.save(user);
-                String token = UUID.randomUUID().toString() + "-" + user.getId();
+                String token = UUID.randomUUID() + "-" + user.getId();
                 user.setToken(token);
                 userService.update(user);
                 try {
@@ -168,7 +169,7 @@ public class UserController {
         User user = userService.findAccountByUserName(optRequest.getUserName());
         if (user != null) {
             if (Objects.equals(user.getOtp(), optRequest.getOtp())) {
-                String tokenPassword = UUID.randomUUID().toString() + "-" + user.getId();
+                String tokenPassword = UUID.randomUUID() + "-" + user.getId();
                 user.setPasswordToken(tokenPassword);
                 userService.update(user);
                 List<String> tokens = new ArrayList<>();
@@ -229,4 +230,15 @@ public class UserController {
         }
     }
 
+    @GetMapping("profile")
+    public Response getProfile(@RequestParam String id) {
+        User user = userService.findAccountByID(id);
+        if (user != null) {
+            List<UserProfile> userProfiles = new ArrayList<>();
+            UserProfile userProfile = new UserProfile(user.getId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), user.getFollower(), socialPostService.getAllByUser(user.getId()),userStoryService.findByUserId(user.getId()), user.getShared());
+            userProfiles.add(userProfile);
+            return new Response((HttpStatus.OK.getReasonPhrase()), userProfiles, "success");
+        }
+        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "User not found");
+    }
 }
