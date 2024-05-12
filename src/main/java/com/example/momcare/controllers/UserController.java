@@ -79,7 +79,7 @@ public class UserController {
             if (Objects.equals(encode.encoderPassword(user.getPassWord()), check.getPassWord()))
                 if (check.getEnabled()) {
                     List<UserResponse> users = new ArrayList<>();
-                    UserResponse userResponse = new UserResponse(check.getId(), check.getUserName(), check.getEmail(), check.getDatePregnant(), check.getPremium());
+                    UserResponse userResponse = new UserResponse(check.getId(), check.getUserName(), check.getEmail(), check.getDatePregnant(), check.getPremium(), check.getAvtUrl());
                     users.add(userResponse);
                     return new Response(HttpStatus.OK.getReasonPhrase(), users, "success");
                 } else
