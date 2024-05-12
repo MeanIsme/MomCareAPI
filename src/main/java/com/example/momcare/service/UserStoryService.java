@@ -4,6 +4,7 @@ import com.example.momcare.models.UserStory;
 import com.example.momcare.repository.UserStoryRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,5 +34,8 @@ public class UserStoryService {
         } catch (Exception e) {
             return false;
         }
+    }
+    public List<UserStory> findall(){
+        return this.userStoryRepository.findAll();
     }
 }

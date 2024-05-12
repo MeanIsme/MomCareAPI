@@ -1,9 +1,12 @@
 package com.example.momcare.controllers;
 
+import com.example.momcare.models.Reaction;
 import com.example.momcare.models.SocialComment;
 import com.example.momcare.models.SocialPost;
+import com.example.momcare.models.SocialReaction;
 import com.example.momcare.payload.request.SocialCommentNewRequest;
 import com.example.momcare.payload.request.SocialCommentDeleteRequest;
+import com.example.momcare.payload.request.SocialCommentUpdateRequest;
 import com.example.momcare.payload.request.SocialPostUpdateResquest;
 import com.example.momcare.payload.response.Response;
 import com.example.momcare.service.SocialCommentService;
@@ -13,10 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping("/socialcomment")
@@ -69,12 +69,48 @@ public class SocialCommentController {
     }
 
     @PutMapping("/update")
-    public Response update(@RequestBody SocialPostUpdateResquest request) {
+    public Response update(@RequestBody SocialCommentUpdateRequest request) {
         SocialComment socialComment = socialCommentService.findById(request.getId());
         if (socialComment != null) {
             if (request.getDescription() != null)
                 socialComment.setDescription(request.getDescription());
             return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");
+        } else
+            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Post not found");
+    }
+    @PutMapping("/addReaction")
+    public Response addReaction(@RequestBody SocialCommentUpdateRequest request) {
+        SocialComment socialComment = socialCommentService.findById(request.getId());
+        if (socialComment != null) {
+            if (request.getReaction() != null&& request.getUserIdReaction()!=null){
+                if(socialComment.getReactions()==null)
+                    socialComment.setReactions(new HashMap<>());
+                Map<String, SocialReaction> reactions = socialComment.getReactions();
+                reactions.put(request.getUserIdReaction(), request.getReaction());
+                socialComment.setReactions(reactions);
+                socialCommentService.save(socialComment);
+                List<SocialComment> socialComments = new ArrayList<>();
+                socialComments.add(socialComment);
+                return new Response((HttpStatus.OK.getReasonPhrase()), socialComments, "success");
+            }
+            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Not found user or reaction");
+        } else
+            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Post not found");
+    }
+    @PutMapping("/deleteReaction")
+    public Response deleteReaction(@RequestBody SocialCommentUpdateRequest request) {
+        SocialComment socialComment = socialCommentService.findById(request.getId());
+        if (socialComment != null) {
+            if (request.getUserIdReaction()!=null){
+                Map<String, SocialReaction> reactions = socialComment.getReactions();
+                reactions.remove(request.getUserIdReaction());
+                socialComment.setReactions(reactions);
+                socialCommentService.save(socialComment);
+                List<SocialComment> socialComments = new ArrayList<>();
+                socialComments.add(socialComment);
+                return new Response((HttpStatus.OK.getReasonPhrase()), socialComments, "success");
+            }
+            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Not found user or reaction");
         } else
             return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Post not found");
     }

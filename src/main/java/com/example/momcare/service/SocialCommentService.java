@@ -3,6 +3,7 @@ package com.example.momcare.service;
 import com.example.momcare.models.SocialComment;
 import com.example.momcare.models.SocialPost;
 import com.example.momcare.repository.SocialCommentRepository;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,8 +21,7 @@ public class SocialCommentService {
     }
     public SocialComment save(SocialComment socialComment) {
         try {
-            SocialComment savedComment = this.socialCommentRepository.save(socialComment);
-            return savedComment;
+            return this.socialCommentRepository.save(socialComment);
         }
         catch (Exception e){
             return null;
@@ -42,6 +42,6 @@ public class SocialCommentService {
         }
     }
     public SocialComment findById(String id){
-        return this.socialCommentRepository.getSocialCommentById(id);
+        return this.socialCommentRepository.findSocialCommentById(new ObjectId(id));
     }
 }

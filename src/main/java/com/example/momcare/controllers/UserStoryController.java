@@ -61,6 +61,21 @@ public class UserStoryController {
             return getResponse(userStory);
         }
     }
+    @GetMapping("/getAllById")
+    public Response getAllById(@RequestParam String userId) {
+        UserStory userStoryRequest = userStoryService.findByUserId(userId);
+        if (userStoryRequest == null) {
+            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Not found User");
+        }
+        else {
+            List<UserStory> userStories = new ArrayList<>();
+            userStories.add(userStoryRequest);
+            return new Response((HttpStatus.OK.getReasonPhrase()), userStories, "success");
+        }
 
-
+    }
+    @GetMapping("/getAll")
+    public Response getAll() {
+        return new Response((HttpStatus.OK.getReasonPhrase()), userStoryService.findall(), "success");
+    }
 }
