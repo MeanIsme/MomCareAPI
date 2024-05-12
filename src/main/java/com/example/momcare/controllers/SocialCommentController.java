@@ -41,7 +41,7 @@ public class SocialCommentController {
     @PostMapping("/new")
     public Response create(@RequestBody SocialCommentNewRequest request) {
 
-        SocialComment socialComment = new SocialComment(request.getUserId(), request.getPostId(), request.getCommentId(),
+        SocialComment socialComment = new SocialComment(request.getUserId(), request.getDisplayName(), request.getAvtUrl(), request.getPostId(), request.getCommentId(),
                 request.getDescription(), LocalDateTime.now().toString());
         SocialPost socialPost = socialPostService.findById(request.getPostId());
         if (socialPost != null) {
