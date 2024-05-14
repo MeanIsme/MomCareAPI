@@ -40,14 +40,13 @@ public class SocialCommentController {
 
     @PostMapping("/new")
     public Response create(@RequestBody SocialCommentNewRequest request) {
-
         SocialComment socialComment = new SocialComment(request.getUserId(), request.getDisplayName(), request.getAvtUrl(), request.getPostId(), request.getCommentId(),
                 request.getDescription(), LocalDateTime.now().toString());
         SocialPost socialPost = socialPostService.findById(request.getPostId());
         if (socialPost != null) {
             SocialComment comment = socialCommentService.save(socialComment);
             SocialComment socialCommentReplied = null;
-            if(request.getCommentId()!=null){
+            if(request.getCommentId()!=null  && !request.getCommentId().equals("")){
                 socialCommentReplied = socialCommentService.findById(request.getCommentId());
                 if(socialCommentReplied==null)
                     return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Not found comment");
@@ -148,7 +147,7 @@ public class SocialCommentController {
                     Set<String> setComment = socialPost.getComments();
                     setComment.remove(socialComment.getId());
                     socialPost.setComments(setComment);
-                    socialPost.setCountComments(socialPost.getComments().size());
+                    socialPost.setCountComments(socialPost.getComments().size()-1);
                     if (socialPostService.save(socialPost)) {
                         return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");
                     } else {

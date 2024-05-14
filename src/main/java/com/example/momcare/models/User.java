@@ -34,6 +34,7 @@ public class User   {
     private String avtUrl;
     private String nameDisplay;
     private Set<String> follower;
+    private Set<String> following;
     private Set<String> shared;
     private String datePregnant;
     private Boolean premium;

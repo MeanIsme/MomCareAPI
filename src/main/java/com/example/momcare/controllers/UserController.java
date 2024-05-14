@@ -12,7 +12,6 @@ import com.example.momcare.security.CheckAccount;
 import com.example.momcare.security.Encode;
 import com.example.momcare.service.*;
 import jakarta.mail.MessagingException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -21,18 +20,21 @@ import java.util.*;
 
 @RestController
 public class UserController {
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private SocialPostService socialPostService;
-    @Autowired
-    private UserStoryService userStoryService;
-    @Autowired
-    private BabyHealthIndexService babyHealthIndexService;
+    private final UserService userService;
+    private final SocialPostService socialPostService;
+    private final UserStoryService userStoryService;
+    private final BabyHealthIndexService babyHealthIndexService;
+    private final EmailService emailService;
+    private final CheckAccount checkAccount = new CheckAccount();
 
-    @Autowired
-    private EmailService emailService;
-    private CheckAccount checkAccount = new CheckAccount();
+    public UserController(UserService userService, SocialPostService socialPostService, UserStoryService userStoryService, BabyHealthIndexService babyHealthIndexService, EmailService emailService) {
+        this.userService = userService;
+        this.socialPostService = socialPostService;
+        this.userStoryService = userStoryService;
+        this.babyHealthIndexService = babyHealthIndexService;
+        this.emailService = emailService;
+    }
+
     Encode encode = new Encode();
 
     @PostMapping("/signup")
@@ -58,7 +60,7 @@ public class UserController {
                     return new Response(HttpStatus.EXPECTATION_FAILED.getReasonPhrase(), new ArrayList<>(), "failure");
                 }
                 List<UserResponse> users = new ArrayList<>();
-                UserResponse userResponse = new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getDatePregnant(), user.getPremium());
+                UserResponse userResponse = new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getDatePregnant(), user.getPremium(), user.getAvtUrl(), user.getFollower(), user.getFollowing(), user.getNameDisplay());
                 users.add(userResponse);
                 return new Response(HttpStatus.OK.getReasonPhrase(), users, "success");
             case (2):
@@ -80,7 +82,7 @@ public class UserController {
             if (Objects.equals(encode.encoderPassword(user.getPassWord()), check.getPassWord()))
                 if (check.getEnabled()) {
                     List<UserResponse> users = new ArrayList<>();
-                    UserResponse userResponse = new UserResponse(check.getId(), check.getUserName(), check.getEmail(), check.getDatePregnant(), check.getPremium(), check.getAvtUrl());
+                    UserResponse userResponse = new UserResponse(check.getId(), check.getUserName(), check.getEmail(), check.getDatePregnant(), check.getPremium(), check.getAvtUrl(), check.getFollower(), check.getFollowing(), check.getNameDisplay());
                     users.add(userResponse);
                     return new Response(HttpStatus.OK.getReasonPhrase(), users, "success");
                 } else
@@ -125,7 +127,17 @@ public class UserController {
 
         return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "failure");
     }
-
+    @GetMapping("user/getById")
+    public Response ChangePassword(@RequestParam String id) {
+        User user = userService.findAccountByID(id);
+        if (user != null) {
+            List<UserResponse> users = new ArrayList<>();
+            UserResponse userResponse = new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getDatePregnant(), user.getPremium(), user.getAvtUrl(), user.getFollower(), user.getFollowing(), user.getNameDisplay());
+            users.add(userResponse);
+            return new Response((HttpStatus.OK.getReasonPhrase()), users, "success");
+        }
+        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "User not found");
+    }
     @PutMapping("user/changepassword")
     public Response ChangePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
         User user = userService.findAccountByID(changePasswordRequest.getId());
@@ -202,11 +214,18 @@ public class UserController {
 
     @PutMapping("user/follow")
     public Response addFollower(@RequestBody AddUserFollowerRequest userFollower){
-        User user = userService.findAccountByID(userFollower.getIdFollowerUser());
-        if (user != null) {
-            Set<String> ids= user.getFollower();
+        User userFollowed = userService.findAccountByID(userFollower.getIdFollowerUser());
+        User userFollowing = userService.findAccountByID(userFollower.getIdFollowerUser());
+        if (userFollowed != null && userFollowing != null){
+            Set<String> ids= userFollowed.getFollower();
             ids.add(userFollower.getIdUser());
-            user.setFollower(ids);
+            userFollowed.setFollower(ids);
+            userService.update(userFollowed);
+            Set<String> idsing= userFollowing.getFollowing();
+            idsing.add(userFollower.getIdFollowerUser());
+            userFollowing.setFollower(idsing);
+            userService.update(userFollowing);
+            return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");
         }
         return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "User not found");
     }
