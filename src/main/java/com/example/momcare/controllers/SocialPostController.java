@@ -7,6 +7,7 @@ import com.example.momcare.payload.request.ShareResquest;
 import com.example.momcare.payload.request.SocialPostNewRequest;
 import com.example.momcare.payload.request.SocialPostUpdateResquest;
 import com.example.momcare.payload.response.Response;
+import com.example.momcare.payload.response.SocialReactionResponse;
 import com.example.momcare.service.SocialCommentService;
 import com.example.momcare.service.SocialPostService;
 import com.example.momcare.service.UserService;
@@ -52,7 +53,27 @@ public class SocialPostController {
     public Response PostPerPage(@RequestParam int time) {
         return new Response((HttpStatus.OK.getReasonPhrase()), (List<?>) socialPostService.PostPerPage(time), "success");
     }
-
+    @GetMapping("/getAllReactionsByPostId")
+    public Response PostPerPage(@RequestParam String id) {
+        SocialPost socialPost = socialPostService.findById(id);
+        Map<String, SocialReactionResponse> socialReactionResponseMap = new HashMap<>();
+        User user = null;
+        SocialReactionResponse socialReactionResponse = null;
+        if(socialPost!=null){
+            for (String userId: socialPost.getReactions().keySet()) {
+                user = userService.findAccountByID(userId);
+                if(user==null)
+                    return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "User not found");
+                SocialReaction socialReaction = socialPost.getReactions().get(userId);
+                socialReactionResponse = new SocialReactionResponse(user.getAvtUrl(),user.getNameDisplay(), socialReaction.getTime(), socialReaction.getReaction());
+                socialReactionResponseMap.put(userId, socialReactionResponse);
+            }
+            List<Map<String, SocialReactionResponse>> list = new ArrayList<>();
+            list.add(socialReactionResponseMap);
+            return new Response((HttpStatus.OK.getReasonPhrase()), list, "success");
+        }
+        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "failure");
+    }
     @PostMapping("/new")
     public Response create(@RequestBody SocialPostNewRequest request) {
         SocialPost socialPost = new SocialPost(request.getDescription(), request.getUserId(),request.getUserName(), request.getDisplayName(), request.getAvtUrl(), request.getMedia(), LocalDateTime.now().toString());

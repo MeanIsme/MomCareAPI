@@ -4,14 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
 @Setter
 public class SocialReaction {
-    private String userName;
-    private String urlAvt;
-    private String time = LocalTime.now().toString();
+
+    private String time = LocalDateTime.now().toString();
     private Reaction reaction;
 
     public SocialReaction() {
@@ -21,9 +21,7 @@ public class SocialReaction {
         this.reaction = reaction;
     }
 
-    public SocialReaction(String userName, String urlAvt, String time, Reaction reaction) {
-        this.userName = userName;
-        this.urlAvt = urlAvt;
+    public SocialReaction(Reaction reaction, String time) {
         this.time = time;
         this.reaction = reaction;
     }

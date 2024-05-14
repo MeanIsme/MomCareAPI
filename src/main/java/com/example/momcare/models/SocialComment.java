@@ -12,6 +12,7 @@ import java.util.*;
 public class SocialComment {
     private String id;
     private String userId;
+    private String userName;
     private String displayName;
     private String avtUrl;
     private String postId;
@@ -40,28 +41,20 @@ public class SocialComment {
         this.avtUrl = avtUrl;
         this.postId = postId;
         this.commentId = commentId;
+
+        this.description = description;
+        this.time = time;
+    }
+
+    public SocialComment(String userId, String userName, String displayName, String avtUrl, String postId, String commentId, String description, String time) {
+        this.userId = userId;
+        this.userName = userName;
+        this.displayName = displayName;
+        this.avtUrl = avtUrl;
+        this.postId = postId;
+        this.commentId = commentId;
         this.reactions = new HashMap<>();
-        this.description = description;
-        this.time = time;
-    }
-
-    public SocialComment(String id, String userId, String postId, String commentId, Map<String, SocialReaction> reactions, String description, String time) {
-        this.id = id;
-        this.userId = userId;
-        this.postId = postId;
-        this.commentId = commentId;
-        this.reactions = reactions;
-        this.description = description;
-        this.time = time;
-    }
-
-    public SocialComment(String id, String userId, String postId, String commentId, Map<String, SocialReaction> reactions, List<String> replies, String description, String time) {
-        this.id = id;
-        this.userId = userId;
-        this.postId = postId;
-        this.commentId = commentId;
-        this.reactions = reactions;
-        this.replies = replies;
+        this.replies = new ArrayList<>();
         this.description = description;
         this.time = time;
     }
