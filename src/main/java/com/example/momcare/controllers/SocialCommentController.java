@@ -133,13 +133,15 @@ public class SocialCommentController {
         SocialComment socialComment = socialCommentService.findById(socialCommentDeleteRequest.getId());
         if (socialComment != null) {
             if (socialCommentService.delete(socialComment.getId())) {
-                SocialComment socialCommentReplied = socialCommentService.findById(socialComment.getCommentId());
-                if (socialCommentReplied !=null){
-                    List<String> list = socialCommentReplied.getReplies();
-                    if(list!=null){
-                        list.remove(socialComment.getId());
-                        socialCommentReplied.setReplies(list);
-                        socialCommentService.save(socialCommentReplied);
+                if(request.getCommentId()!=null  && !request.getCommentId().equals("")){
+                    SocialComment socialCommentReplied = socialCommentService.findById(socialComment.getCommentId());
+                    if (socialCommentReplied !=null){
+                        List<String> list = socialCommentReplied.getReplies();
+                        if(list!=null){
+                            list.remove(socialComment.getId());
+                            socialCommentReplied.setReplies(list);
+                            socialCommentService.save(socialCommentReplied);
+                        }
                     }
                 }
                 SocialPost socialPost = socialPostService.findById(socialCommentDeleteRequest.getPostId());
