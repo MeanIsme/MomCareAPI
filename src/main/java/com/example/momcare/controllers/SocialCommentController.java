@@ -133,7 +133,7 @@ public class SocialCommentController {
         SocialComment socialComment = socialCommentService.findById(socialCommentDeleteRequest.getId());
         if (socialComment != null) {
             if (socialCommentService.delete(socialComment.getId())) {
-                if(request.getCommentId()!=null  && !request.getCommentId().equals("")){
+                if(socialCommentDeleteRequest.getCommentId()!=null  && !socialCommentDeleteRequest.getCommentId().equals("")){
                     SocialComment socialCommentReplied = socialCommentService.findById(socialComment.getCommentId());
                     if (socialCommentReplied !=null){
                         List<String> list = socialCommentReplied.getReplies();

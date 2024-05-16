@@ -8,5 +8,6 @@ import lombok.Setter;
 public class SocialCommentDeleteRequest {
     private String postId;
     private String id;
+    private String commentId;
 
 }
