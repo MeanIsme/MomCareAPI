@@ -49,6 +49,7 @@ public class UserController {
                 user.setDatePregnant("");
                 user.setMomIndex(momHealthIndices);
                 user.setBabyIndex(babyHealthIndices);
+                user.setNameDisplay(user.getUserName());
                 user.setEnabled(false);
                 userService.save(user);
                 String token = UUID.randomUUID() + "-" + user.getId();
