@@ -1,16 +1,15 @@
 package com.example.momcare.controllers;
 
-import com.example.momcare.models.Reaction;
-import com.example.momcare.models.SocialComment;
-import com.example.momcare.models.SocialPost;
-import com.example.momcare.models.SocialReaction;
+import com.example.momcare.models.*;
 import com.example.momcare.payload.request.SocialCommentNewRequest;
 import com.example.momcare.payload.request.SocialCommentDeleteRequest;
 import com.example.momcare.payload.request.SocialCommentUpdateRequest;
 import com.example.momcare.payload.request.SocialPostUpdateResquest;
 import com.example.momcare.payload.response.Response;
+import com.example.momcare.payload.response.SocialReactionResponse;
 import com.example.momcare.service.SocialCommentService;
 import com.example.momcare.service.SocialPostService;
+import com.example.momcare.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +24,8 @@ public class SocialCommentController {
     SocialCommentService socialCommentService;
     @Autowired
     SocialPostService socialPostService;
-
+    @Autowired
+    UserService userService;
     @GetMapping("/all")
     public Response GetAll() {
         List<SocialComment> socialComments = socialCommentService.findAll();
@@ -37,7 +37,27 @@ public class SocialCommentController {
         List<SocialComment> socialComments = socialCommentService.findAllById(id);
         return new Response(HttpStatus.OK.getReasonPhrase(), socialComments, "success");
     }
-
+    @GetMapping("/getAllReactionsByCommentId")
+    public Response PostPerPage(@RequestParam String id) {
+        SocialComment socialComment = socialCommentService.findById(id);
+        Map<String, SocialReactionResponse> socialReactionResponseMap = new HashMap<>();
+        User user = null;
+        SocialReactionResponse socialReactionResponse = null;
+        if(socialComment!=null){
+            for (String userId: socialComment.getReactions().keySet()) {
+                user = userService.findAccountByID(userId);
+                if(user==null)
+                    return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "User not found");
+                SocialReaction socialReaction = socialComment.getReactions().get(userId);
+                socialReactionResponse = new SocialReactionResponse(user.getAvtUrl(),user.getNameDisplay(), socialReaction.getTime(), socialReaction.getReaction());
+                socialReactionResponseMap.put(userId, socialReactionResponse);
+            }
+            List<Map<String, SocialReactionResponse>> list = new ArrayList<>();
+            list.add(socialReactionResponseMap);
+            return new Response((HttpStatus.OK.getReasonPhrase()), list, "success");
+        }
+        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "failure");
+    }
     @PostMapping("/new")
     public Response create(@RequestBody SocialCommentNewRequest request) {
         SocialComment socialComment = new SocialComment(request.getUserId(), request.getUserName(), request.getDisplayName(), request.getAvtUrl(), request.getPostId(), request.getCommentId(),
@@ -64,7 +84,6 @@ public class SocialCommentController {
                 }
                 setComment.add(socialComment.getId());
                 socialPost.setComments(setComment);
-                socialPost.setCountComments(socialPost.getComments().size());
                 if (socialPostService.save(socialPost)) {
                     List<SocialComment> socialComments = new ArrayList<>();
                     socialComments.add(comment);
@@ -149,7 +168,6 @@ public class SocialCommentController {
                     Set<String> setComment = socialPost.getComments();
                     setComment.remove(socialComment.getId());
                     socialPost.setComments(setComment);
-                    socialPost.setCountComments(socialPost.getComments().size()-1);
                     if (socialPostService.save(socialPost)) {
                         return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");
                     } else {

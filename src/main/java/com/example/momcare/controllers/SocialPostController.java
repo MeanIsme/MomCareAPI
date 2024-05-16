@@ -7,6 +7,7 @@ import com.example.momcare.payload.request.ShareResquest;
 import com.example.momcare.payload.request.SocialPostNewRequest;
 import com.example.momcare.payload.request.SocialPostUpdateResquest;
 import com.example.momcare.payload.response.Response;
+import com.example.momcare.payload.response.SocialPostResponse;
 import com.example.momcare.payload.response.SocialReactionResponse;
 import com.example.momcare.service.SocialCommentService;
 import com.example.momcare.service.SocialPostService;
@@ -32,6 +33,11 @@ public class SocialPostController {
     @GetMapping("/getallbyuser")
     public Response getAllByUser(@RequestParam String userId) {
         return new Response((HttpStatus.OK.getReasonPhrase()), (List<?>) socialPostService.getAllByUser(userId), "success");
+    }
+
+    @GetMapping("/getById")
+    public Response getById(@RequestParam String id) {
+        return new Response((HttpStatus.OK.getReasonPhrase()), (List<?>) socialPostService.findByIdResponse(id), "success");
     }
 
     @GetMapping("/pagebyuser")
@@ -76,11 +82,15 @@ public class SocialPostController {
     }
     @PostMapping("/new")
     public Response create(@RequestBody SocialPostNewRequest request) {
-        SocialPost socialPost = new SocialPost(request.getDescription(), request.getUserId(),request.getUserName(), request.getDisplayName(), request.getAvtUrl(), request.getMedia(), LocalDateTime.now().toString());
+        SocialPost socialPost = new SocialPost(request.getDescription(), request.getUserId(), request.getMedia(), LocalDateTime.now().toString());
         if (socialPostService.save(socialPost)) {
-            List<SocialPost> socialPosts = new ArrayList<>();
-            socialPosts.add(socialPost);
-            return new Response((HttpStatus.OK.getReasonPhrase()), socialPosts, "success");
+            User user = userService.findAccountByID(socialPost.getUserId());
+            if (user == null)
+                return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "User not found");
+            List<SocialPostResponse> socialPostResponses = new ArrayList<>();
+            SocialPostResponse socialPostResponse = new SocialPostResponse(socialPost.getId(), socialPost.getDescription(), socialPost.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialPost.getReactions(), socialPost.getComments(), socialPost.getShare(), socialPost.getMedia(), socialPost.getTime());
+            socialPostResponses.add(socialPostResponse);
+            return new Response((HttpStatus.OK.getReasonPhrase()), socialPostResponses, "success");
         } else
             return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "failure");
     }
@@ -89,6 +99,9 @@ public class SocialPostController {
     public Response update(@RequestBody SocialPostUpdateResquest request) {
         SocialPost socialPost = socialPostService.findById(request.getId());
         if (socialPost != null) {
+            User user = userService.findAccountByID(socialPost.getUserId());
+            if (user == null)
+                return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "User not found");
             if (request.getDescription() != null)
                 socialPost.setDescription(request.getDescription());
             if (request.getMedia() != null)
@@ -96,9 +109,10 @@ public class SocialPostController {
             if (request.getReaction() != null)
                 socialPost.setReactions(request.getReaction());
             socialPostService.save(socialPost);
-            List<SocialPost> socialPosts = new ArrayList<>();
-            socialPosts.add(socialPost);
-            return new Response((HttpStatus.OK.getReasonPhrase()), socialPosts, "success");
+            List<SocialPostResponse> socialPostResponses = new ArrayList<>();
+            SocialPostResponse socialPostResponse = new SocialPostResponse(socialPost.getId(), socialPost.getDescription(), socialPost.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialPost.getReactions(), socialPost.getComments(), socialPost.getShare(), socialPost.getMedia(), socialPost.getTime());
+            socialPostResponses.add(socialPostResponse);
+            return new Response((HttpStatus.OK.getReasonPhrase()), socialPostResponses, "success");
         } else
             return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Post not found");
     }
@@ -115,7 +129,6 @@ public class SocialPostController {
                 Set<String> sharesPost = new HashSet<>(socialPost.getShare());
                 sharesPost.add(user.getId());
                 socialPost.setShare(sharesPost);
-                socialPost.setCountShare(socialPost.getShare().size());
                 userService.save(user);
                 if (socialPostService.save(socialPost))
                     return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");
@@ -139,7 +152,6 @@ public class SocialPostController {
                 Set<String> sharesPost = new HashSet<>(socialPost.getShare());
                 sharesPost.remove(user.getId());
                 socialPost.setShare(sharesPost);
-                socialPost.setCountShare(socialPost.getShare().size());
                 userService.save(user);
                 if (socialPostService.save(socialPost))
                     return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");
@@ -157,7 +169,6 @@ public class SocialPostController {
         if (socialPost != null) {
             if (socialPostService.delete(socialPost.getId())) {
                 Set<String> setComment = socialPost.getComments();
-                Map<String, SocialReaction> setReaction = socialPost.getReactions();
                 if (setComment != null) {
                     for (String id : setComment) {
                         socialCommentService.delete(id);
