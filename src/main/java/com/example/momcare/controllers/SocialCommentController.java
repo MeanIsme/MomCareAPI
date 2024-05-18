@@ -6,6 +6,7 @@ import com.example.momcare.payload.request.SocialCommentDeleteRequest;
 import com.example.momcare.payload.request.SocialCommentUpdateRequest;
 import com.example.momcare.payload.request.SocialPostUpdateResquest;
 import com.example.momcare.payload.response.Response;
+import com.example.momcare.payload.response.SocialCommentResponse;
 import com.example.momcare.payload.response.SocialReactionResponse;
 import com.example.momcare.service.SocialCommentService;
 import com.example.momcare.service.SocialPostService;
@@ -35,7 +36,14 @@ public class SocialCommentController {
     @GetMapping("/allByPostId")
     public Response GetAllByPostId(@RequestParam String id) {
         List<SocialComment> socialComments = socialCommentService.findAllById(id);
-        return new Response(HttpStatus.OK.getReasonPhrase(), socialComments, "success");
+        List<SocialCommentResponse> socialCommentResponses = new ArrayList<>();
+        for (SocialComment socialComment: socialComments) {
+            User user = userService.findAccountByID(socialComment.getUserId());
+            if(user!=null){
+                socialCommentResponses.add(new SocialCommentResponse(socialComment.getId(), socialComment.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialComment.getPostId(), socialComment.getCommentId(), socialComment.getReactions(), socialComment.getReplies(), socialComment.getDescription(), socialComment.getTime()));
+            }
+        }
+        return new Response(HttpStatus.OK.getReasonPhrase(), socialCommentResponses, "success");
     }
     @GetMapping("/getAllReactionsByCommentId")
     public Response PostPerPage(@RequestParam String id) {
@@ -60,13 +68,13 @@ public class SocialCommentController {
     }
     @PostMapping("/new")
     public Response create(@RequestBody SocialCommentNewRequest request) {
-        SocialComment socialComment = new SocialComment(request.getUserId(), request.getUserName(), request.getDisplayName(), request.getAvtUrl(), request.getPostId(), request.getCommentId(),
+        SocialComment socialComment = new SocialComment(request.getUserId(), request.getPostId(), request.getCommentId(),
                 request.getDescription(), LocalDateTime.now().toString());
         SocialPost socialPost = socialPostService.findById(request.getPostId());
         if (socialPost != null) {
             SocialComment comment = socialCommentService.save(socialComment);
             SocialComment socialCommentReplied = null;
-            if(request.getCommentId()!=null  && !request.getCommentId().equals("")){
+            if(request.getCommentId()!=null  && !request.getCommentId().isEmpty()){
                 socialCommentReplied = socialCommentService.findById(request.getCommentId());
                 if(socialCommentReplied==null)
                     return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Not found comment");
@@ -85,9 +93,10 @@ public class SocialCommentController {
                 setComment.add(socialComment.getId());
                 socialPost.setComments(setComment);
                 if (socialPostService.save(socialPost)) {
-                    List<SocialComment> socialComments = new ArrayList<>();
-                    socialComments.add(comment);
-                    return new Response((HttpStatus.OK.getReasonPhrase()), socialComments, "success");
+                    List<SocialCommentResponse> socialCommentResponses = new ArrayList<>();
+                    User user = userService.findAccountByID(socialComment.getUserId());
+                    socialCommentResponses.add(new SocialCommentResponse(socialComment.getId(), socialComment.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialComment.getPostId(), socialComment.getCommentId(), socialComment.getReactions(), socialComment.getReplies(), socialComment.getDescription(), socialComment.getTime()));
+                    return new Response((HttpStatus.OK.getReasonPhrase()), socialCommentResponses, "success");
                 } else {
                     socialCommentService.delete(socialComment.getId());
                     return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "failure");
@@ -106,7 +115,15 @@ public class SocialCommentController {
         if (socialComment != null) {
             if (request.getDescription() != null)
                 socialComment.setDescription(request.getDescription());
-            return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");
+            if (socialCommentService.save(socialComment) != null){
+                List<SocialCommentResponse> socialCommentResponses = new ArrayList<>();
+                User user = userService.findAccountByID(socialComment.getUserId());
+                socialCommentResponses.add(new SocialCommentResponse(socialComment.getId(), socialComment.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialComment.getPostId(), socialComment.getCommentId(), socialComment.getReactions(), socialComment.getReplies(), socialComment.getDescription(), socialComment.getTime()));
+                return new Response((HttpStatus.OK.getReasonPhrase()), socialCommentResponses, "success");
+            }
+
+            else
+                return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "failure");
         } else
             return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Post not found");
     }
@@ -121,9 +138,10 @@ public class SocialCommentController {
                 reactions.put(request.getUserIdReaction(), request.getReaction());
                 socialComment.setReactions(reactions);
                 socialCommentService.save(socialComment);
-                List<SocialComment> socialComments = new ArrayList<>();
-                socialComments.add(socialComment);
-                return new Response((HttpStatus.OK.getReasonPhrase()), socialComments, "success");
+                List<SocialCommentResponse> socialCommentResponses = new ArrayList<>();
+                User user = userService.findAccountByID(socialComment.getUserId());
+                socialCommentResponses.add(new SocialCommentResponse(socialComment.getId(), socialComment.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialComment.getPostId(), socialComment.getCommentId(), socialComment.getReactions(), socialComment.getReplies(), socialComment.getDescription(), socialComment.getTime()));
+                return new Response((HttpStatus.OK.getReasonPhrase()), socialCommentResponses, "success");
             }
             return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Not found user or reaction");
         } else
@@ -138,9 +156,10 @@ public class SocialCommentController {
                 reactions.remove(request.getUserIdReaction());
                 socialComment.setReactions(reactions);
                 socialCommentService.save(socialComment);
-                List<SocialComment> socialComments = new ArrayList<>();
-                socialComments.add(socialComment);
-                return new Response((HttpStatus.OK.getReasonPhrase()), socialComments, "success");
+                List<SocialCommentResponse> socialCommentResponses = new ArrayList<>();
+                User user = userService.findAccountByID(socialComment.getUserId());
+                socialCommentResponses.add(new SocialCommentResponse(socialComment.getId(), socialComment.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialComment.getPostId(), socialComment.getCommentId(), socialComment.getReactions(), socialComment.getReplies(), socialComment.getDescription(), socialComment.getTime()));
+                return new Response((HttpStatus.OK.getReasonPhrase()), socialCommentResponses, "success");
             }
             return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Not found user or reaction");
         } else
@@ -152,7 +171,7 @@ public class SocialCommentController {
         SocialComment socialComment = socialCommentService.findById(socialCommentDeleteRequest.getId());
         if (socialComment != null) {
             if (socialCommentService.delete(socialComment.getId())) {
-                if(socialCommentDeleteRequest.getCommentId()!=null  && !socialCommentDeleteRequest.getCommentId().equals("")){
+                if(socialCommentDeleteRequest.getCommentId()!=null  && !socialCommentDeleteRequest.getCommentId().isEmpty()){
                     SocialComment socialCommentReplied = socialCommentService.findById(socialComment.getCommentId());
                     if (socialCommentReplied !=null){
                         List<String> list = socialCommentReplied.getReplies();

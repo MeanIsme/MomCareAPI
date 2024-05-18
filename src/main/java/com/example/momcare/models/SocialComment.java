@@ -12,9 +12,6 @@ import java.util.*;
 public class SocialComment {
     private String id;
     private String userId;
-    private String userName;
-    private String displayName;
-    private String avtUrl;
     private String postId;
     private String commentId;
     private Map<String, SocialReaction> reactions;
@@ -26,31 +23,12 @@ public class SocialComment {
     public SocialComment() {
     }
 
+
+
+
+
     public SocialComment(String userId, String postId, String commentId, String description, String time) {
         this.userId = userId;
-        this.postId = postId;
-        this.commentId = commentId;
-        this.description = description;
-        this.time = time;
-        this.reactions = new HashMap<>();
-    }
-
-    public SocialComment(String userId, String displayName, String avtUrl, String postId, String commentId, String description, String time) {
-        this.userId = userId;
-        this.displayName = displayName;
-        this.avtUrl = avtUrl;
-        this.postId = postId;
-        this.commentId = commentId;
-
-        this.description = description;
-        this.time = time;
-    }
-
-    public SocialComment(String userId, String userName, String displayName, String avtUrl, String postId, String commentId, String description, String time) {
-        this.userId = userId;
-        this.userName = userName;
-        this.displayName = displayName;
-        this.avtUrl = avtUrl;
         this.postId = postId;
         this.commentId = commentId;
         this.reactions = new HashMap<>();
