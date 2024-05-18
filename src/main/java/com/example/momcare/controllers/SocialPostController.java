@@ -32,7 +32,16 @@ public class SocialPostController {
 
     @GetMapping("/getallbyuser")
     public Response getAllByUser(@RequestParam String userId) {
-        return new Response((HttpStatus.OK.getReasonPhrase()), (List<?>) socialPostService.getAllByUser(userId), "success");
+        User user = userService.findAccountByID(userId);
+        if (user == null)
+            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "User not found");
+        List<SocialPostResponse> socialPostResponses = new ArrayList<>();
+        List<SocialPost> socialPosts = socialPostService.getAllByUser(userId);
+        for (SocialPost socialPost : socialPosts) {
+            SocialPostResponse socialPostResponse = new SocialPostResponse(socialPost.getId(), socialPost.getDescription(), socialPost.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialPost.getReactions(), socialPost.getComments(), socialPost.getShare(), socialPost.getMedia(), socialPost.getTime());
+            socialPostResponses.add(socialPostResponse);
+        }
+        return new Response((HttpStatus.OK.getReasonPhrase()),socialPostResponses, "success");
     }
 
     @GetMapping("/getById")
