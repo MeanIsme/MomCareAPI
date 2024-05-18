@@ -18,50 +18,31 @@ import java.util.List;
 public class UserStory {
     @Id
     private String id;
-    private String userName;
-    private String displayName;
     private String userId;
-    private String avtUrl;
     private List<SocialStory> socialStories;
 
     public UserStory() {
     }
 
-    public UserStory(String userName, String displayName, String userId, String avtUrl, List<SocialStory> socialStories) {
-        this.userName = userName;
-        this.displayName = displayName;
-        this.userId = userId;
-        this.avtUrl = avtUrl;
-        this.socialStories = socialStories;
-    }
 
-    public UserStory(String userName, String displayName, String userId, String avtUrl, SocialStory socialStory) {
-        this.userName = userName;
-        this.displayName = displayName;
+    public UserStory(String userId, SocialStory socialStory) {
         this.userId = userId;
-        this.avtUrl = avtUrl;
         this.socialStories = new ArrayList<>();
         socialStory.setTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         this.socialStories.add(socialStory);
     }
 
-    public UserStory(String id, String userName, String displayName, String userId, String avtUrl, List<SocialStory> socialStories, SocialStory socialStory) {
+    public UserStory(String id, String userId, List<SocialStory> socialStories, SocialStory socialStory) {
         this.id = id;
-        this.userName = userName;
-        this.displayName = displayName;
         this.userId = userId;
-        this.avtUrl = avtUrl;
         socialStory.setTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         socialStories.add(socialStory);
         this.socialStories = socialStories;
     }
 
-    public UserStory(String id, String userName, String displayName, String userId, String avtUrl, List<SocialStory> socialStories) {
+    public UserStory(String id, String userId, List<SocialStory> socialStories) {
         this.id = id;
-        this.userName = userName;
-        this.displayName = displayName;
         this.userId = userId;
-        this.avtUrl = avtUrl;
         this.socialStories = socialStories;
     }
 }

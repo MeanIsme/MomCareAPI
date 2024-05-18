@@ -1,10 +1,13 @@
 package com.example.momcare.controllers;
 
 import com.example.momcare.models.SocialStory;
+import com.example.momcare.models.User;
 import com.example.momcare.models.UserStory;
 import com.example.momcare.payload.request.UserStoryDeleteRequest;
 import com.example.momcare.payload.request.UserStoryNewRequest;
 import com.example.momcare.payload.response.Response;
+import com.example.momcare.payload.response.UserStoryResponse;
+import com.example.momcare.service.UserService;
 import com.example.momcare.service.UserStoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,20 +22,22 @@ import java.util.List;
 public class UserStoryController {
     @Autowired
     UserStoryService userStoryService;
+    @Autowired
+    UserService userService;
     @PostMapping("/newOrAddStory")
     public Response newUserStory(@RequestBody UserStoryNewRequest request) {
-        if(request.getUserName()== null){
+        if(request.getUserId()== null){
             return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Not found User");
         }
         UserStory userStoryRequest = userStoryService.findByUserId(request.getUserId());
+
         if (userStoryRequest == null) {
-            UserStory userStory = new UserStory(request.getUserName(), request.getDisplayName(), request.getUserId(),
-                    request.getAvtUrl(), request.getSocialStory());
+            UserStory userStory = new UserStory(request.getUserId(), request.getSocialStory());
             return getResponse(userStory);
         }
         else {
-            UserStory userStory = new UserStory(userStoryRequest.getId(),request.getUserName(), request.getDisplayName(), request.getUserId(),
-                    request.getAvtUrl(),userStoryRequest.getSocialStories(), request.getSocialStory());
+            UserStory userStory = new UserStory(userStoryRequest.getId(), request.getUserId(),
+                    userStoryRequest.getSocialStories(), request.getSocialStory());
             return getResponse(userStory);
         }
 
@@ -41,9 +46,11 @@ public class UserStoryController {
 
     private Response getResponse(UserStory userStory) {
         if (userStoryService.save(userStory)) {
-            List<UserStory> userStories = new ArrayList<>();
-            userStories.add(userStory);
-            return new Response((HttpStatus.OK.getReasonPhrase()), userStories, "success");
+            List<UserStoryResponse> userStoryResponses = new ArrayList<>();
+            User user = userService.findAccountByID(userStory.getUserId());
+            userStoryResponses.add(new UserStoryResponse(userStory.getId(), user.getUserName(), user.getNameDisplay(),
+                    userStory.getUserId(), user.getAvtUrl(), userStory.getSocialStories()));
+            return new Response((HttpStatus.OK.getReasonPhrase()), userStoryResponses, "success");
         } else {
             return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "failure");
         }
@@ -56,8 +63,7 @@ public class UserStoryController {
             return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Not found User");
         }
         else {
-            UserStory userStory = new UserStory(userStoryRequest.getId(),userStoryRequest.getUserName(), userStoryRequest.getDisplayName(), userStoryRequest.getUserId(),
-                    userStoryRequest.getAvtUrl(),request.getSocialStories());
+            UserStory userStory = new UserStory(userStoryRequest.getId(), userStoryRequest.getUserId(),request.getSocialStories());
             return getResponse(userStory);
         }
     }
@@ -68,14 +74,26 @@ public class UserStoryController {
             return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Not found User");
         }
         else {
-            List<UserStory> userStories = new ArrayList<>();
-            userStories.add(userStoryRequest);
-            return new Response((HttpStatus.OK.getReasonPhrase()), userStories, "success");
+            List<UserStoryResponse> userStoryResponses = new ArrayList<>();
+            User user = userService.findAccountByID(userStoryRequest.getUserId());
+            userStoryResponses.add(new UserStoryResponse(userStoryRequest.getId(), user.getUserName(), user.getNameDisplay(),
+                    userStoryRequest.getUserId(), user.getAvtUrl(), userStoryRequest.getSocialStories()));
+            return new Response((HttpStatus.OK.getReasonPhrase()), userStoryResponses, "success");
         }
 
     }
     @GetMapping("/getAll")
     public Response getAll() {
-        return new Response((HttpStatus.OK.getReasonPhrase()), userStoryService.findall(), "success");
+        List<UserStory> userStories = userStoryService.findall();
+        List<UserStoryResponse> userStoryResponses = new ArrayList<>();
+        if (userStories == null) {
+            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Not found");
+        }
+        for (UserStory userStory : userStories) {
+            User user = userService.findAccountByID(userStory.getUserId());
+            userStoryResponses.add(new UserStoryResponse(userStory.getId(), user.getUserName(), user.getNameDisplay(),
+                    userStory.getUserId(), user.getAvtUrl(), userStory.getSocialStories()));
+        }
+        return new Response((HttpStatus.OK.getReasonPhrase()), userStoryResponses, "success");
     }
 }

@@ -8,9 +8,6 @@ import java.util.List;
 @Getter
 @Setter
 public class UserStoryNewRequest {
-    private String userName;
-    private String displayName;
     private String userId;
-    private String avtUrl;
     private SocialStory socialStory;
 }
