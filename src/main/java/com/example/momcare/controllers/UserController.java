@@ -216,15 +216,19 @@ public class UserController {
     @PutMapping("user/follow")
     public Response addFollower(@RequestBody AddUserFollowerRequest userFollower){
         User userFollowed = userService.findAccountByID(userFollower.getIdFollowerUser());
-        User userFollowing = userService.findAccountByID(userFollower.getIdFollowerUser());
+        User userFollowing = userService.findAccountByID(userFollower.getIdUser());
         if (userFollowed != null && userFollowing != null){
             Set<String> ids= userFollowed.getFollower();
+            if (userFollowed.getFollower() == null)
+                ids = new HashSet<>();
             ids.add(userFollower.getIdUser());
             userFollowed.setFollower(ids);
             userService.update(userFollowed);
             Set<String> idsing= userFollowing.getFollowing();
+            if (userFollowing.getFollowing() == null)
+                idsing = new HashSet<>();
             idsing.add(userFollower.getIdFollowerUser());
-            userFollowing.setFollower(idsing);
+            userFollowing.setFollowing(idsing);
             userService.update(userFollowing);
             return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");
         }
