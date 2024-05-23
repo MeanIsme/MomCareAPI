@@ -1,11 +1,8 @@
 package com.example.momcare.payload.response;
 
-import com.example.momcare.models.BabyHealthIndex;
-import com.example.momcare.models.MomHealthIndex;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -19,7 +16,7 @@ public class UserResponse {
     private String avtUrl;
     private Set<String> follower;
     private Set<String> following;
-    private String displayName;
+    private String nameDisplay;
 
     public UserResponse(String id, String userName, String email, String datePregnant, Boolean premium, String avtUrl) {
         this.id = id;
@@ -49,7 +46,7 @@ public class UserResponse {
         this.following = following;
     }
 
-    public UserResponse(String id, String userName, String email, String datePregnant, Boolean premium, String avtUrl, Set<String> follower, Set<String> following, String displayName) {
+    public UserResponse(String id, String userName, String email, String datePregnant, Boolean premium, String avtUrl, Set<String> follower, Set<String> following, String nameDisplay) {
         this.id = id;
         this.userName = userName;
         this.email = email;
@@ -58,6 +55,6 @@ public class UserResponse {
         this.avtUrl = avtUrl;
         this.follower = follower;
         this.following = following;
-        this.displayName = displayName;
+        this.nameDisplay = nameDisplay;
     }
 }

@@ -215,8 +215,8 @@ public class UserController {
 
     @PutMapping("user/follow")
     public Response addFollower(@RequestBody AddUserFollowerRequest userFollower){
-        User userFollowed = userService.findAccountByID(userFollower.getIdFollowerUser());
-        User userFollowing = userService.findAccountByID(userFollower.getIdUser());
+        User userFollowed = userService.findAccountByID(userFollower.getIdUser());
+        User userFollowing = userService.findAccountByID(userFollower.getIdFollowerUser());
         if (userFollowed != null && userFollowing != null){
             Set<String> ids= userFollowed.getFollower();
             if (userFollowed.getFollower() == null)
@@ -230,6 +230,27 @@ public class UserController {
             idsing.add(userFollower.getIdFollowerUser());
             userFollowing.setFollowing(idsing);
             userService.update(userFollowing);
+            return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");
+        }
+        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "User not found");
+    }
+    @PutMapping("user/unfollow")
+    public Response unFollow(@RequestBody AddUserFollowerRequest userFollower){
+        User userFollowed = userService.findAccountByID(userFollower.getIdFollowerUser());
+        User userFollowing = userService.findAccountByID(userFollower.getIdUser());
+        if (userFollowed != null && userFollowing != null){
+            Set<String> ids= userFollowed.getFollower();
+            if (userFollowed.getFollower() != null){
+                ids.remove(userFollower.getIdUser());
+                userFollowed.setFollower(ids);
+                userService.update(userFollowed);
+            }
+            Set<String> idsing= userFollowing.getFollowing();
+            if (userFollowing.getFollowing() != null){
+                idsing.remove(userFollower.getIdFollowerUser());
+                userFollowing.setFollowing(idsing);
+                userService.update(userFollowing);
+            }
             return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");
         }
         return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "User not found");
