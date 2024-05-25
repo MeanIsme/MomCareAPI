@@ -1,5 +1,6 @@
 package com.example.momcare.controllers;
 
+import com.example.momcare.handler.NotificationHandler;
 import com.example.momcare.models.SocialPost;
 import com.example.momcare.models.SocialReaction;
 import com.example.momcare.models.User;
@@ -29,6 +30,8 @@ public class SocialPostController {
     SocialCommentService socialCommentService;
     @Autowired
     UserService userService;
+    @Autowired
+    NotificationHandler notificationHandler;
 
     @GetMapping("/getallbyuser")
     public Response getAllByUser(@RequestParam String userId) {
@@ -139,8 +142,10 @@ public class SocialPostController {
                 sharesPost.add(user.getId());
                 socialPost.setShare(sharesPost);
                 userService.save(user);
-                if (socialPostService.save(socialPost))
+                if (socialPostService.save(socialPost)){
                     return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");
+                }
+
                 else
                     return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Failure");
             }

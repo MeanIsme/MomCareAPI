@@ -1,18 +1,15 @@
-package com.example.momcare.models;
+package com.example.momcare.payload.request;
 
+import com.example.momcare.models.NotificationType;
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
-public class Notification {
+public class NotificationHandlerRequest {
     private String id;
     private String senderId;
     private String receiverId;
     private String timestamp;
-    private boolean isRead;
     private NotificationType notificationType;
-    public void markAsRead(){
-        this.setRead(true);
-    }
 }

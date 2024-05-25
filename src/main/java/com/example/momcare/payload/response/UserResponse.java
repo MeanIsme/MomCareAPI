@@ -57,4 +57,5 @@ public class UserResponse {
         this.following = following;
         this.nameDisplay = nameDisplay;
     }
+
 }

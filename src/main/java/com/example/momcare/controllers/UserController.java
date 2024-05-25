@@ -111,8 +111,6 @@ public class UserController {
                 check.setAvtUrl(user.getAvtUrl());
             if(user.getNameDisplay() != null)
                 check.setNameDisplay(user.getNameDisplay());
-
-
             List<UserResponse> users = new ArrayList<>();
             UserResponse userResponse = new UserResponse(
                     check.getId(),
@@ -120,7 +118,11 @@ public class UserController {
                     check.getEmail(),
                     check.getDatePregnant(),
                     check.getPremium(),
-                    check.getAvtUrl());
+                    check.getAvtUrl(),
+                    check.getFollower(),
+                    check.getFollowing(),
+                    check.getNameDisplay());
+
             users.add(userResponse);
             userService.update(check);
             return new Response(HttpStatus.OK.getReasonPhrase(), users, "success");
@@ -215,8 +217,8 @@ public class UserController {
 
     @PutMapping("user/follow")
     public Response addFollower(@RequestBody AddUserFollowerRequest userFollower){
-        User userFollowed = userService.findAccountByID(userFollower.getIdUser());
-        User userFollowing = userService.findAccountByID(userFollower.getIdFollowerUser());
+        User userFollowed = userService.findAccountByID(userFollower.getIdFollowingUser());
+        User userFollowing = userService.findAccountByID(userFollower.getIdUser());
         if (userFollowed != null && userFollowing != null){
             Set<String> ids= userFollowed.getFollower();
             if (userFollowed.getFollower() == null)
@@ -227,7 +229,7 @@ public class UserController {
             Set<String> idsing= userFollowing.getFollowing();
             if (userFollowing.getFollowing() == null)
                 idsing = new HashSet<>();
-            idsing.add(userFollower.getIdFollowerUser());
+            idsing.add(userFollower.getIdFollowingUser());
             userFollowing.setFollowing(idsing);
             userService.update(userFollowing);
             return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");
@@ -236,7 +238,7 @@ public class UserController {
     }
     @PutMapping("user/unfollow")
     public Response unFollow(@RequestBody AddUserFollowerRequest userFollower){
-        User userFollowed = userService.findAccountByID(userFollower.getIdFollowerUser());
+        User userFollowed = userService.findAccountByID(userFollower.getIdFollowingUser());
         User userFollowing = userService.findAccountByID(userFollower.getIdUser());
         if (userFollowed != null && userFollowing != null){
             Set<String> ids= userFollowed.getFollower();
@@ -247,7 +249,7 @@ public class UserController {
             }
             Set<String> idsing= userFollowing.getFollowing();
             if (userFollowing.getFollowing() != null){
-                idsing.remove(userFollower.getIdFollowerUser());
+                idsing.remove(userFollower.getIdFollowingUser());
                 userFollowing.setFollowing(idsing);
                 userService.update(userFollowing);
             }

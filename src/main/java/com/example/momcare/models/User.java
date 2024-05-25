@@ -16,7 +16,6 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
-
 @Document(collection = "Account")
 public class User   {
     @Id
@@ -44,4 +43,6 @@ public class User   {
     private String token;
     private String otp;
     private String passwordToken;
+    private String sessionId;
+    private List<Notification> notificationsMissed;
 }

@@ -5,7 +5,6 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class AddUserFollowerRequest {
-    private String idUser;
-    private String idFollowingUser;
+public class UserHandlerRequest {
+    private String id;
 }
