@@ -102,6 +102,7 @@ public class NotificationHandler extends TextWebSocketHandler {
             }
         } else {
             // Handle unknown message type or throw an error
+            sendMessageToSession(session.getId(), new TextMessage("Invalid input!"), null);
         }
 
     }
