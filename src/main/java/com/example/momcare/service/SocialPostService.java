@@ -13,6 +13,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,6 +44,8 @@ public class SocialPostService {
         List<SocialPostResponse> socialPostResponses = new ArrayList<>();
         for (SocialPost socialPost : socialPosts) {
             User user = this.userService.findAccountByID(socialPost.getUserId()) ;
+            if(user == null)
+                return Collections.emptyList();
             socialPostResponses.add(new SocialPostResponse(socialPost.getId(), socialPost.getDescription(), socialPost.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialPost.getReactions(), socialPost.getComments(), socialPost.getShare(), socialPost.getMedia(), socialPost.getTime()));
         }
         return socialPostResponses;

@@ -91,7 +91,8 @@ public class UserStoryController {
         }
         for (UserStory userStory : userStories) {
             User user = userService.findAccountByID(userStory.getUserId());
-            userStoryResponses.add(new UserStoryResponse(userStory.getId(), user.getUserName(), user.getNameDisplay(),
+            if (user != null)
+                userStoryResponses.add(new UserStoryResponse(userStory.getId(), user.getUserName(), user.getNameDisplay(),
                     userStory.getUserId(), user.getAvtUrl(), userStory.getSocialStories()));
         }
         return new Response((HttpStatus.OK.getReasonPhrase()), userStoryResponses, "success");
