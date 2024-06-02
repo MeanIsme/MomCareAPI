@@ -26,6 +26,8 @@ public class Constant {
     public static final String TIME = "Time";
     public static final String MENU_NOT_FOUND = "Menu not found";
     public static final String WEEK_FROM = "weekFrom";
+    public static final String NOT_FOUND_COMMENT = "Not found comment";
+    public static final String NOT_FOUND_POST = "Not found post";
 
 
 }
