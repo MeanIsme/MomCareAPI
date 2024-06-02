@@ -14,18 +14,23 @@ import java.util.ArrayList;
 
 @RestController
 public class VideoController {
-    @Autowired
-    private VideoService videoService;
+
+    private final VideoService videoService;
+
+    public VideoController(VideoService videoService) {
+        this.videoService = videoService;
+    }
+
     @GetMapping("video/random")
-    public Response GetRandomVideo(){
-        return new Response((HttpStatus.OK.getReasonPhrase()), videoService.Top8Random(), "success");
+    public Response getRandomVideo(){
+        return videoService.getRandomVideo();
     }
     @GetMapping("video/category")
-    public Response GetVideoByCategory(@RequestParam String category){
-        return new Response((HttpStatus.OK.getReasonPhrase()), videoService.findByCategory(category), "success");
+    public Response getVideoByCategory(@RequestParam String category){
+        return videoService.getVideoByCategory(category);
     }
     @GetMapping("video/allcategory")
-    public Response GetCategory(){
-        return new Response((HttpStatus.OK.getReasonPhrase()), videoService.getAllCategories(), "success");
+    public Response getCategory(){
+        return videoService.getCategory();
     }
 }

@@ -1,17 +1,15 @@
 package com.example.momcare.service;
 
-import com.example.momcare.models.Category;
-import com.example.momcare.models.HandBook;
 import com.example.momcare.models.Video;
 import com.example.momcare.models.VideoCategory;
-import com.example.momcare.repository.MusicCategoryRepository;
+import com.example.momcare.payload.response.Response;
 import com.example.momcare.repository.VideoCategoryRepository;
 import com.example.momcare.repository.VideoRepository;
-import org.springframework.data.domain.Sort;
+import com.example.momcare.util.Constant;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class VideoService {
@@ -23,7 +21,19 @@ public class VideoService {
         this.videoCategoryRepository = videoCategoryRepository;
     }
 
-    public List<Video> Top8Random(){
+    public Response getRandomVideo(){
+        return new Response((HttpStatus.OK.getReasonPhrase()), top8Random(), Constant.SUCCESS);
+    }
+    
+    public Response getVideoByCategory(String category){
+        return new Response((HttpStatus.OK.getReasonPhrase()), findByCategory(category), Constant.SUCCESS);
+    }
+    
+    public Response getCategory(){
+        return new Response((HttpStatus.OK.getReasonPhrase()), getAllCategories(), Constant.SUCCESS);
+    }
+
+    public List<Video> top8Random(){
         List<Video> allVideo = videoRepository.findAll();
         int totalVideo = allVideo.size();
         if (totalVideo <= 8) {
