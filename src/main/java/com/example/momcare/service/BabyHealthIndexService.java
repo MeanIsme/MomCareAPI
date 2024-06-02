@@ -10,6 +10,7 @@ import com.example.momcare.payload.response.StandardsBabyIndexResponse;
 import com.example.momcare.util.Constant;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class BabyHealthIndexService {
     public BabyHealthIndexService(UserService userService) {
         this.userService = userService;
     }
-
+    @Transactional
     public Response createBabyHealthIndex(BabyHealthIndexRequest babyIndex) {
         User user = userService.findAccountByID(babyIndex.getUserID());
         if (user == null)
@@ -53,7 +54,7 @@ public class BabyHealthIndexService {
                 LocalDateTime.now().toString(),
                 LocalDateTime.now().toString());
     }
-
+    @Transactional
     public Response updateBabyHealthIndex(BabyHealthIndexRequest babyIndex) {
         User user = userService.findAccountByID(babyIndex.getUserID());
         if (user == null)
@@ -86,7 +87,7 @@ public class BabyHealthIndexService {
         }
         return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.INDEX_NOT_FOUND);
     }
-
+    @Transactional
     public Response deleteBabyHealthIndex(BabyHealthIndexRequest babyIndex) {
         User user = userService.findAccountByID(babyIndex.getUserID());
         if (user == null)

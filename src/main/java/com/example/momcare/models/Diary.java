@@ -6,7 +6,6 @@ import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
 import java.util.List;
 @Getter
 @Setter
@@ -36,12 +35,15 @@ public class Diary {
         this.timeUpdate = timeUpdate;
     }
 
-    public Diary(String id, String idUser, String title, String content, List<String> thumbnail, String timeCreate, String timeUpdate) {
+
+
+    public Diary(String id, String idUser, String title, String content, List<String> thumbnail, int reaction, String timeCreate, String timeUpdate) {
         this.id = id;
         this.idUser = idUser;
         this.title = title;
         this.content = content;
         this.thumbnail = thumbnail;
+        this.reaction = reaction;
         this.timeCreate = timeCreate;
         this.timeUpdate = timeUpdate;
     }

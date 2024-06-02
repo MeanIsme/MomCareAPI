@@ -1,85 +1,53 @@
 package com.example.momcare.controllers;
 
-import com.example.momcare.models.Diary;
+import com.example.momcare.payload.request.DiaryRequest;
 import com.example.momcare.payload.response.Response;
 import com.example.momcare.service.DiaryService;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 
 @RequestMapping("/diary")
 public class DiaryController {
-    @Autowired
-    private DiaryService service;
+    private final DiaryService service;
+
+    public DiaryController(DiaryService service) {
+        this.service = service;
+    }
+
     @PostMapping ("/new")
-    public Response CreateDiary(@RequestBody Diary diaryRequest){
-        Diary diary = new Diary(diaryRequest.getIdUser(),diaryRequest.getTitle(), diaryRequest.getContent(), diaryRequest.getThumbnail(), diaryRequest.getReaction(), LocalDateTime.now().toString(),LocalDateTime.now().toString());
-        if(service.save(diary))
-            return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");
-        else
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "failure");
+    public Response createDiary(@RequestBody DiaryRequest diaryRequest){
+        return service.createDiary(diaryRequest);
     }
 
     @GetMapping("/all")
-    public Response FindAllDiaryByUser(@RequestParam String idUser){
-        return new Response((HttpStatus.OK.getReasonPhrase()), service.findDiaryByIdUser(idUser), "success");
+    public Response findAllDiaryByUser(@RequestParam String idUser){
+        return service.findAllDiaryByUser(idUser);
     }
     @GetMapping()
-    public Response FindDiaryById(@RequestParam String id){
-        List<Diary> diaries = new ArrayList<>();
-        diaries.add(service.findDiaryById(id));
-        return new Response((HttpStatus.OK.getReasonPhrase()), diaries, "success");
+    public Response findDiaryById(@RequestParam String id){
+        return service.findDiaryByIdService(id);
     }
-
 
     @PutMapping("/update")
-    public Response UpdateDiary(@RequestBody Diary diaryRequest){
-        Diary diary = service.findDiaryById(diaryRequest.getId());
-        if (diary != null)
-        {
-            List<Diary> diaries = new ArrayList<>();
-            diaryRequest.setTimeUpdate(LocalDateTime.now().toString());
-            diaries.add(diaryRequest);
-            if(service.save(diaryRequest))
-
-                return new Response((HttpStatus.OK.getReasonPhrase()), diaries, "success");
-            else
-                return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "failure");
-        }
-        else
-            return new Response((HttpStatus.NOT_FOUND.getReasonPhrase()), new ArrayList<>(), "failure");
+    public Response updateDiary(@RequestBody DiaryRequest diaryRequest){
+        return service.updateDiary(diaryRequest);
     }
     @DeleteMapping("/delete")
-    public Response DeleteDiary(@RequestParam String id){
-        Diary diary = service.findDiaryById(id);
-        if (diary != null)
-        {
-            if(service.delete(diary))
-
-                return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), "success");
-            else
-                return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "failure");
-        }
-        else
-            return new Response((HttpStatus.NOT_FOUND.getReasonPhrase()), new ArrayList<>(), "failure");
+    public Response deleteDiary(@RequestParam String id){
+        return service.deleteDiary(id);
     }
     @GetMapping("/newest")
-    public Response Top8Newest(){
-        return new Response((HttpStatus.OK.getReasonPhrase()), service.Top8Newest(), "success");
+    public Response top8Newest(){
+        return service.getTop8NewestDiaries();
     }
     @GetMapping("/page")
-    public Response DiaryPerPage(int time){
-        return new Response((HttpStatus.OK.getReasonPhrase()), service.DiaryPerPage(time), "success");
+    public Response diaryPerPage(int time){
+        return service.getDiaryPerPage(time);
     }
     @GetMapping("/random")
-    public Response Random(){
-        return new Response((HttpStatus.OK.getReasonPhrase()), service.Top8Newest(), "success");
+    public Response random(){
+        return service.getTop8NewestDiaries();
     }
 }

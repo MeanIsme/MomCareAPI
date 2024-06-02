@@ -7,6 +7,7 @@ public class Constant {
     public static final String USER_NOT_FOUND = "User not found";
     public static final String INDEX_NOT_FOUND = "Index not found";
     public static final String SUCCESS = "Success";
+    public static final String FAILURE = "Failure";
     public static final String LESS = "Less";
     public static final String OVER = "Over";
     public static final String NORMAL = "Normal";
@@ -15,4 +16,7 @@ public class Constant {
     public static final String OCCIPITOFRONTAL = "Occipitofrontal";
     public static final String ABDOMINAL = "Abdominal";
     public static final String FEMUR = "Femur";
+    public static final String DIARY_NOT_FOUND = "Diary not found";
+    public static final String TIME_UPDATE = "timeUpdate";
+
 }
