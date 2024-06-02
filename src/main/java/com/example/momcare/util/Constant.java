@@ -28,6 +28,10 @@ public class Constant {
     public static final String WEEK_FROM = "weekFrom";
     public static final String NOT_FOUND_COMMENT = "Not found comment";
     public static final String NOT_FOUND_POST = "Not found post";
+    public static final String WEEK_BLANK = "Week ";
+    public static final String WEEK = "week";
+    public static final String TRACKING = "tracking";
+    public static final String CONTENT_OF_WEEK_BLANK = "Content of week ";
 
 
 }

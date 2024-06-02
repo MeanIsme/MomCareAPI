@@ -15,28 +15,18 @@ import java.util.List;
 @RestController
 public class TrackingController {
 
-    @Autowired
-    private TrackingService service;
+    private final TrackingService service;
+
+    public TrackingController(TrackingService service) {
+        this.service = service;
+    }
+
     @GetMapping("/trackingall")
     public Response trackingall(){
-        List<Tracking> trackings = service.findAll();
-        List<TrackingWeekResponse> weekResponses = new ArrayList<>();
-        for (Tracking tracking : trackings) {
-            weekResponses.add(new TrackingWeekResponse(tracking.getId(),  tracking.getWeek(), "Week " + tracking.getWeek(), "tracking"));
-        }
-        return new Response(HttpStatus.OK.getReasonPhrase(), weekResponses , "success");
+        return service.trackingall();
     }
     @GetMapping("/tracking")
-    @ResponseBody
     public Response trackingWeek(@RequestParam("week") int week){
-        Tracking tracking = service.findTrackingByWeek(week);
-        TrackingWeekDetailResponse response = new TrackingWeekDetailResponse(tracking.getId(),
-                tracking.getWeek(),"Content of week " + tracking.getWeek(),
-                tracking.getBaby(), tracking.getMom(), tracking.getAdvice(), tracking.getThumbnails());
-        List<TrackingWeekDetailResponse> responses = new ArrayList<>();
-        responses.add(response);
-        return new Response(HttpStatus.OK.getReasonPhrase(), responses, "success");
+        return service.trackingWeek(week);
     }
-
-
 }
