@@ -20,81 +20,30 @@ import java.util.List;
 @RestController
 @RequestMapping("/userStory")
 public class UserStoryController {
-    @Autowired
+
     UserStoryService userStoryService;
-    @Autowired
-    UserService userService;
-    @PostMapping("/newOrAddStory")
-    public Response newUserStory(@RequestBody UserStoryNewRequest request) {
-        if(request.getUserId()== null){
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Not found User");
-        }
-        UserStory userStoryRequest = userStoryService.findByUserId(request.getUserId());
 
-        if (userStoryRequest == null) {
-            UserStory userStory = new UserStory(request.getUserId(), request.getSocialStory());
-            return getResponse(userStory);
-        }
-        else {
-            UserStory userStory = new UserStory(userStoryRequest.getId(), request.getUserId(),
-                    userStoryRequest.getSocialStories(), request.getSocialStory());
-            return getResponse(userStory);
-        }
-
-
+    public UserStoryController(UserStoryService userStoryService) {
+        this.userStoryService = userStoryService;
     }
 
-    private Response getResponse(UserStory userStory) {
-        if (userStoryService.save(userStory)) {
-            List<UserStoryResponse> userStoryResponses = new ArrayList<>();
-            User user = userService.findAccountByID(userStory.getUserId());
-            userStoryResponses.add(new UserStoryResponse(userStory.getId(), user.getUserName(), user.getNameDisplay(),
-                    userStory.getUserId(), user.getAvtUrl(), userStory.getSocialStories()));
-            return new Response((HttpStatus.OK.getReasonPhrase()), userStoryResponses, "success");
-        } else {
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "failure");
-        }
+    @PostMapping("/newOrAddStory")
+    public Response newUserStory(@RequestBody UserStoryNewRequest request) {
+        return userStoryService.newUserStory(request);
     }
 
     @PutMapping("/deleteStory")
     public Response deleteStory(@RequestBody UserStoryDeleteRequest request) {
-        UserStory userStoryRequest = userStoryService.findByUserId(request.getUserId());
-        if (userStoryRequest == null) {
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Not found User");
-        }
-        else {
-            UserStory userStory = new UserStory(userStoryRequest.getId(), userStoryRequest.getUserId(),request.getSocialStories());
-            return getResponse(userStory);
-        }
+        return userStoryService.deleteStory(request);
     }
+
     @GetMapping("/getAllById")
     public Response getAllById(@RequestParam String userId) {
-        UserStory userStoryRequest = userStoryService.findByUserId(userId);
-        if (userStoryRequest == null) {
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Not found User");
-        }
-        else {
-            List<UserStoryResponse> userStoryResponses = new ArrayList<>();
-            User user = userService.findAccountByID(userStoryRequest.getUserId());
-            userStoryResponses.add(new UserStoryResponse(userStoryRequest.getId(), user.getUserName(), user.getNameDisplay(),
-                    userStoryRequest.getUserId(), user.getAvtUrl(), userStoryRequest.getSocialStories()));
-            return new Response((HttpStatus.OK.getReasonPhrase()), userStoryResponses, "success");
-        }
-
+        return userStoryService.getAllById(userId);
     }
+
     @GetMapping("/getAll")
     public Response getAll() {
-        List<UserStory> userStories = userStoryService.findall();
-        List<UserStoryResponse> userStoryResponses = new ArrayList<>();
-        if (userStories == null) {
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Not found");
-        }
-        for (UserStory userStory : userStories) {
-            User user = userService.findAccountByID(userStory.getUserId());
-            if (user != null)
-                userStoryResponses.add(new UserStoryResponse(userStory.getId(), user.getUserName(), user.getNameDisplay(),
-                    userStory.getUserId(), user.getAvtUrl(), userStory.getSocialStories()));
-        }
-        return new Response((HttpStatus.OK.getReasonPhrase()), userStoryResponses, "success");
+        return userStoryService.getAll();
     }
 }

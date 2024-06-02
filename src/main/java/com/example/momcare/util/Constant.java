@@ -13,7 +13,6 @@ public class Constant {
     public static final String BMI = "BMI";
     public static final String HEALTH_RATE = "HealthRate";
     public static final String GLYCEMIC_INDEX = "GlycemicIndex";
-
     public static final String NORMAL = "Normal";
     public static final String HEAD = "Head";
     public static final String BIPARIETAL = "Biparietal";
@@ -37,6 +36,7 @@ public class Constant {
     public static final String EMAIL_NOT_VERIFY = "Email not verify";
     public static final String OLD_PASSWORD_NOT_MATCH = "Old password not match";
     public static final String OPT_NOT_MATCH = "OPT not match";
+    public static final String NOT_FOUND = "Not found";
 
 
 }
