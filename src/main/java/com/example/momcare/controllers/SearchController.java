@@ -21,9 +21,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/search")
 public class SearchController {
-    private UserService userService;
-    private SocialPostService socialPostService;
-    private HandBookService handBookService;
+    private final UserService userService;
+    private final SocialPostService socialPostService;
+    private final HandBookService handBookService;
 
     public SearchController(UserService userService, SocialPostService socialPostService, HandBookService handBookService) {
         this.userService = userService;
