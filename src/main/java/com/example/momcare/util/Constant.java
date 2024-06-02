@@ -18,5 +18,7 @@ public class Constant {
     public static final String FEMUR = "Femur";
     public static final String DIARY_NOT_FOUND = "Diary not found";
     public static final String TIME_UPDATE = "timeUpdate";
+    public static final String HAND_BOOK_NOT_FOUND = "Handbook not found";
+    public static final String TIME = "Time";
 
 }
