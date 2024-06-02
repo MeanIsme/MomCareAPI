@@ -11,18 +11,18 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class SocialStory{
-    private String media;
+    private Media media;
     private String time;
 
     public SocialStory() {
     }
 
-    public SocialStory( String media, String time) {
+    public SocialStory( Media media, String time) {
         this.media = media;
         this.time = time;
     }
 
-    public SocialStory(String media) {
+    public SocialStory(Media media) {
         this.media = media;
         this.time = LocalDate.now().toString();
     }
