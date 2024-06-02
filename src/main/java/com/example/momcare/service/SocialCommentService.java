@@ -146,7 +146,7 @@ public class SocialCommentService {
             else
                 return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.FAILURE);
         } else
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.NOT_FOUND_POST);
+            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.NOT_FOUND_COMMENT);
     }
     @Transactional
     public Response addReaction(SocialCommentUpdateRequest request){
@@ -166,7 +166,7 @@ public class SocialCommentService {
             }
             return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Not found user or reaction");
         } else
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.NOT_FOUND_POST);
+            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.NOT_FOUND_COMMENT);
     }
     @Transactional
     public Response deleteReaction(SocialCommentUpdateRequest request){
@@ -184,13 +184,13 @@ public class SocialCommentService {
             }
             return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Not found user or reaction");
         } else
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.NOT_FOUND_POST);
+            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.NOT_FOUND_COMMENT);
     }
     @Transactional
     public Response delete(SocialCommentDeleteRequest socialCommentDeleteRequest){
         SocialComment socialComment = findById(socialCommentDeleteRequest.getId());
         if (socialComment == null) {
-            return new Response(HttpStatus.NOT_FOUND.getReasonPhrase(), new ArrayList<>(), Constant.NOT_FOUND_POST);
+            return new Response(HttpStatus.NOT_FOUND.getReasonPhrase(), new ArrayList<>(), Constant.NOT_FOUND_COMMENT);
         }
 
         boolean deleted = deleteSocialComment(socialComment.getId());
