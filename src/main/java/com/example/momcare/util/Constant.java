@@ -32,6 +32,11 @@ public class Constant {
     public static final String WEEK = "week";
     public static final String TRACKING = "tracking";
     public static final String CONTENT_OF_WEEK_BLANK = "Content of week ";
+    public static final String PASSWORD_NOT_STRENGTH = "Password not strength";
+    public static final String EMAIL_HAS_BEEN_USED = "Email has been used";
+    public static final String EMAIL_NOT_VERIFY = "Email not verify";
+    public static final String OLD_PASSWORD_NOT_MATCH = "Old password not match";
+    public static final String OPT_NOT_MATCH = "OPT not match";
 
 
 }
