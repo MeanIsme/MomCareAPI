@@ -3,18 +3,9 @@ package com.example.momcare.controllers;
 import com.example.momcare.models.*;
 import com.example.momcare.payload.request.*;
 import com.example.momcare.payload.response.Response;
-import com.example.momcare.payload.response.UserProfile;
-import com.example.momcare.payload.response.UserResponse;
-import com.example.momcare.security.CheckAccount;
-import com.example.momcare.security.Encode;
 import com.example.momcare.service.*;
-import com.example.momcare.util.Constant;
-import jakarta.mail.MessagingException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.*;
 
 @RestController
 public class UserController {
