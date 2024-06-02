@@ -26,22 +26,16 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
-public class UserService {
+public class UserService{
 
     private final UserRepository userRepository;
     private final EmailService emailService;
-    private final BabyHealthIndexService babyHealthIndexService;
-    private final SocialPostService socialPostService;
-    private final UserStoryService userStoryService;
     private final Encode encode;
     private final CheckAccount checkAccount;
 
-    public UserService(UserRepository userRepository, EmailService emailService, BabyHealthIndexService babyHealthIndexService, SocialPostService socialPostService, UserStoryService userStoryService) {
+    public UserService(UserRepository userRepository, EmailService emailService) {
         this.userRepository = userRepository;
         this.emailService = emailService;
-        this.babyHealthIndexService = babyHealthIndexService;
-        this.socialPostService = socialPostService;
-        this.userStoryService = userStoryService;
         this.encode = new Encode();
         this.checkAccount = new CheckAccount();
     }
@@ -109,6 +103,7 @@ public class UserService {
 
             if (user.getDatePregnant() != null) {
                 check.setDatePregnant(user.getDatePregnant());
+                BabyHealthIndexService babyHealthIndexService = new BabyHealthIndexService(this);
                 check.setBabyIndex(babyHealthIndexService.updateDatePregnant(check));
             }
             if (user.getPremium() != null)
@@ -283,7 +278,7 @@ public class UserService {
         User user = findAccountByID(id);
         if (user != null) {
             List<UserProfile> userProfiles = new ArrayList<>();
-            UserProfile userProfile = new UserProfile(user.getId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), user.getFollower(), socialPostService.getAllByUser(user.getId()), userStoryService.findByUserId(user.getId()), user.getShared());
+            UserProfile userProfile = new UserProfile(user.getId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), user.getFollower(), user.getShared());
             userProfiles.add(userProfile);
             return new Response((HttpStatus.OK.getReasonPhrase()), userProfiles, Constant.SUCCESS);
         }
