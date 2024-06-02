@@ -12,9 +12,15 @@ import java.util.List;
 
 @RestController
 public class MenuCategoryController {
-    @Autowired
+
     MenuCategoryService service;
+
+    public MenuCategoryController(MenuCategoryService service) {
+        this.service = service;
+    }
+
     @GetMapping("/menuCategory")
     public Response findAll(){
-        return new Response(HttpStatus.OK.getReasonPhrase(), service.findAll(), "success");}
+        return service.findAllMenuCategory();
+    }
 }

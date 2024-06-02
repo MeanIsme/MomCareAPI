@@ -20,5 +20,6 @@ public class Constant {
     public static final String TIME_UPDATE = "timeUpdate";
     public static final String HAND_BOOK_NOT_FOUND = "Handbook not found";
     public static final String TIME = "Time";
+    public static final String MENU_NOT_FOUND = "Menu not found";
 
 }

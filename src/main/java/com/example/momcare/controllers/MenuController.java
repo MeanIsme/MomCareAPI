@@ -15,19 +15,20 @@ import java.util.List;
 
 @RestController
 public class MenuController {
-    @Autowired
+
     MenuService service;
 
-    @GetMapping("/menu")
-    public Response findMenuByCategory(@RequestParam("idCategory") String idCategory){
-        List<Menu> menus = service.findByCategory(idCategory);
-
-        return new Response(HttpStatus.OK.getReasonPhrase(), menus, "success");
+    public MenuController(MenuService service) {
+        this.service = service;
     }
+
+    @GetMapping("/menu")
+    public Response findMenuByCategory(@RequestParam("idCategory") String idCategory) {
+        return service.findMenusByCategory(idCategory);
+    }
+
     @GetMapping("/detailmenu")
-    public Response findMenuById(@RequestParam("id") String id){
-        List<Menu> menus = new ArrayList<>();
-        menus.add(service.findById(id));
-        return new Response(HttpStatus.OK.getReasonPhrase(), menus , "success");
+    public Response findMenuById(@RequestParam("id") String id) {
+        return service.findMenuById(id);
     }
 }
