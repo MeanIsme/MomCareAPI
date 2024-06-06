@@ -335,6 +335,7 @@ public class UserService{
     }
     public User convertUserRequestToUser(UserRequest user){
         User user1 = new User();
+        user1.setId(user.getId());
         user1.setUserName(user.getUserName());
         user1.setEmail(user.getEmail());
         user1.setPassWord(user.getPassWord());
