@@ -298,7 +298,7 @@ public class UserService{
         List<UserResponse> userResponses = new ArrayList<>();
         List<User> users = userRepository.findByUserNameLike(keyWord);
         for (User user : users)
-            userResponses.add(new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getDatePregnant(), user.getPremium()));
+            userResponses.add(new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getDatePregnant(), user.getPremium(), user.getAvtUrl(), user.getFollower(), user.getFollowing(), user.getNameDisplay()));
         return userResponses;
     }
 
