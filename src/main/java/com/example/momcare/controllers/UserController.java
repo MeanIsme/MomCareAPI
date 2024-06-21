@@ -74,4 +74,14 @@ public class UserController {
     public Response getProfile(@RequestParam String id) {
         return userService.getProfile(id);
     }
+
+    @GetMapping("follower")
+    public Response getFollower(@RequestParam String id) {
+        return userService.getAllFollower(id);
+    }
+
+    @GetMapping("following")
+    public Response getFollowing (@RequestParam String id) {
+        return userService.getAllFollowing(id);
+    }
 }

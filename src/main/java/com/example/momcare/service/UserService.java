@@ -350,4 +350,32 @@ public class UserService{
         return user1;
     }
 
+    public Response getAllFollower(String id){
+        User user = findAccountByID(id);
+        List<UserResponse> userResponses = new ArrayList<>();
+        if (user != null) {
+            for (String idFollower : user.getFollower()) {
+                User userFollower = findAccountByID(idFollower);
+                if (userFollower != null) {
+                    UserResponse userResponse = new UserResponse(userFollower.getId(), userFollower.getUserName(), userFollower.getEmail(), userFollower.getDatePregnant(), userFollower.getPremium(), userFollower.getAvtUrl(), userFollower.getFollower(), userFollower.getFollowing(), userFollower.getNameDisplay());
+                    userResponses.add(userResponse);
+                }
+            }
+        }
+        return new Response((HttpStatus.OK.getReasonPhrase()), userResponses, Constant.SUCCESS);
+    }
+    public Response getAllFollowing(String id) {
+        User user = findAccountByID(id);
+        List<UserResponse> userResponses = new ArrayList<>();
+        if (user != null) {
+            for (String idFollowing : user.getFollowing()) {
+                User userFollower = findAccountByID(idFollowing);
+                if (userFollower != null) {
+                    UserResponse userResponse = new UserResponse(userFollower.getId(), userFollower.getUserName(), userFollower.getEmail(), userFollower.getDatePregnant(), userFollower.getPremium(), userFollower.getAvtUrl(), userFollower.getFollower(), userFollower.getFollowing(), userFollower.getNameDisplay());
+                    userResponses.add(userResponse);
+                }
+            }
+        }
+        return new Response((HttpStatus.OK.getReasonPhrase()), userResponses, Constant.SUCCESS);
+    }
 }
