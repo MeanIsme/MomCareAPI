@@ -15,17 +15,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/signup")
-    public Response signUpAccount(@RequestBody UserRequest userRequest) {
-        User user = userService.convertUserRequestToUser(userRequest);
-        return userService.signUpAccount(user);
-    }
-
-    @PostMapping("/login")
-    public Response loginAccount(@RequestBody UserRequest userRequest) {
-        User user = userService.convertUserRequestToUser(userRequest);
-        return userService.loginAccount(user);
-    }
 
     @PutMapping("/user/update")
     public Response updateAccount(@RequestBody UserRequest userRequest) {

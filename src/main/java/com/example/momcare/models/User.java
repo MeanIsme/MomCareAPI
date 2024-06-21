@@ -9,7 +9,6 @@ import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -37,6 +36,7 @@ public class User   {
     private Set<String> shared;
     private String datePregnant;
     private Boolean premium;
+    private Role roles;
     private List<MomHealthIndex> momIndex;
     private List<BabyHealthIndex> babyIndex;
     private Boolean enabled;
