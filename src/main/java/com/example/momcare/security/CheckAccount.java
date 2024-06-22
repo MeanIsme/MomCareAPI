@@ -2,10 +2,11 @@ package com.example.momcare.security;
 
 import com.example.momcare.models.User;
 import com.example.momcare.service.UserService;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CheckAccount {
     public int checkSignup(User user, UserService service){
-        User user1 = service.findAccountByEmail(user.getEmail());
         if(service.findAccountByEmail(user.getEmail()) != null)
             return 1;
         if (!checkPassWordstrength(user.getPassWord()))

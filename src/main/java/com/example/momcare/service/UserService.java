@@ -13,11 +13,11 @@ import com.example.momcare.repository.UserRepository;
 
 
 import com.example.momcare.security.CheckAccount;
-import com.example.momcare.security.Encode;
 import com.example.momcare.util.Constant;
 import jakarta.mail.MessagingException;
 import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,13 +30,13 @@ public class UserService{
 
     private final UserRepository userRepository;
     private final EmailService emailService;
-    private final Encode encode;
+    private final PasswordEncoder passwordEncoder;
     private final CheckAccount checkAccount;
 
-    public UserService(UserRepository userRepository, EmailService emailService) {
+    public UserService(UserRepository userRepository, EmailService emailService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.emailService = emailService;
-        this.encode = new Encode();
+        this.passwordEncoder = passwordEncoder;
         this.checkAccount = new CheckAccount();
     }
 
@@ -77,25 +77,6 @@ public class UserService{
         return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.FAILURE);
     }
 
-    public Response loginAccount(User user){
-        User check = findAccountByUserName(user.getUserName());
-        if (check == null)
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.USER_NOT_FOUND);
-
-
-        if (Objects.equals(user.getUserName(), check.getUserName()) && Objects.equals(encode.encoderPassword(user.getPassWord()), check.getPassWord())){
-            if (check.getEnabled().equals(true)) {
-                List<UserResponse> users = new ArrayList<>();
-                UserResponse userResponse = new UserResponse(check.getId(), check.getUserName(), check.getEmail(), check.getDatePregnant(), check.getPremium(), check.getAvtUrl(), check.getFollower(), check.getFollowing(), check.getNameDisplay());
-                users.add(userResponse);
-                return new Response(HttpStatus.OK.getReasonPhrase(), users, Constant.SUCCESS);
-            }
-            if (check.getEnabled().equals(false)) {
-                return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.EMAIL_NOT_VERIFY);
-            }
-        }
-        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.FAILURE);
-    }
     @Transactional
     public Response updateAccount(User user){
         User check = findAccountByID(user.getId());
@@ -149,7 +130,7 @@ public class UserService{
     public Response changePassword(ChangePasswordRequest changePasswordRequest){
         User user = findAccountByID(changePasswordRequest.getId());
         if (user != null) {
-            if (Objects.equals(encode.encoderPassword(changePasswordRequest.getOldPassword()), user.getPassWord())) {
+            if (Objects.equals(passwordEncoder.encode(changePasswordRequest.getOldPassword()), user.getPassWord())) {
                 if (checkAccount.checkPassWordstrength(changePasswordRequest.getNewPassword())) {
                     user.setPassWord(changePasswordRequest.getNewPassword());
                     save(user);
@@ -286,7 +267,7 @@ public class UserService{
     }
 
     public void save (User user){
-        String encoderPassword = encode.encoderPassword(user.getPassWord());
+        String encoderPassword = passwordEncoder.encode(user.getPassWord());
         user.setPassWord(encoderPassword);
         this.userRepository.save(user);
     }

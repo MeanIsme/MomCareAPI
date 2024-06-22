@@ -43,6 +43,11 @@ public class AppConfig {
                 .authorizeHttpRequests(
                         authz -> authz
                                 .requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/user/forgotpassword").permitAll()
+                                .requestMatchers("/user/createpassword").permitAll()
+                                .requestMatchers("/user/optlogin").permitAll()
+                                .requestMatchers("/user/optlogin").permitAll()
+                                .requestMatchers("/user/changepassword").permitAll()
                                 .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults())
                         .authenticationEntryPoint(customAuthenticationEntryPoint))
