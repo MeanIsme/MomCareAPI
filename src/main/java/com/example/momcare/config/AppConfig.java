@@ -46,7 +46,7 @@ public class AppConfig {
                                 .requestMatchers("/user/forgotpassword").permitAll()
                                 .requestMatchers("/user/createpassword").permitAll()
                                 .requestMatchers("/user/optlogin").permitAll()
-                                .requestMatchers("/user/optlogin").permitAll()
+                                .requestMatchers("/verifyemail").permitAll()
                                 .requestMatchers("/user/changepassword").permitAll()
                                 .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults())
