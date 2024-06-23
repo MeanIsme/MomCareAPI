@@ -1,7 +1,6 @@
 package com.example.momcare.service;
 
-import com.example.momcare.models.BabyHealthIndex;
-import com.example.momcare.models.MomHealthIndex;
+
 import com.example.momcare.models.User;
 import com.example.momcare.payload.request.AddUserFollowerRequest;
 import com.example.momcare.payload.request.ChangePasswordRequest;
@@ -40,42 +39,7 @@ public class UserService{
         this.checkAccount = new CheckAccount();
     }
 
-    @Transactional
-    public Response signUpAccount(User user){
-        switch (checkAccount.checkSignup(user, this)) {
-            case (0):
-                return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "User name has been used");
-            case (3):
-                List<MomHealthIndex> momHealthIndices = new ArrayList<>();
-                List<BabyHealthIndex> babyHealthIndices = new ArrayList<>();
-                user.setPremium(false);
-                user.setDatePregnant("");
-                user.setMomIndex(momHealthIndices);
-                user.setBabyIndex(babyHealthIndices);
-                user.setNameDisplay(user.getUserName());
-                user.setEnabled(false);
-                save(user);
-                String token = UUID.randomUUID() + "-" + user.getId();
-                user.setToken(token);
-                update(user);
-                try {
-                    emailService.sendVerifyEmail(user.getEmail(), token);
-                } catch (MessagingException e) {
-                    return new Response(HttpStatus.EXPECTATION_FAILED.getReasonPhrase(), new ArrayList<>(), Constant.FAILURE);
-                }
-                List<UserResponse> users = new ArrayList<>();
-                UserResponse userResponse = new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getDatePregnant(), user.getPremium(), user.getAvtUrl(), user.getFollower(), user.getFollowing(), user.getNameDisplay());
-                users.add(userResponse);
-                return new Response(HttpStatus.OK.getReasonPhrase(), users, Constant.SUCCESS);
-            case (2):
-                return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.PASSWORD_NOT_STRENGTH);
-            case (1):
-                return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.EMAIL_HAS_BEEN_USED);
-            default:
-                break;
-        }
-        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.FAILURE);
-    }
+
 
     @Transactional
     public Response updateAccount(User user){
@@ -152,7 +116,7 @@ public class UserService{
             String otp = otp();
             List<String> opts = new ArrayList<>();
             user.setOtp(otp);
-            save(user);
+            update(user);
             try {
                 emailService.sendOTPEmail(user.getEmail(), otp);
             } catch (MessagingException e) {

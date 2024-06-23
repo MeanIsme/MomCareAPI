@@ -66,7 +66,7 @@ public class SocialPostService {
                 Set<String> sharesPost = new HashSet<>(socialPost.getShare());
                 sharesPost.remove(user.getId());
                 socialPost.setShare(sharesPost);
-                userService.save(user);
+                userService.update(user);
                 if (save(socialPost))
                     return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), Constant.SUCCESS);
                 else
@@ -89,7 +89,7 @@ public class SocialPostService {
                 Set<String> sharesPost = new HashSet<>(socialPost.getShare());
                 sharesPost.add(user.getId());
                 socialPost.setShare(sharesPost);
-                userService.save(user);
+                userService.update(user);
                 if (save(socialPost)){
                     return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), Constant.SUCCESS);
                 }
