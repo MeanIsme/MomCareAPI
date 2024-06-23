@@ -171,7 +171,7 @@ public class SocialPostService {
     }
 
     public Response getById(String id){
-        return new Response((HttpStatus.OK.getReasonPhrase()), (List<?>) findByIdResponse(id), Constant.SUCCESS);
+        return new Response((HttpStatus.OK.getReasonPhrase()), List.of(findByIdResponse(id)), Constant.SUCCESS);
     }
 
     public Response getAllByUser(String userId, int time){
