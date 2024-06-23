@@ -88,7 +88,7 @@ public class AuthController {
             return new Response(HttpStatus.BAD_REQUEST.getReasonPhrase(), null, "Username is already taken");
         }
 
-        user.setPassWord(passwordEncoder.encode(userSignUpRequest.getPassword()));
+        user.setPassWord(userSignUpRequest.getPassword());
         user.setEmail(userSignUpRequest.getEmail());
         user.setRoles(Role.USER);
         switch (checkAccount.checkSignup(user, userService)) {
