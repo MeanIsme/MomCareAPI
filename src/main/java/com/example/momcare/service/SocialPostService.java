@@ -1,12 +1,12 @@
 package com.example.momcare.service;
 
+import com.example.momcare.exception.ResourceNotFoundException;
 import com.example.momcare.models.SocialPost;
 import com.example.momcare.models.SocialReaction;
 import com.example.momcare.models.User;
 import com.example.momcare.payload.request.ShareResquest;
 import com.example.momcare.payload.request.SocialPostNewRequest;
 import com.example.momcare.payload.request.SocialPostUpdateResquest;
-import com.example.momcare.payload.response.Response;
 import com.example.momcare.payload.response.SocialPostResponse;
 import com.example.momcare.payload.response.SocialReactionResponse;
 import com.example.momcare.repository.SocialPostRepository;
@@ -15,7 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,8 +36,9 @@ public class SocialPostService {
 
         return this.socialPostRepository.getSocialPostsByUserId(idUser);
     }
+
     @Transactional
-    public Response deletePost(String idPost){
+    public void deletePost(String idPost) throws ResourceNotFoundException {
         SocialPost socialPost = findById(idPost);
         if (socialPost != null) {
             if (delete(socialPost.getId())) {
@@ -48,14 +48,14 @@ public class SocialPostService {
                         delete(id);
                     }
                 }
-                return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), Constant.SUCCESS);
             } else
-                return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.FAILURE);
+                throw new ResourceNotFoundException(Constant.FAILURE);
         } else
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.NOT_FOUND_POST);
+            throw new ResourceNotFoundException(Constant.NOT_FOUND_POST);
     }
+
     @Transactional
-    public Response unshare(ShareResquest request){
+    public void unshare(ShareResquest request) throws ResourceNotFoundException {
         SocialPost socialPost = findById(request.getIdPost());
         User user = userService.findAccountByID(request.getIdUser());
         if (socialPost != null) {
@@ -67,18 +67,17 @@ public class SocialPostService {
                 sharesPost.remove(user.getId());
                 socialPost.setShare(sharesPost);
                 userService.update(user);
-                if (save(socialPost))
-                    return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), Constant.SUCCESS);
-                else
-                    return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.FAILURE);
+                if (!save(socialPost))
+                    throw new ResourceNotFoundException(Constant.FAILURE);
+
             }
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "User or not found");
+            throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
         } else
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Post or not found");
+            throw new ResourceNotFoundException(Constant.NOT_FOUND_POST);
     }
-    
+
     @Transactional
-    public Response share(ShareResquest request){
+    public void share(ShareResquest request) throws ResourceNotFoundException {
         SocialPost socialPost = findById(request.getIdPost());
         User user = userService.findAccountByID(request.getIdUser());
         if (socialPost != null) {
@@ -90,24 +89,22 @@ public class SocialPostService {
                 sharesPost.add(user.getId());
                 socialPost.setShare(sharesPost);
                 userService.update(user);
-                if (save(socialPost)){
-                    return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), Constant.SUCCESS);
-                }
+                if (!save(socialPost)) {
+                    throw new ResourceNotFoundException(Constant.FAILURE);
 
-                else
-                    return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.FAILURE);
-            }
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "User or not found");
-        } else
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Post or not found");
+                }
+                throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
+            } else
+                throw new ResourceNotFoundException(Constant.NOT_FOUND_POST);
+        }
     }
 
-    public Response update(SocialPostUpdateResquest request){
+    public List<SocialPostResponse> update(SocialPostUpdateResquest request) throws ResourceNotFoundException {
         SocialPost socialPost = findById(request.getId());
         if (socialPost != null) {
             User user = userService.findAccountByID(socialPost.getUserId());
             if (user == null)
-                return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.USER_NOT_FOUND);
+                throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
             if (request.getDescription() != null)
                 socialPost.setDescription(request.getDescription());
             if (request.getMedia() != null)
@@ -118,88 +115,87 @@ public class SocialPostService {
             List<SocialPostResponse> socialPostResponses = new ArrayList<>();
             SocialPostResponse socialPostResponse = new SocialPostResponse(socialPost.getId(), socialPost.getDescription(), socialPost.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialPost.getReactions(), socialPost.getComments(), socialPost.getShare(), socialPost.getMedia(), socialPost.getTime());
             socialPostResponses.add(socialPostResponse);
-            return new Response((HttpStatus.OK.getReasonPhrase()), socialPostResponses, Constant.SUCCESS);
+            return socialPostResponses;
         } else
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.NOT_FOUND_POST);
+            throw new ResourceNotFoundException(Constant.NOT_FOUND_POST);
     }
 
-    public Response create(SocialPostNewRequest request){
+    public List<SocialPostResponse> create(SocialPostNewRequest request) throws ResourceNotFoundException {
         SocialPost socialPost = new SocialPost(request.getDescription(), request.getUserId(), request.getMedia(), LocalDateTime.now().toString());
         if (save(socialPost)) {
             User user = userService.findAccountByID(socialPost.getUserId());
             if (user == null)
-                return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.USER_NOT_FOUND);
+                throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
             List<SocialPostResponse> socialPostResponses = new ArrayList<>();
             SocialPostResponse socialPostResponse = new SocialPostResponse(socialPost.getId(), socialPost.getDescription(), socialPost.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialPost.getReactions(), socialPost.getComments(), socialPost.getShare(), socialPost.getMedia(), socialPost.getTime());
             socialPostResponses.add(socialPostResponse);
-            return new Response((HttpStatus.OK.getReasonPhrase()), socialPostResponses, Constant.SUCCESS);
+            return socialPostResponses;
         } else
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.FAILURE);
+            throw new ResourceNotFoundException(Constant.FAILURE);
     }
 
-    public Response postPerPage(String id){
+    public List<Map<String, SocialReactionResponse>> postPerPage(String id) throws ResourceNotFoundException {
         SocialPost socialPost = findById(id);
         Map<String, SocialReactionResponse> socialReactionResponseMap = new HashMap<>();
         User user = null;
         SocialReactionResponse socialReactionResponse = null;
-        if(socialPost!=null){
-            for (String userId: socialPost.getReactions().keySet()) {
+        if (socialPost != null) {
+            for (String userId : socialPost.getReactions().keySet()) {
                 user = userService.findAccountByID(userId);
-                if(user==null)
-                    return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.USER_NOT_FOUND);
+                if (user == null)
+                    throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
                 SocialReaction socialReaction = socialPost.getReactions().get(userId);
-                socialReactionResponse = new SocialReactionResponse(user.getAvtUrl(),user.getNameDisplay(), socialReaction.getTime(), socialReaction.getReaction());
+                socialReactionResponse = new SocialReactionResponse(user.getAvtUrl(), user.getNameDisplay(), socialReaction.getTime(), socialReaction.getReaction());
                 socialReactionResponseMap.put(userId, socialReactionResponse);
             }
             List<Map<String, SocialReactionResponse>> list = new ArrayList<>();
             list.add(socialReactionResponseMap);
-            return new Response((HttpStatus.OK.getReasonPhrase()), list, Constant.SUCCESS);
+            return list;
         }
-        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.FAILURE);
+        throw new ResourceNotFoundException(Constant.FAILURE);
     }
 
-    public Response getAllByUserService(String userId){
+    public List<SocialPostResponse> getAllByUserService(String userId) throws ResourceNotFoundException {
         User user = userService.findAccountByID(userId);
-        if(user==null)
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.USER_NOT_FOUND);
+        if (user == null)
+            throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
         List<SocialPostResponse> socialPostResponses = new ArrayList<>();
         List<SocialPost> socialPosts = getAllByUser(userId);
         for (SocialPost socialPost : socialPosts) {
             socialPostResponses.add(new SocialPostResponse(socialPost.getId(), socialPost.getDescription(), socialPost.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialPost.getReactions(), socialPost.getComments(), socialPost.getShare(), socialPost.getMedia(), socialPost.getTime()));
         }
-        return new Response((HttpStatus.OK.getReasonPhrase()), socialPostResponses, Constant.SUCCESS);
+        return socialPostResponses;
     }
 
-    public Response getById(String id){
-        return new Response((HttpStatus.OK.getReasonPhrase()), List.of(findByIdResponse(id)), Constant.SUCCESS);
+    public List<SocialPostResponse> getById(String id) {
+        return List.of(findByIdResponse(id));
     }
 
-    public Response getAllByUser(String userId, int time){
-        return new Response((HttpStatus.OK.getReasonPhrase()), postPerPageByUser(userId, time), Constant.SUCCESS);
+    public List<SocialPost> getAllByUser(String userId, int time) {
+        return postPerPageByUser(userId, time);
     }
 
-    public Response getAllService() {
-        return new Response((HttpStatus.OK.getReasonPhrase()), getAll(), Constant.SUCCESS);
+    public List<SocialPostResponse> getAllService() {
+        return getAll();
     }
-    public Response search(String keyWord) {
-        return new Response((HttpStatus.OK.getReasonPhrase()), getAll(), Constant.SUCCESS);
+
+    public List<SocialPost> postPerPageService(int time) {
+        return postPerPage(time);
     }
-    public Response postPerPageService(int time) {
-        return new Response((HttpStatus.OK.getReasonPhrase()), postPerPage(time), Constant.SUCCESS);
-    }
+
     public List<SocialPost> postPerPageByUser(String idUser, int time) {
         Pageable pageable = PageRequest.of(time, 20);
         Page<SocialPost> socialPostsPage = this.socialPostRepository.getSocialPostsByUserId(idUser, pageable);
         return socialPostsPage.getContent();
     }
-    
+
 
     public List<SocialPostResponse> getAll() {
         List<SocialPost> socialPosts = this.socialPostRepository.findAll();
         List<SocialPostResponse> socialPostResponses = new ArrayList<>();
         for (SocialPost socialPost : socialPosts) {
-            User user = this.userService.findAccountByID(socialPost.getUserId()) ;
-            if(user == null)
+            User user = this.userService.findAccountByID(socialPost.getUserId());
+            if (user == null)
                 return Collections.emptyList();
             socialPostResponses.add(new SocialPostResponse(socialPost.getId(), socialPost.getDescription(), socialPost.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialPost.getReactions(), socialPost.getComments(), socialPost.getShare(), socialPost.getMedia(), socialPost.getTime()));
         }
@@ -234,6 +230,7 @@ public class SocialPostService {
     public SocialPost findById(String id) {
         return this.socialPostRepository.getSocialPostById(id);
     }
+
     public SocialPostResponse findByIdResponse(String id) {
         User user = this.userService.findAccountByID(this.socialPostRepository.getSocialPostById(id).getUserId());
         SocialPost socialPost = this.socialPostRepository.getSocialPostById(id);

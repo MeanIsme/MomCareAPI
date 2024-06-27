@@ -1,11 +1,11 @@
 package com.example.momcare.service;
 
 
+import com.example.momcare.exception.ResourceNotFoundException;
 import com.example.momcare.models.User;
 import com.example.momcare.payload.request.AddUserFollowerRequest;
 import com.example.momcare.payload.request.ChangePasswordRequest;
 import com.example.momcare.payload.request.UserRequest;
-import com.example.momcare.payload.response.Response;
 import com.example.momcare.payload.response.UserProfile;
 import com.example.momcare.payload.response.UserResponse;
 import com.example.momcare.repository.UserRepository;
@@ -15,7 +15,6 @@ import com.example.momcare.security.CheckAccount;
 import com.example.momcare.util.Constant;
 import jakarta.mail.MessagingException;
 import org.bson.types.ObjectId;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +41,7 @@ public class UserService{
 
 
     @Transactional
-    public Response updateAccount(User user){
+    public List<UserResponse> updateAccount(User user) throws ResourceNotFoundException {
         User check = findAccountByID(user.getId());
         if (check != null) {
 
@@ -75,78 +74,71 @@ public class UserService{
 
             users.add(userResponse);
             update(check);
-            return new Response(HttpStatus.OK.getReasonPhrase(), users, Constant.SUCCESS);
+            return users;
         }
 
-        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.FAILURE);
+        throw new ResourceNotFoundException(Constant.FAILURE);
     }
-    public Response changePassword(String id){
+    public List<UserResponse> findById(String id) throws ResourceNotFoundException {
         User user = findAccountByID(id);
         if (user != null) {
             List<UserResponse> users = new ArrayList<>();
             UserResponse userResponse = new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getDatePregnant(), user.getPremium(), user.getAvtUrl(), user.getFollower(), user.getFollowing(), user.getNameDisplay());
             users.add(userResponse);
-            return new Response((HttpStatus.OK.getReasonPhrase()), users, Constant.SUCCESS);
+            return users;
         }
-        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.USER_NOT_FOUND);
+        throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
     }
     @Transactional
-    public Response changePassword(ChangePasswordRequest changePasswordRequest){
+    public void changePassword(ChangePasswordRequest changePasswordRequest) throws ResourceNotFoundException {
         User user = findAccountByID(changePasswordRequest.getId());
         if (user != null) {
             if (Objects.equals(passwordEncoder.encode(changePasswordRequest.getOldPassword()), user.getPassWord())) {
                 if (checkAccount.checkPassWordstrength(changePasswordRequest.getNewPassword())) {
                     user.setPassWord(changePasswordRequest.getNewPassword());
                     save(user);
-                    return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), Constant.SUCCESS);
                 } else
-                    return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.PASSWORD_NOT_STRENGTH);
+                    throw new ResourceNotFoundException(Constant.PASSWORD_NOT_STRENGTH);
 
             } else
-                return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.OLD_PASSWORD_NOT_MATCH);
+                throw new ResourceNotFoundException(Constant.OLD_PASSWORD_NOT_MATCH);
 
         }
-        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.USER_NOT_FOUND);
+        throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
     }
 
     @Transactional
-    public Response forgotPassword(String userName){
+    public void forgotPassword(String userName) throws ResourceNotFoundException {
         User user = findAccountByUserName(userName);
         if (user != null) {
             String otp = otp();
-            List<String> opts = new ArrayList<>();
             user.setOtp(otp);
             update(user);
             try {
                 emailService.sendOTPEmail(user.getEmail(), otp);
             } catch (MessagingException e) {
-                return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.FAILURE);
+                throw new ResourceNotFoundException(Constant.FAILURE);
             }
-            opts.add(otp);
-            return new Response((HttpStatus.OK.getReasonPhrase()), opts, Constant.SUCCESS);
         }
-        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.USER_NOT_FOUND);
+        throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
     }
 
     @Transactional
-    public Response optLogin(String userName, String otp){
+    public void optLogin(String userName, String otp) throws ResourceNotFoundException {
         User user = findAccountByUserName(userName);
         if (user != null) {
             if (Objects.equals(user.getOtp(), otp)) {
                 String tokenPassword = UUID.randomUUID() + "-" + user.getId();
                 user.setPasswordToken(tokenPassword);
                 update(user);
-                List<String> tokens = new ArrayList<>();
-                tokens.add(tokenPassword);
-                return new Response((HttpStatus.OK.getReasonPhrase()), tokens, Constant.SUCCESS);
             }
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.OPT_NOT_MATCH);
+            throw new ResourceNotFoundException(Constant.OPT_NOT_MATCH);
         }
-        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.USER_NOT_FOUND);
+        throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
     }
 
     @Transactional
-    public Response createPassword(String userName, String token, String newPassword){
+    public List<UserResponse> createPassword(String userName, String token, String newPassword) throws ResourceNotFoundException {
         User user = findAccountByUserName(userName);
         if (user != null) {
             if (Objects.equals(user.getPasswordToken(), token)) {
@@ -156,17 +148,17 @@ public class UserService{
                     List<UserResponse> users = new ArrayList<>();
                     UserResponse userResponse = new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getDatePregnant(), user.getPremium(), user.getAvtUrl(), user.getFollower(), user.getFollowing(), user.getNameDisplay());
                     users.add(userResponse);
-                    return new Response((HttpStatus.OK.getReasonPhrase()), users, Constant.SUCCESS);
+                    return users;
                 }
-                return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.PASSWORD_NOT_STRENGTH);
+                throw new ResourceNotFoundException(Constant.PASSWORD_NOT_STRENGTH);
             }
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.OPT_NOT_MATCH);
+            throw new ResourceNotFoundException(Constant.OPT_NOT_MATCH);
         }
-        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.USER_NOT_FOUND);
+        throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
     }
 
     @Transactional
-    public Response addFollower(AddUserFollowerRequest userFollower) {
+    public void addFollower(AddUserFollowerRequest userFollower) throws ResourceNotFoundException {
         User userFollowed = findAccountByID(userFollower.getIdFollowingUser());
         User userFollowing = findAccountByID(userFollower.getIdUser());
         if (userFollowed != null && userFollowing != null) {
@@ -182,13 +174,12 @@ public class UserService{
             idsing.add(userFollower.getIdFollowingUser());
             userFollowing.setFollowing(idsing);
             update(userFollowing);
-            return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), Constant.SUCCESS);
         }
-        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.USER_NOT_FOUND);
+        throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
     }
 
     @Transactional
-    public Response unFollow(AddUserFollowerRequest userFollower) {
+    public void unFollow(AddUserFollowerRequest userFollower) throws ResourceNotFoundException {
         User userFollowed = findAccountByID(userFollower.getIdFollowingUser());
         User userFollowing = findAccountByID(userFollower.getIdUser());
         if (userFollowed != null && userFollowing != null) {
@@ -204,9 +195,8 @@ public class UserService{
                 userFollowing.setFollowing(idsing);
                 update(userFollowing);
             }
-            return new Response((HttpStatus.OK.getReasonPhrase()), new ArrayList<>(), Constant.SUCCESS);
         }
-        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.USER_NOT_FOUND);
+        throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
     }
     @Transactional
     public String verifyEmail(String token) {
@@ -219,15 +209,15 @@ public class UserService{
         return EmailService.ERROR;
     }
 
-    public Response getProfile(String id) {
+    public List<UserProfile> getProfile(String id) throws ResourceNotFoundException {
         User user = findAccountByID(id);
         if (user != null) {
             List<UserProfile> userProfiles = new ArrayList<>();
             UserProfile userProfile = new UserProfile(user.getId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), user.getFollower(), user.getShared());
             userProfiles.add(userProfile);
-            return new Response((HttpStatus.OK.getReasonPhrase()), userProfiles, Constant.SUCCESS);
+            return userProfiles;
         }
-        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.USER_NOT_FOUND);
+        throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
     }
 
     public void save (User user){
@@ -295,7 +285,7 @@ public class UserService{
         return user1;
     }
 
-    public Response getAllFollower(String id){
+    public List<UserResponse> getAllFollower(String id){
         User user = findAccountByID(id);
         List<UserResponse> userResponses = new ArrayList<>();
         if (user != null) {
@@ -307,9 +297,9 @@ public class UserService{
                 }
             }
         }
-        return new Response((HttpStatus.OK.getReasonPhrase()), userResponses, Constant.SUCCESS);
+        return userResponses;
     }
-    public Response getAllFollowing(String id) {
+    public List<UserResponse> getAllFollowing(String id) {
         User user = findAccountByID(id);
         List<UserResponse> userResponses = new ArrayList<>();
         if (user != null) {
@@ -321,6 +311,6 @@ public class UserService{
                 }
             }
         }
-        return new Response((HttpStatus.OK.getReasonPhrase()), userResponses, Constant.SUCCESS);
+        return userResponses;
     }
 }

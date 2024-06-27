@@ -1,12 +1,11 @@
 package com.example.momcare.service;
 
+import com.example.momcare.exception.ResourceNotFoundException;
 import com.example.momcare.models.Diary;
 import com.example.momcare.payload.request.DiaryRequest;
-import com.example.momcare.payload.response.Response;
 import com.example.momcare.repository.DiaryRepository;
 import com.example.momcare.util.Constant;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +22,7 @@ public class DiaryService {
     }
 
     @Transactional
-    public Response createDiary(DiaryRequest diaryRequest) {
+    public Diary createDiary(DiaryRequest diaryRequest) throws ResourceNotFoundException {
         Diary diary = new Diary(
                 diaryRequest.getIdUser(),
                 diaryRequest.getTitle(),
@@ -34,30 +33,29 @@ public class DiaryService {
                 LocalDateTime.now().toString());
 
         if (save(diary)) {
-            return new Response(HttpStatus.OK.getReasonPhrase(), List.of(diary), Constant.SUCCESS);
+            return diary;
         } else {
-            return new Response(HttpStatus.EXPECTATION_FAILED.getReasonPhrase(), new ArrayList<>(), Constant.FAILURE);
+            throw new ResourceNotFoundException(Constant.FAILURE);
         }
     }
 
-    public Response findAllDiaryByUser(String idUser) {
-        List<Diary> diaries = findDiaryByIdUser(idUser);
-        return new Response(HttpStatus.OK.getReasonPhrase(), diaries, Constant.SUCCESS);
+    public List<Diary> findAllDiaryByUser(String idUser) {
+        return findDiaryByIdUser(idUser);
     }
 
-    public Response findDiaryByIdService(String id) {
+    public List<Diary> findDiaryByIdService(String id) throws ResourceNotFoundException {
         List<Diary> diaries = new ArrayList<>();
         Diary diary = findDiaryById(id);
         if (diary != null) {
             diaries.add(diary);
-            return new Response(HttpStatus.OK.getReasonPhrase(), diaries, Constant.SUCCESS);
+            return diaries;
         } else {
-            return new Response(HttpStatus.NOT_FOUND.getReasonPhrase(), new ArrayList<>(), Constant.DIARY_NOT_FOUND);
+            throw new ResourceNotFoundException(Constant.DIARY_NOT_FOUND);
         }
     }
 
     @Transactional
-    public Response updateDiary(DiaryRequest diaryRequest) {
+    public List<Diary> updateDiary(DiaryRequest diaryRequest) throws ResourceNotFoundException {
         Diary diary = new Diary(
                 diaryRequest.getId(),
                 diaryRequest.getIdUser(),
@@ -71,39 +69,33 @@ public class DiaryService {
         if (diaryCheck != null) {
             diaryRequest.setTimeUpdate(LocalDateTime.now().toString());
             if (save(diary)) {
-                List<Diary> diaries = new ArrayList<>();
-                diaries.add(diary);
-                return new Response(HttpStatus.OK.getReasonPhrase(), diaries, Constant.SUCCESS);
+                return List.of(diary);
             } else {
-                return new Response(HttpStatus.EXPECTATION_FAILED.getReasonPhrase(), new ArrayList<>(), Constant.FAILURE);
+                throw new ResourceNotFoundException(Constant.FAILURE);
             }
         } else {
-            return new Response(HttpStatus.NOT_FOUND.getReasonPhrase(), new ArrayList<>(), Constant.DIARY_NOT_FOUND);
+            throw new ResourceNotFoundException(Constant.NOT_FOUND);
         }
     }
 
-    public Response getTop8NewestDiaries() {
-        List<Diary> top8NewestDiaries = top8Newest();
-        return new Response(HttpStatus.OK.getReasonPhrase(), top8NewestDiaries, Constant.SUCCESS);
+    public List<Diary> getTop8NewestDiaries() {
+        return top8Newest();
     }
 
     @Transactional
-    public Response deleteDiary(String id) {
+    public void deleteDiary(String id) throws ResourceNotFoundException {
         Diary diary = findDiaryById(id);
         if (diary != null) {
-            if (delete(diary)) {
-                return new Response(HttpStatus.OK.getReasonPhrase(), new ArrayList<>(), Constant.SUCCESS);
-            } else {
-                return new Response(HttpStatus.EXPECTATION_FAILED.getReasonPhrase(), new ArrayList<>(), Constant.FAILURE);
+            if (!delete(diary)) {
+                throw new ResourceNotFoundException(Constant.FAILURE);
             }
         } else {
-            return new Response(HttpStatus.NOT_FOUND.getReasonPhrase(), new ArrayList<>(), Constant.DIARY_NOT_FOUND);
+            throw new ResourceNotFoundException(Constant.DIARY_NOT_FOUND);
         }
     }
 
-    public Response getDiaryPerPage(int time) {
-        List<Diary> diariesPerPage = diaryPerPage(time);
-        return new Response(HttpStatus.OK.getReasonPhrase(), diariesPerPage, Constant.SUCCESS);
+    public List<Diary> getDiaryPerPage(int time) {
+        return diaryPerPage(time);
     }
 
     public List<Diary> findDiaryByIdUser(String idUser) {

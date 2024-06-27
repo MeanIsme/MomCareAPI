@@ -1,11 +1,10 @@
 package com.example.momcare.service;
 
+import com.example.momcare.exception.ResourceNotFoundException;
 import com.example.momcare.models.HandBook;
-import com.example.momcare.payload.response.Response;
 import com.example.momcare.repository.HandBookRepository;
 import com.example.momcare.util.Constant;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 
@@ -21,37 +20,36 @@ public class HandBookService {
 
     }
 
-    public Response findHandBookByCategoryService(String idCategory) {
-        List<HandBook> handBooks = findHandBookByCategory(idCategory);
-        return new Response(HttpStatus.OK.getReasonPhrase(), handBooks, Constant.SUCCESS);
+    public List<HandBook> findHandBookByCategoryService(String idCategory) {
+        return findHandBookByCategory(idCategory);
     }
 
-    public Response findHandBookByIDService(String id) {
+    public List<HandBook> findHandBookByIDService(String id) throws ResourceNotFoundException {
         HandBook handBook = findHandBookByID(id);
         if (handBook != null) {
             List<HandBook> handBooks = new ArrayList<>();
             handBooks.add(handBook);
-            return new Response(HttpStatus.OK.getReasonPhrase(), handBooks, Constant.SUCCESS);
+            return handBooks;
         } else {
-            return new Response(HttpStatus.NOT_FOUND.getReasonPhrase(), new ArrayList<>(), Constant.HAND_BOOK_NOT_FOUND);
+            throw new ResourceNotFoundException(Constant.HAND_BOOK_NOT_FOUND);
         }
     }
 
-    public Response getTop8NewestHandBooksService() {
-        List<HandBook> top8NewestHandBooks = top8Newest();
-        return new Response(HttpStatus.OK.getReasonPhrase(), top8NewestHandBooks, Constant.SUCCESS);
+    public List<HandBook> getTop8NewestHandBooksService() {
+        return top8Newest();
+
     }
-    public Response getHandBookPerPage(int time) {
-        List<HandBook> handBooksPerPage = handBookPerTime(time);
-        return new Response(HttpStatus.OK.getReasonPhrase(), handBooksPerPage, Constant.SUCCESS);
+    public List<HandBook> getHandBookPerPage(int time) {
+        return handBookPerTime(time);
+
     }
-    public Response getTop8RandomHandBooks() {
-        List<HandBook> top8RandomHandBooks = top8Random();
-        return new Response(HttpStatus.OK.getReasonPhrase(), top8RandomHandBooks, Constant.SUCCESS);
+    public List<HandBook> getTop8RandomHandBooks() {
+        return top8Random();
+
     }
-    public Response searchHandBookByKey(String key) {
-        List<HandBook> searchResult = searchHandBook(key);
-        return new Response(HttpStatus.OK.getReasonPhrase(), searchResult, Constant.SUCCESS);
+    public List<HandBook> searchHandBookByKey(String key) {
+        return searchHandBook(key);
+
     }
     public List<HandBook> findHandBookByCategory(String id){
         return this.handBookRepository.findAllByCategory(id);

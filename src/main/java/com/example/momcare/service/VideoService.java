@@ -2,11 +2,8 @@ package com.example.momcare.service;
 
 import com.example.momcare.models.Video;
 import com.example.momcare.models.VideoCategory;
-import com.example.momcare.payload.response.Response;
 import com.example.momcare.repository.VideoCategoryRepository;
 import com.example.momcare.repository.VideoRepository;
-import com.example.momcare.util.Constant;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -21,17 +18,7 @@ public class VideoService {
         this.videoCategoryRepository = videoCategoryRepository;
     }
 
-    public Response getRandomVideo(){
-        return new Response((HttpStatus.OK.getReasonPhrase()), top8Random(), Constant.SUCCESS);
-    }
-    
-    public Response getVideoByCategory(String category){
-        return new Response((HttpStatus.OK.getReasonPhrase()), findByCategory(category), Constant.SUCCESS);
-    }
-    
-    public Response getCategory(){
-        return new Response((HttpStatus.OK.getReasonPhrase()), getAllCategories(), Constant.SUCCESS);
-    }
+
 
     public List<Video> top8Random(){
         List<Video> allVideo = videoRepository.findAll();

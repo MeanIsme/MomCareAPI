@@ -2,10 +2,7 @@ package com.example.momcare.service;
 
 import com.example.momcare.models.HandBookCategory;
 
-import com.example.momcare.payload.response.Response;
 import com.example.momcare.repository.HandBookCategoryRepository;
-import com.example.momcare.util.Constant;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,14 +15,13 @@ public class HandBookCategoryService {
         this.handBookCategoryRepository = handBookCategoryRepository;
     }
 
-    public Response findAllCategories() {
-        List<HandBookCategory> categories = this.findAll();
-        return new Response(HttpStatus.OK.getReasonPhrase(), categories, Constant.SUCCESS);
+    public List<HandBookCategory> findAllCategories() {
+        return this.findAll();
+
     }
 
-    public Response findCategoriesByCollection(String collectionId) {
-        List<HandBookCategory> categories = this.findCategoryByCollection(collectionId);
-        return new Response(HttpStatus.OK.getReasonPhrase(), categories, Constant.SUCCESS);
+    public List<HandBookCategory> findCategoriesByCollection(String collectionId) {
+         return this.findCategoryByCollection(collectionId);
     }
     public List<HandBookCategory> findAll(){return this.handBookCategoryRepository.findAll();}
     public List<HandBookCategory> findCategoryByCollection(String collection){

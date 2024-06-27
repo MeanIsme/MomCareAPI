@@ -1,5 +1,6 @@
 package com.example.momcare.service;
 
+import com.example.momcare.exception.ResourceNotFoundException;
 import com.example.momcare.models.SocialComment;
 import com.example.momcare.models.SocialPost;
 import com.example.momcare.models.SocialReaction;
@@ -7,13 +8,11 @@ import com.example.momcare.models.User;
 import com.example.momcare.payload.request.SocialCommentDeleteRequest;
 import com.example.momcare.payload.request.SocialCommentNewRequest;
 import com.example.momcare.payload.request.SocialCommentUpdateRequest;
-import com.example.momcare.payload.response.Response;
 import com.example.momcare.payload.response.SocialCommentResponse;
 import com.example.momcare.payload.response.SocialReactionResponse;
 import com.example.momcare.repository.SocialCommentRepository;
 import com.example.momcare.util.Constant;
 import org.bson.types.ObjectId;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,59 +31,64 @@ public class SocialCommentService {
         this.socialPostService = socialPostService;
     }
 
-    public Response getAllSocialComments() {
-        List<SocialComment> socialComments = findAll();
-        return new Response(HttpStatus.OK.getReasonPhrase(), socialComments, Constant.SUCCESS);
+    public List<SocialComment> getAllSocialComments() {
+        return findAll();
     }
 
-    public Response getSocialCommentsById(String id) {
+    public List<SocialCommentResponse> getSocialCommentsById(String id) {
         List<SocialComment> socialComments = findAllById(id);
         List<SocialCommentResponse> socialCommentResponses = new ArrayList<>();
-        for (SocialComment socialComment: socialComments) {
+        for (SocialComment socialComment : socialComments) {
             User user = userService.findAccountByID(socialComment.getUserId());
-            if(user!=null){
+            if (user != null) {
                 socialCommentResponses.add(new SocialCommentResponse(socialComment.getId(), socialComment.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialComment.getPostId(), socialComment.getCommentId(), socialComment.getReactions(), socialComment.getReplies(), socialComment.getDescription(), socialComment.getTime()));
             }
         }
-        return new Response(HttpStatus.OK.getReasonPhrase(), socialCommentResponses, Constant.SUCCESS);
+        return socialCommentResponses;
     }
-    public Response getSocialCommentReactions(String id) {
+
+    public List<Map<String, SocialReactionResponse>> getSocialCommentReactions(String id) throws ResourceNotFoundException {
         SocialComment socialComment = findById(id);
         Map<String, SocialReactionResponse> socialReactionResponseMap = new HashMap<>();
         User user = null;
         SocialReactionResponse socialReactionResponse = null;
-        if(socialComment!=null){
-            for (String userId: socialComment.getReactions().keySet()) {
+        if (socialComment != null) {
+            for (String userId : socialComment.getReactions().keySet()) {
                 user = userService.findAccountByID(userId);
-                if(user==null)
-                    return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.USER_NOT_FOUND);
+                if (user == null)
+                    throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
                 SocialReaction socialReaction = socialComment.getReactions().get(userId);
-                socialReactionResponse = new SocialReactionResponse(user.getAvtUrl(),user.getNameDisplay(), socialReaction.getTime(), socialReaction.getReaction());
+                socialReactionResponse = new SocialReactionResponse(user.getAvtUrl(), user.getNameDisplay(), socialReaction.getTime(), socialReaction.getReaction());
                 socialReactionResponseMap.put(userId, socialReactionResponse);
             }
             List<Map<String, SocialReactionResponse>> list = new ArrayList<>();
             list.add(socialReactionResponseMap);
-            return new Response((HttpStatus.OK.getReasonPhrase()), list, Constant.SUCCESS);
+            return list;
         }
-        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.FAILURE);
+        throw new ResourceNotFoundException(Constant.FAILURE);
     }
+
     @Transactional
-    public Response create(SocialCommentNewRequest request){
+    public List<SocialCommentResponse> create(SocialCommentNewRequest request) throws ResourceNotFoundException {
         SocialComment socialComment = createSocialComment(request);
 
         if (socialComment == null) {
-            return new Response(HttpStatus.EXPECTATION_FAILED.getReasonPhrase(), new ArrayList<>(), Constant.FAILURE);
+            throw new ResourceNotFoundException(Constant.NOT_FOUND_COMMENT);
         }
 
         SocialPost socialPost = socialPostService.findById(request.getPostId());
         if (socialPost == null) {
-            delete(socialComment.getId());
-            return new Response(HttpStatus.EXPECTATION_FAILED.getReasonPhrase(), new ArrayList<>(), Constant.NOT_FOUND_POST);
+            throw new ResourceNotFoundException(Constant.NOT_FOUND_POST);
         }
 
         updateSocialPostComments(socialPost, socialComment);
-
-        return createResponse(socialComment);
+        User user = userService.findAccountByID(socialComment.getUserId());
+        if (user == null) {
+            throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
+        }
+        List<SocialCommentResponse> socialCommentResponses = new ArrayList<>();
+        socialCommentResponses.add(new SocialCommentResponse(socialComment.getId(), socialComment.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialComment.getPostId(), socialComment.getCommentId(), socialComment.getReactions(), socialComment.getReplies(), socialComment.getDescription(), socialComment.getTime()));
+        return socialCommentResponses;
     }
 
     private SocialComment createSocialComment(SocialCommentNewRequest request) {
@@ -122,38 +126,30 @@ public class SocialCommentService {
         socialPostService.save(socialPost);
     }
 
-    private Response createResponse(SocialComment socialComment) {
-        User user = userService.findAccountByID(socialComment.getUserId());
-        if (user == null) {
-            return new Response(HttpStatus.EXPECTATION_FAILED.getReasonPhrase(), new ArrayList<>(), Constant.FAILURE);
-        }
-        List<SocialCommentResponse> socialCommentResponses = new ArrayList<>();
-        socialCommentResponses.add(new SocialCommentResponse(socialComment.getId(), socialComment.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialComment.getPostId(), socialComment.getCommentId(), socialComment.getReactions(), socialComment.getReplies(), socialComment.getDescription(), socialComment.getTime()));
-        return new Response(HttpStatus.OK.getReasonPhrase(), socialCommentResponses, Constant.SUCCESS);
-    }
+
     @Transactional
-    public Response update(SocialCommentUpdateRequest request){
+    public List<SocialCommentResponse> update(SocialCommentUpdateRequest request) throws ResourceNotFoundException {
         SocialComment socialComment = findById(request.getId());
         if (socialComment != null) {
             if (request.getDescription() != null)
                 socialComment.setDescription(request.getDescription());
-            if (save(socialComment) != null){
+            if (save(socialComment) != null) {
                 List<SocialCommentResponse> socialCommentResponses = new ArrayList<>();
                 User user = userService.findAccountByID(socialComment.getUserId());
                 socialCommentResponses.add(new SocialCommentResponse(socialComment.getId(), socialComment.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialComment.getPostId(), socialComment.getCommentId(), socialComment.getReactions(), socialComment.getReplies(), socialComment.getDescription(), socialComment.getTime()));
-                return new Response((HttpStatus.OK.getReasonPhrase()), socialCommentResponses, Constant.SUCCESS);
-            }
-            else
-                return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.FAILURE);
+                return socialCommentResponses;
+            } else
+                throw new ResourceNotFoundException(Constant.FAILURE);
         } else
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.NOT_FOUND_COMMENT);
+            throw new ResourceNotFoundException(Constant.NOT_FOUND_COMMENT);
     }
+
     @Transactional
-    public Response addReaction(SocialCommentUpdateRequest request){
+    public List<SocialCommentResponse> addReaction(SocialCommentUpdateRequest request) throws ResourceNotFoundException {
         SocialComment socialComment = findById(request.getId());
         if (socialComment != null) {
-            if (request.getReaction() != null&& request.getUserIdReaction()!=null){
-                if(socialComment.getReactions()==null)
+            if (request.getReaction() != null && request.getUserIdReaction() != null) {
+                if (socialComment.getReactions() == null)
                     socialComment.setReactions(new HashMap<>());
                 Map<String, SocialReaction> reactions = socialComment.getReactions();
                 reactions.put(request.getUserIdReaction(), request.getReaction());
@@ -162,17 +158,18 @@ public class SocialCommentService {
                 List<SocialCommentResponse> socialCommentResponses = new ArrayList<>();
                 User user = userService.findAccountByID(socialComment.getUserId());
                 socialCommentResponses.add(new SocialCommentResponse(socialComment.getId(), socialComment.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialComment.getPostId(), socialComment.getCommentId(), socialComment.getReactions(), socialComment.getReplies(), socialComment.getDescription(), socialComment.getTime()));
-                return new Response((HttpStatus.OK.getReasonPhrase()), socialCommentResponses, Constant.SUCCESS);
+                return socialCommentResponses;
             }
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Not found user or reaction");
+            throw new ResourceNotFoundException(Constant.NOT_FOUND_USER_OR_REACTION);
         } else
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.NOT_FOUND_COMMENT);
+            throw new ResourceNotFoundException(Constant.NOT_FOUND_COMMENT);
     }
+
     @Transactional
-    public Response deleteReaction(SocialCommentUpdateRequest request){
+    public List<SocialCommentResponse> deleteReaction(SocialCommentUpdateRequest request) throws ResourceNotFoundException {
         SocialComment socialComment = findById(request.getId());
         if (socialComment != null) {
-            if (request.getUserIdReaction()!=null){
+            if (request.getUserIdReaction() != null) {
                 Map<String, SocialReaction> reactions = socialComment.getReactions();
                 reactions.remove(request.getUserIdReaction());
                 socialComment.setReactions(reactions);
@@ -180,32 +177,29 @@ public class SocialCommentService {
                 List<SocialCommentResponse> socialCommentResponses = new ArrayList<>();
                 User user = userService.findAccountByID(socialComment.getUserId());
                 socialCommentResponses.add(new SocialCommentResponse(socialComment.getId(), socialComment.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialComment.getPostId(), socialComment.getCommentId(), socialComment.getReactions(), socialComment.getReplies(), socialComment.getDescription(), socialComment.getTime()));
-                return new Response((HttpStatus.OK.getReasonPhrase()), socialCommentResponses, Constant.SUCCESS);
+                return socialCommentResponses;
             }
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), "Not found user or reaction");
+            throw new ResourceNotFoundException(Constant.NOT_FOUND_USER_OR_REACTION);
         } else
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.NOT_FOUND_COMMENT);
+            throw new ResourceNotFoundException(Constant.NOT_FOUND_COMMENT);
     }
+
     @Transactional
-    public Response delete(SocialCommentDeleteRequest socialCommentDeleteRequest){
+    public void delete(SocialCommentDeleteRequest socialCommentDeleteRequest) throws ResourceNotFoundException {
         SocialComment socialComment = findById(socialCommentDeleteRequest.getId());
         if (socialComment == null) {
-            return new Response(HttpStatus.NOT_FOUND.getReasonPhrase(), new ArrayList<>(), Constant.NOT_FOUND_COMMENT);
+            throw new ResourceNotFoundException(Constant.NOT_FOUND_COMMENT);
         }
 
         boolean deleted = deleteSocialComment(socialComment.getId());
         if (!deleted) {
-            return new Response(HttpStatus.EXPECTATION_FAILED.getReasonPhrase(), new ArrayList<>(), Constant.FAILURE);
+            throw new ResourceNotFoundException(Constant.FAILURE);
         }
 
-        // Xóa bình luận khỏi bài đăng và cập nhật lại bài đăng
         if (!updateSocialPost(socialCommentDeleteRequest.getPostId(), socialComment.getId(), socialComment.getCommentId())) {
-            // Nếu không thể cập nhật bài đăng, khôi phục bình luận và trả về lỗi
             save(socialComment);
-            return new Response(HttpStatus.EXPECTATION_FAILED.getReasonPhrase(), new ArrayList<>(), Constant.FAILURE);
+            throw new ResourceNotFoundException(Constant.FAILURE);
         }
-
-        return new Response(HttpStatus.OK.getReasonPhrase(), new ArrayList<>(), Constant.SUCCESS);
     }
 
     private boolean deleteSocialComment(String commentId) {
@@ -239,32 +233,33 @@ public class SocialCommentService {
         return socialPostService.save(socialPost);
     }
 
-    public List<SocialComment> findAll(){
+    public List<SocialComment> findAll() {
         return this.socialCommentRepository.findAll();
     }
+
     public SocialComment save(SocialComment socialComment) {
         try {
             return this.socialCommentRepository.save(socialComment);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
-    public List<SocialComment> findAllById(String id){
+
+    public List<SocialComment> findAllById(String id) {
         return this.socialCommentRepository.findSocialCommentByPostId(id);
     }
 
 
-    public boolean delete(String id){
+    public boolean delete(String id) {
         try {
             this.socialCommentRepository.deleteById(id);
             return true;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
-    public SocialComment findById(String id){
+
+    public SocialComment findById(String id) {
         return this.socialCommentRepository.findSocialCommentById(new ObjectId(id));
     }
 }

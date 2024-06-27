@@ -1,14 +1,12 @@
 package com.example.momcare.controllers;
 
-import com.example.momcare.models.MenuCategory;
 import com.example.momcare.payload.response.Response;
 import com.example.momcare.service.MenuCategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import com.example.momcare.util.Constant;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 public class MenuCategoryController {
@@ -21,6 +19,6 @@ public class MenuCategoryController {
 
     @GetMapping("/menuCategory")
     public Response findAll(){
-        return service.findAllMenuCategory();
+        return new Response(HttpStatus.OK.getReasonPhrase(), service.findAllMenuCategory(), Constant.SUCCESS);
     }
 }

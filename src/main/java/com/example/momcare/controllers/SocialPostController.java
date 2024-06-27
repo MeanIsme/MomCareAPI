@@ -1,24 +1,16 @@
 package com.example.momcare.controllers;
 
-import com.example.momcare.handler.NotificationHandler;
-import com.example.momcare.models.SocialPost;
-import com.example.momcare.models.SocialReaction;
-import com.example.momcare.models.User;
 import com.example.momcare.payload.request.ShareResquest;
 import com.example.momcare.payload.request.SocialPostNewRequest;
 import com.example.momcare.payload.request.SocialPostUpdateResquest;
 import com.example.momcare.payload.response.Response;
-import com.example.momcare.payload.response.SocialPostResponse;
-import com.example.momcare.payload.response.SocialReactionResponse;
-import com.example.momcare.service.SocialCommentService;
 import com.example.momcare.service.SocialPostService;
-import com.example.momcare.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.momcare.util.Constant;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+
 
 @RestController
 @RequestMapping("/socialpost")
@@ -31,58 +23,89 @@ public class SocialPostController {
 
     @GetMapping("/getallbyuser")
     public Response getAllByUser(@RequestParam String userId) {
-        return socialPostService.getAllByUserService(userId);
+        try {
+            return new Response(HttpStatus.OK.getReasonPhrase(), socialPostService.getAllByUserService(userId), Constant.SUCCESS);
+        } catch (Exception e) {
+            return new Response(HttpStatus.EXPECTATION_FAILED.getReasonPhrase(), new ArrayList<>(), e.getMessage());
+        }
     }
     @GetMapping("/getById")
     public Response getById(@RequestParam String id) {
-        return socialPostService.getById(id);
+        return new Response(HttpStatus.OK.getReasonPhrase(), socialPostService.getById(id), Constant.SUCCESS);
     }
 
     @GetMapping("/pagebyuser")
     public Response getAllByUser(@RequestParam String userId, int time) {
-        return socialPostService.getAllByUser(userId, time);
+        return new Response(HttpStatus.OK.getReasonPhrase(), socialPostService.getAllByUser(userId, time), Constant.SUCCESS);
     }
 
     @GetMapping("/getall")
     public Response getAll() {
-        return socialPostService.getAllService();
+        return new Response(HttpStatus.OK.getReasonPhrase(), socialPostService.getAllService(), Constant.SUCCESS);
     }
 
     @GetMapping("/like")
     public Response search(@RequestParam String keyWord) {
-        return socialPostService.search(keyWord);
+        return new Response(HttpStatus.OK.getReasonPhrase(), socialPostService.getAllService(), Constant.SUCCESS);
     }
 
     @GetMapping("/page")
     public Response postPerPage(@RequestParam int time) {
-        return socialPostService.postPerPageService(time);
+        return new Response(HttpStatus.OK.getReasonPhrase(), socialPostService.postPerPageService(time), Constant.SUCCESS);
     }
     @GetMapping("/getAllReactionsByPostId")
     public Response postPerPage(@RequestParam String id) {
-        return socialPostService.postPerPage(id);
+        try {
+            return new Response(HttpStatus.OK.getReasonPhrase(), socialPostService.postPerPage(id), Constant.SUCCESS);
+        } catch (Exception e) {
+            return new Response(HttpStatus.EXPECTATION_FAILED.getReasonPhrase(), new ArrayList<>(), e.getMessage());
+        }
     }
     @PostMapping("/new")
     public Response create(@RequestBody SocialPostNewRequest request) {
-        return socialPostService.create(request);
+        try {
+            return new Response(HttpStatus.OK.getReasonPhrase(), socialPostService.create(request), Constant.SUCCESS);
+        } catch (Exception e) {
+            return new Response(HttpStatus.EXPECTATION_FAILED.getReasonPhrase(), new ArrayList<>(), e.getMessage());
+        }
     }
 
     @PutMapping("/update")
     public Response update(@RequestBody SocialPostUpdateResquest request) {
-        return socialPostService.update(request);
+        try {
+            return new Response(HttpStatus.OK.getReasonPhrase(), socialPostService.update(request), Constant.SUCCESS);
+        } catch (Exception e) {
+            return new Response(HttpStatus.EXPECTATION_FAILED.getReasonPhrase(), new ArrayList<>(), e.getMessage());
+        }
     }
 
     @PutMapping("/share")
     public Response share(@RequestBody ShareResquest request) {
-        return socialPostService.share(request);
+        try {
+            socialPostService.share(request);
+            return new Response(HttpStatus.OK.getReasonPhrase(), new ArrayList<>(), Constant.SUCCESS);
+        } catch (Exception e) {
+            return new Response(HttpStatus.EXPECTATION_FAILED.getReasonPhrase(), new ArrayList<>(), e.getMessage());
+        }
     }
 
     @PutMapping("/unshare")
     public Response unshare(@RequestBody ShareResquest request) {
-        return socialPostService.unshare(request);
+        try {
+            socialPostService.unshare(request);
+            return new Response(HttpStatus.OK.getReasonPhrase(), new ArrayList<>(), Constant.SUCCESS);
+        } catch (Exception e) {
+            return new Response(HttpStatus.EXPECTATION_FAILED.getReasonPhrase(), new ArrayList<>(), e.getMessage());
+        }
     }
 
     @DeleteMapping("/delete")
     public Response delete(@RequestParam String idPost) {
-        return socialPostService.deletePost(idPost);
+        try {
+            socialPostService.deletePost(idPost);
+            return new Response(HttpStatus.OK.getReasonPhrase(), new ArrayList<>(), Constant.SUCCESS);
+        } catch (Exception e) {
+            return new Response(HttpStatus.EXPECTATION_FAILED.getReasonPhrase(), new ArrayList<>(), e.getMessage());
+        }
     }
 }

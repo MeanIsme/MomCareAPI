@@ -39,6 +39,7 @@ public class Constant {
     public static final String OLD_PASSWORD_NOT_MATCH = "Old password not match";
     public static final String OPT_NOT_MATCH = "OPT not match";
     public static final String NOT_FOUND = "Not found";
+    public static final String NOT_FOUND_USER_OR_REACTION = "Not found user or reaction";
 
 
 }

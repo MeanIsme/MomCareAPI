@@ -1,14 +1,13 @@
 package com.example.momcare.service;
 
+import com.example.momcare.exception.ResourceNotFoundException;
 import com.example.momcare.models.BabyHealthIndex;
 import com.example.momcare.models.User;
 import com.example.momcare.models.WarningHealth;
 import com.example.momcare.models.StandardsIndex;
 import com.example.momcare.payload.request.BabyHealthIndexRequest;
-import com.example.momcare.payload.response.Response;
 import com.example.momcare.payload.response.StandardsBabyIndexResponse;
 import com.example.momcare.util.Constant;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,10 +24,10 @@ public class BabyHealthIndexService{
         this.userService = userService;
     }
     @Transactional
-    public Response createBabyHealthIndex(BabyHealthIndexRequest babyIndex) {
+    public List<BabyHealthIndex> createBabyHealthIndex(BabyHealthIndexRequest babyIndex) throws ResourceNotFoundException {
         User user = userService.findAccountByID(babyIndex.getUserID());
         if (user == null)
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.USER_NOT_FOUND);
+            throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
 
         BabyHealthIndex babyHealthIndex = createBabyHealthIndexFromRequest(babyIndex);
         babyHealthIndex.setWarningHealths(generateWarningHealths(user, babyHealthIndex));
@@ -40,8 +39,7 @@ public class BabyHealthIndexService{
         babyHealthIndices.add(babyHealthIndex);
         user.setBabyIndex(babyHealthIndices);
         userService.update(user);
-
-        return new Response(HttpStatus.OK.getReasonPhrase(), List.of(babyHealthIndex), Constant.SUCCESS);
+        return List.of(babyHealthIndex);
     }
 
     private BabyHealthIndex createBabyHealthIndexFromRequest(BabyHealthIndexRequest babyIndex) {
@@ -55,10 +53,10 @@ public class BabyHealthIndexService{
                 LocalDateTime.now().toString());
     }
     @Transactional
-    public Response updateBabyHealthIndex(BabyHealthIndexRequest babyIndex) {
+    public List<BabyHealthIndex> updateBabyHealthIndex(BabyHealthIndexRequest babyIndex) throws ResourceNotFoundException {
         User user = userService.findAccountByID(babyIndex.getUserID());
         if (user == null)
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.USER_NOT_FOUND);
+            throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
         List<BabyHealthIndex> babyHealthResponse = new ArrayList<>();
         if (user.getBabyIndex() != null) {
             List<BabyHealthIndex> babyHealthIndices = new ArrayList<>(user.getBabyIndex());
@@ -81,42 +79,48 @@ public class BabyHealthIndexService{
             if (babyHealthIndices.get(babyIndex.getIndex()).getFemur() != null)
                 warningHealths.add(checkFemur(ga, babyHealthIndices.get(babyIndex.getIndex()).getFemur()));
             babyHealthIndices.get(babyIndex.getIndex()).setWarningHealths(warningHealths);
-            userService.update(user);
             babyHealthResponse.add(babyHealthIndices.get(babyIndex.getIndex()));
-            return new Response(HttpStatus.OK.getReasonPhrase(), babyHealthResponse, Constant.SUCCESS);
+            userService.update(user);
+            return babyHealthResponse;
         }
-        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.INDEX_NOT_FOUND);
+        else {
+            throw new ResourceNotFoundException(Constant.INDEX_NOT_FOUND);
+        }
     }
     @Transactional
-    public Response deleteBabyHealthIndex(BabyHealthIndexRequest babyIndex) {
+    public List<BabyHealthIndex> deleteBabyHealthIndex(BabyHealthIndexRequest babyIndex) throws ResourceNotFoundException {
         User user = userService.findAccountByID(babyIndex.getUserID());
         if (user == null)
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.USER_NOT_FOUND);
+            throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
         if (user.getBabyIndex() != null) {
             List<BabyHealthIndex> babyHealthIndices = new ArrayList<>(user.getBabyIndex());
             int index = babyIndex.getIndex();
             babyHealthIndices.remove(index);
             user.setBabyIndex(babyHealthIndices);
             userService.update(user);
-            return new Response(HttpStatus.OK.getReasonPhrase(), babyHealthIndices, Constant.SUCCESS);
+            return babyHealthIndices;
         }
-        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.INDEX_NOT_FOUND);
+        else {
+            throw new ResourceNotFoundException(Constant.INDEX_NOT_FOUND);
+        }
+
     }
 
-    public Response getAllBabyHealthIndices(String userID) {
+    public List<BabyHealthIndex> getAllBabyHealthIndices(String userID) throws ResourceNotFoundException {
         User user = userService.findAccountByID(userID);
         if (user == null)
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.USER_NOT_FOUND);
+            throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
         if (user.getBabyIndex() != null) {
-            List<BabyHealthIndex> babyHealthIndices = new ArrayList<>(user.getBabyIndex());
-            return new Response(HttpStatus.OK.getReasonPhrase(), babyHealthIndices, Constant.SUCCESS);
+            return user.getBabyIndex();
         }
-        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.INDEX_NOT_FOUND);
+        else {
+            throw new ResourceNotFoundException(Constant.INDEX_NOT_FOUND);
+        }
     }
 
-    public Response getStandardBabyIndex(String datePregnant, String dateEnd) {
+    public List<StandardsBabyIndexResponse> getStandardBabyIndex(String datePregnant, String dateEnd) {
         int ga = userService.gestationalAge(datePregnant, dateEnd);
-        return new Response(HttpStatus.OK.getReasonPhrase(), List.of(getStandardBabyIndex(ga)), Constant.SUCCESS);
+        return List.of(getStandardBabyIndex(ga));
     }
 
     private List<WarningHealth> generateWarningHealths(User user, BabyHealthIndex babyHealthIndex) {

@@ -1,21 +1,14 @@
 package com.example.momcare.controllers;
 
-import com.example.momcare.models.SocialStory;
-import com.example.momcare.models.User;
-import com.example.momcare.models.UserStory;
 import com.example.momcare.payload.request.UserStoryDeleteRequest;
 import com.example.momcare.payload.request.UserStoryNewRequest;
 import com.example.momcare.payload.response.Response;
-import com.example.momcare.payload.response.UserStoryResponse;
-import com.example.momcare.service.UserService;
 import com.example.momcare.service.UserStoryService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.momcare.util.Constant;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/userStory")
@@ -29,21 +22,37 @@ public class UserStoryController {
 
     @PostMapping("/newOrAddStory")
     public Response newUserStory(@RequestBody UserStoryNewRequest request) {
-        return userStoryService.newUserStory(request);
+        try {
+            return new Response(HttpStatus.OK.getReasonPhrase(), userStoryService.newUserStory(request), Constant.SUCCESS);
+        } catch (Exception e) {
+            return new Response(HttpStatus.EXPECTATION_FAILED.getReasonPhrase(), new ArrayList<>(), e.getMessage());
+        }
     }
 
     @PutMapping("/deleteStory")
     public Response deleteStory(@RequestBody UserStoryDeleteRequest request) {
-        return userStoryService.deleteStory(request);
+        try {
+            return new Response(HttpStatus.OK.getReasonPhrase(), userStoryService.deleteStory(request), Constant.SUCCESS);
+        } catch (Exception e) {
+            return new Response(HttpStatus.EXPECTATION_FAILED.getReasonPhrase(), new ArrayList<>(), e.getMessage());
+        }
     }
 
     @GetMapping("/getAllById")
     public Response getAllById(@RequestParam String userId) {
-        return userStoryService.getAllById(userId);
+        try {
+            return new Response(HttpStatus.OK.getReasonPhrase(), userStoryService.getAllById(userId), Constant.SUCCESS);
+        } catch (Exception e) {
+            return new Response(HttpStatus.EXPECTATION_FAILED.getReasonPhrase(), new ArrayList<>(), e.getMessage());
+        }
     }
 
     @GetMapping("/getAll")
     public Response getAll() {
-        return userStoryService.getAll();
+        try {
+            return new Response(HttpStatus.OK.getReasonPhrase(), userStoryService.getAll(), Constant.SUCCESS);
+        } catch (Exception e) {
+            return new Response(HttpStatus.EXPECTATION_FAILED.getReasonPhrase(), new ArrayList<>(), e.getMessage());
+        }
     }
 }

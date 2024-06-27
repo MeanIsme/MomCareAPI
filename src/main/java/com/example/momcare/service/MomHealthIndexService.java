@@ -1,14 +1,13 @@
 package com.example.momcare.service;
 
+import com.example.momcare.exception.ResourceNotFoundException;
 import com.example.momcare.models.MomHealthIndex;
 import com.example.momcare.models.StandardsIndex;
 import com.example.momcare.models.User;
 import com.example.momcare.models.WarningHealth;
 import com.example.momcare.payload.request.MomHealthIndexRequest;
-import com.example.momcare.payload.response.Response;
 import com.example.momcare.payload.response.StandardsMomIndexResponse;
 import com.example.momcare.util.Constant;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,10 +24,10 @@ public class MomHealthIndexService {
     }
 
     @Transactional
-    public Response createMomHealthIndex(MomHealthIndexRequest momIndex) {
+    public List<MomHealthIndex> createMomHealthIndex(MomHealthIndexRequest momIndex) throws ResourceNotFoundException {
         User user = userService.findAccountByID(momIndex.getUserID());
         if (user == null)
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.USER_NOT_FOUND);
+            throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
         List<MomHealthIndex> momHealthIndices = new ArrayList<>();
         List<MomHealthIndex> momHealthResponse = new ArrayList<>();
         MomHealthIndex momHealthIndex = new MomHealthIndex(
@@ -58,13 +57,15 @@ public class MomHealthIndexService {
         user.setMomIndex(momHealthIndices);
         userService.update(user);
         momHealthResponse.add(momHealthIndex);
-        return new Response(HttpStatus.OK.getReasonPhrase(), momHealthResponse, Constant.SUCCESS);
+        return momHealthResponse;
+
     }
 
-    public Response updateMomHealthIndex(MomHealthIndexRequest momIndex) {
+    @Transactional
+    public List<MomHealthIndex> updateMomHealthIndex(MomHealthIndexRequest momIndex) throws ResourceNotFoundException {
         User user = userService.findAccountByID(momIndex.getUserID());
         if (user == null)
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.USER_NOT_FOUND);
+            throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
         List<MomHealthIndex> momHealthResponse = new ArrayList<>();
         if (user.getMomIndex() != null) {
             List<MomHealthIndex> momHealthIndices = new ArrayList<>(user.getMomIndex());
@@ -88,17 +89,17 @@ public class MomHealthIndexService {
             user.setMomIndex(momHealthIndices);
             userService.update(user);
             momHealthResponse.add(momHealthIndices.get(momIndex.getIndex()));
-            return new Response(HttpStatus.OK.getReasonPhrase(), momHealthResponse, Constant.SUCCESS);
+            return momHealthResponse;
+        } else {
+            throw new ResourceNotFoundException(Constant.INDEX_NOT_FOUND);
         }
-
-
-        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.INDEX_NOT_FOUND);
     }
 
-    public Response deleteMomHealthIndex(MomHealthIndexRequest momIndex) {
+    @Transactional
+    public List<MomHealthIndex> deleteMomHealthIndex(MomHealthIndexRequest momIndex) throws ResourceNotFoundException {
         User user = userService.findAccountByID(momIndex.getUserID());
         if (user == null)
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.USER_NOT_FOUND);
+            throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
         List<MomHealthIndex> momHealthResponse = new ArrayList<>();
         if (user.getMomIndex() != null) {
             List<MomHealthIndex> momHealthIndices = new ArrayList<>(user.getMomIndex());
@@ -106,20 +107,23 @@ public class MomHealthIndexService {
             user.setMomIndex(momHealthIndices);
             userService.update(user);
             momHealthResponse.addAll(momHealthIndices);
-            return new Response(HttpStatus.OK.getReasonPhrase(), momHealthResponse, Constant.SUCCESS);
+            return momHealthResponse;
+
+        }else {
+            throw new ResourceNotFoundException(Constant.INDEX_NOT_FOUND);
         }
-        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.INDEX_NOT_FOUND);
     }
 
-    public Response getMomHealthIndex(String userID) {
+    public List<MomHealthIndex> getMomHealthIndex(String userID) throws ResourceNotFoundException {
         User user = userService.findAccountByID(userID);
         if (user == null)
-            return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.USER_NOT_FOUND);
+            throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
         if (user.getMomIndex() != null) {
-            List<MomHealthIndex> momHealthIndices = new ArrayList<>(user.getMomIndex());
-            return new Response(HttpStatus.OK.getReasonPhrase(), momHealthIndices, Constant.SUCCESS);
+            return new ArrayList<>(user.getMomIndex());
+
+        }else {
+            throw new ResourceNotFoundException(Constant.INDEX_NOT_FOUND);
         }
-        return new Response((HttpStatus.EXPECTATION_FAILED.getReasonPhrase()), new ArrayList<>(), Constant.INDEX_NOT_FOUND);
     }
 
 
@@ -195,10 +199,8 @@ public class MomHealthIndexService {
         return warningHealth;
     }
 
-    public Response getIndexStandard() {
-        List<StandardsMomIndexResponse> list = new ArrayList<>();
-        list.add(getStandardMomIndex());
-        return new Response((HttpStatus.OK.getReasonPhrase()), list, Constant.SUCCESS);
+    public List<StandardsMomIndexResponse> getIndexStandard() {
+        return List.of(getStandardMomIndex());
     }
 
     public StandardsMomIndexResponse getStandardMomIndex() {
