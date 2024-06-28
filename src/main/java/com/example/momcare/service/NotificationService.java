@@ -1,9 +1,12 @@
 package com.example.momcare.service;
 
+import com.example.momcare.exception.ResourceNotFoundException;
 import com.example.momcare.models.Notification;
+import com.example.momcare.models.User;
 import com.example.momcare.payload.request.NotificationRequest;
-import com.example.momcare.payload.response.Response;
+import com.example.momcare.payload.response.NotificationResponse;
 import com.example.momcare.repository.NotificationRepository;
+import com.example.momcare.repository.UserRepository;
 import com.example.momcare.util.Constant;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,10 +20,13 @@ import java.util.List;
 @Service
 public class NotificationService {
     NotificationRepository notificationRepository;
+    UserRepository userRepository;
 
-    public NotificationService(NotificationRepository notificationRepository) {
+    public NotificationService(NotificationRepository notificationRepository, UserRepository userRepository) {
         this.notificationRepository = notificationRepository;
+        this.userRepository = userRepository;
     }
+
     @Transactional
     public List<Notification> save(NotificationRequest notificationRequest) {
         Notification notification = map(notificationRequest);
@@ -36,36 +42,60 @@ public class NotificationService {
         notification.setTimestamp(notificationRequest.getTimestamp());
         notification.setRead(false);
         notification.setNotificationType(notificationRequest.getNotificationType());
+        notification.setTargetId(notificationRequest.getTargetId());
         return notification;
     }
+    private NotificationResponse map(Notification notification) throws ResourceNotFoundException {
+        User user = this.userRepository.findById(notification.getSenderId()).orElseThrow(() -> new ResourceNotFoundException(Constant.USER_NOT_FOUND));
+        NotificationResponse notificationResponse = new NotificationResponse();
+        notificationResponse.setId(notification.getId());
+        notificationResponse.setReceiverId(notification.getReceiverId());
+        notificationResponse.setSenderId(notification.getSenderId());
+        notificationResponse.setTimestamp(notification.getTimestamp());
+        notificationResponse.setRead(notification.isRead());
+        notificationResponse.setNotificationType(notification.getNotificationType());
+        notificationResponse.setTargetId(notification.getTargetId());
+        notificationResponse.setSenderAvt(user.getAvtUrl());
+        notificationResponse.setSenderName(user.getNameDisplay());
+        return notificationResponse;
+    }
+
 
     @Transactional
-    public Response markAsRead(String id) {
-        Notification notification = this.notificationRepository.findById(id).orElseThrow(() -> new RuntimeException("Notification not found"));
+    public List<NotificationResponse> markAsRead(String id) throws ResourceNotFoundException {
+        Notification notification = this.notificationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Constant.NOT_FOUND));
         notification.markAsRead();
         this.notificationRepository.save(notification);
-        List<Notification> notifications = new ArrayList<>();
-        notifications.add(notification);
-        return new Response( Constant.SUCCESS, notifications, "Notification marked as read");
+        return List.of(this.map(notification));
     }
 
-    public Response getAllByReceiverId(String receiverId, int page, int size) {
+    public List<NotificationResponse> getAllByReceiverId(String receiverId, int page, int size) throws ResourceNotFoundException {
         Pageable pageable = PageRequest.of(page, size);
         Page<Notification> notificationsPage = notificationRepository.findByReceiverId(receiverId, pageable);
-        List<Notification> notifications = notificationsPage.getContent();
-        return new Response( Constant.SUCCESS, notifications, "Get all notifications by receiverId");
+        List <Notification> notifications = notificationsPage.getContent();
+        List<NotificationResponse> notificationResponses = new ArrayList<>();
+        for (Notification notification : notifications) {
+            notificationResponses.add(this.map(notification));
+        }
+        return notificationResponses;
+
     }
-    public Response getUnreadNotifications(String receiverId, int page, int size) {
+
+    public List<NotificationResponse> getUnreadNotifications(String receiverId, int page, int size) throws ResourceNotFoundException {
         Pageable pageable = PageRequest.of(page, size);
         Page<Notification> notificationsPage = notificationRepository.findByReceiverIdAndIsRead(receiverId, false, pageable);
-        List<Notification> notifications = notificationsPage.getContent();
-        return new Response( Constant.SUCCESS, notifications, "Get all unread notifications by receiverId");
+        List <Notification> notifications = notificationsPage.getContent();
+        List<NotificationResponse> notificationResponses = new ArrayList<>();
+        for (Notification notification : notifications) {
+            notificationResponses.add(this.map(notification));
+        }
+        return notificationResponses;
     }
+
     @Transactional
-    public Response deleteNotification(String id) {
-        Notification notification = this.notificationRepository.findById(id).orElseThrow(() -> new RuntimeException("Notification not found"));
+    public void deleteNotification(String id) throws ResourceNotFoundException {
+        Notification notification = this.notificationRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Notification not found"));
         this.notificationRepository.delete(notification);
-        return new Response( Constant.SUCCESS, null, "Notification deleted");
     }
 
 

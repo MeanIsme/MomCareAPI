@@ -11,6 +11,7 @@ public class Notification {
     private String id;
     private String senderId;
     private String receiverId;
+    private String targetId;
     private String timestamp;
     private boolean isRead;
     private NotificationType notificationType;
