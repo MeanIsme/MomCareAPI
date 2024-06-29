@@ -1,5 +1,6 @@
 package com.example.momcare.models;
 
+import com.example.momcare.payload.response.NotificationResponse;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -44,5 +45,5 @@ public class User   {
     private String otp;
     private String passwordToken;
     private String sessionId;
-    private List<Notification> notificationsMissed;
+    private List<NotificationResponse> notificationsMissed;
 }

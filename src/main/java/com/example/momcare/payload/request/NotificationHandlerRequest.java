@@ -7,9 +7,9 @@ import lombok.Setter;
 @Setter
 @Getter
 public class NotificationHandlerRequest {
-    private String id;
     private String senderId;
     private String receiverId;
     private String timestamp;
+    private String targetId;
     private NotificationType notificationType;
 }

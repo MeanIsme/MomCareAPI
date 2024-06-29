@@ -45,7 +45,8 @@ public class NotificationService {
         notification.setTargetId(notificationRequest.getTargetId());
         return notification;
     }
-    private NotificationResponse map(Notification notification) throws ResourceNotFoundException {
+
+    public NotificationResponse map(Notification notification) throws ResourceNotFoundException {
         User user = this.userRepository.findById(notification.getSenderId()).orElseThrow(() -> new ResourceNotFoundException(Constant.USER_NOT_FOUND));
         NotificationResponse notificationResponse = new NotificationResponse();
         notificationResponse.setId(notification.getId());
