@@ -41,7 +41,7 @@ public class SocialCommentService {
         for (SocialComment socialComment : socialComments) {
             User user = userService.findAccountByID(socialComment.getUserId());
             if (user != null) {
-                socialCommentResponses.add(new SocialCommentResponse(socialComment.getId(), socialComment.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialComment.getPostId(), socialComment.getCommentId(), socialComment.getReactions(), socialComment.getReplies(), socialComment.getDescription(), socialComment.getTime()));
+                socialCommentResponses.add(new SocialCommentResponse(socialComment.getId(), socialComment.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialComment.getPostId(), socialComment.getCommentId(), socialComment.getImageUrl(), socialComment.getReactions(), socialComment.getReplies(), socialComment.getDescription(), socialComment.getTime()));
             }
         }
         return socialCommentResponses;
@@ -87,12 +87,12 @@ public class SocialCommentService {
             throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
         }
         List<SocialCommentResponse> socialCommentResponses = new ArrayList<>();
-        socialCommentResponses.add(new SocialCommentResponse(socialComment.getId(), socialComment.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialComment.getPostId(), socialComment.getCommentId(), socialComment.getReactions(), socialComment.getReplies(), socialComment.getDescription(), socialComment.getTime()));
+        socialCommentResponses.add(new SocialCommentResponse(socialComment.getId(), socialComment.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialComment.getPostId(), socialComment.getCommentId(), socialComment.getImageUrl(), socialComment.getReactions(), socialComment.getReplies(), socialComment.getDescription(), socialComment.getTime()));
         return socialCommentResponses;
     }
 
     private SocialComment createSocialComment(SocialCommentNewRequest request) {
-        SocialComment socialComment = new SocialComment(request.getUserId(), request.getPostId(), request.getCommentId(),
+        SocialComment socialComment = new SocialComment(request.getUserId(), request.getPostId(), request.getCommentId(), request.getImageUrl(),
                 request.getDescription(), LocalDateTime.now().toString());
         SocialComment savedComment = save(socialComment);
 
@@ -133,10 +133,12 @@ public class SocialCommentService {
         if (socialComment != null) {
             if (request.getDescription() != null)
                 socialComment.setDescription(request.getDescription());
+            if (request.getImageUrl() != null)
+                socialComment.setImageUrl(request.getImageUrl());
             if (save(socialComment) != null) {
                 List<SocialCommentResponse> socialCommentResponses = new ArrayList<>();
                 User user = userService.findAccountByID(socialComment.getUserId());
-                socialCommentResponses.add(new SocialCommentResponse(socialComment.getId(), socialComment.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialComment.getPostId(), socialComment.getCommentId(), socialComment.getReactions(), socialComment.getReplies(), socialComment.getDescription(), socialComment.getTime()));
+                socialCommentResponses.add(new SocialCommentResponse(socialComment.getId(), socialComment.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialComment.getPostId(), socialComment.getCommentId(), socialComment.getImageUrl(), socialComment.getReactions(), socialComment.getReplies(), socialComment.getDescription(), socialComment.getTime()));
                 return socialCommentResponses;
             } else
                 throw new ResourceNotFoundException(Constant.FAILURE);
@@ -157,7 +159,7 @@ public class SocialCommentService {
                 save(socialComment);
                 List<SocialCommentResponse> socialCommentResponses = new ArrayList<>();
                 User user = userService.findAccountByID(socialComment.getUserId());
-                socialCommentResponses.add(new SocialCommentResponse(socialComment.getId(), socialComment.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialComment.getPostId(), socialComment.getCommentId(), socialComment.getReactions(), socialComment.getReplies(), socialComment.getDescription(), socialComment.getTime()));
+                socialCommentResponses.add(new SocialCommentResponse(socialComment.getId(), socialComment.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialComment.getPostId(), socialComment.getCommentId(), socialComment.getImageUrl(), socialComment.getReactions(), socialComment.getReplies(), socialComment.getDescription(), socialComment.getTime()));
                 return socialCommentResponses;
             }
             throw new ResourceNotFoundException(Constant.NOT_FOUND_USER_OR_REACTION);
@@ -176,7 +178,7 @@ public class SocialCommentService {
                 save(socialComment);
                 List<SocialCommentResponse> socialCommentResponses = new ArrayList<>();
                 User user = userService.findAccountByID(socialComment.getUserId());
-                socialCommentResponses.add(new SocialCommentResponse(socialComment.getId(), socialComment.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialComment.getPostId(), socialComment.getCommentId(), socialComment.getReactions(), socialComment.getReplies(), socialComment.getDescription(), socialComment.getTime()));
+                socialCommentResponses.add(new SocialCommentResponse(socialComment.getId(), socialComment.getUserId(), user.getUserName(), user.getNameDisplay(), user.getAvtUrl(), socialComment.getPostId(), socialComment.getCommentId(), socialComment.getImageUrl(), socialComment.getReactions(), socialComment.getReplies(), socialComment.getDescription(), socialComment.getTime()));
                 return socialCommentResponses;
             }
             throw new ResourceNotFoundException(Constant.NOT_FOUND_USER_OR_REACTION);

@@ -21,6 +21,7 @@ public class SocialCommentResponse {
     private String avtUrl;
     private String postId;
     private String commentId;
+    private String imageUrl;
     private Map<String, SocialReaction> reactions;
     private List<String> replies;
     private String description;

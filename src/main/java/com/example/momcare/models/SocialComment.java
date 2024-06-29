@@ -14,6 +14,7 @@ public class SocialComment {
     private String userId;
     private String postId;
     private String commentId;
+    private String imageUrl;
     private Map<String, SocialReaction> reactions;
     private List<String> replies;
     private String description;
@@ -27,12 +28,13 @@ public class SocialComment {
 
 
 
-    public SocialComment(String userId, String postId, String commentId, String description, String time) {
+    public SocialComment(String userId, String postId, String commentId,String imageUrl, String description, String time) {
         this.userId = userId;
         this.postId = postId;
         this.commentId = commentId;
         this.reactions = new HashMap<>();
         this.replies = new ArrayList<>();
+        this.imageUrl = imageUrl;
         this.description = description;
         this.time = time;
     }
