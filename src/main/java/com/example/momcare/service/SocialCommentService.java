@@ -189,15 +189,24 @@ public class SocialCommentService {
     @Transactional
     public void delete(SocialCommentDeleteRequest socialCommentDeleteRequest) throws ResourceNotFoundException {
         SocialComment socialComment = findById(socialCommentDeleteRequest.getId());
+        SocialPost socialPost = socialPostService.findById(socialCommentDeleteRequest.getPostId());
+        if (socialPost == null) {
+            throw new ResourceNotFoundException(Constant.NOT_FOUND_POST);
+        }
         if (socialComment == null) {
             throw new ResourceNotFoundException(Constant.NOT_FOUND_COMMENT);
         }
+        Set<String> ids = socialPost.getComments();
         for (String replyId : socialComment.getReplies()) {
             SocialComment reply = findById(replyId);
             deleteSocialComment(reply.getId());
+            ids.remove(reply.getId());
+            delete(reply.getId());
         }
         boolean deleted = deleteSocialComment(socialComment.getId());
-
+        ids.remove(socialComment.getId());
+        socialPost.setComments(ids);
+        socialPostService.save(socialPost);
         if (!deleted) {
             throw new ResourceNotFoundException(Constant.FAILURE);
         }
@@ -218,12 +227,10 @@ public class SocialCommentService {
             return false;
         }
 
-        // Xóa bình luận khỏi tập hợp bình luận của bài đăng
         Set<String> commentSet = socialPost.getComments();
         commentSet.remove(commentId);
         socialPost.setComments(commentSet);
 
-        // Nếu bình luận được trả lời, xóa id bình luận khỏi danh sách phản hồi của bình luận được trả lời
         if (repliedCommentId != null && !repliedCommentId.isEmpty()) {
             SocialComment repliedComment = findById(repliedCommentId);
             if (repliedComment != null) {
