@@ -192,8 +192,12 @@ public class SocialCommentService {
         if (socialComment == null) {
             throw new ResourceNotFoundException(Constant.NOT_FOUND_COMMENT);
         }
-
+        for (String replyId : socialComment.getReplies()) {
+            SocialComment reply = findById(replyId);
+            deleteSocialComment(reply.getId());
+        }
         boolean deleted = deleteSocialComment(socialComment.getId());
+
         if (!deleted) {
             throw new ResourceNotFoundException(Constant.FAILURE);
         }
