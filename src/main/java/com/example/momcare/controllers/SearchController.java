@@ -43,7 +43,7 @@ public class SearchController {
     }
     @GetMapping("/user")
     public Response searchUser (@RequestParam String keyWord){
-        List<UserResponse> userResponses = new ArrayList<>(userService.searchUserByUserName(keyWord));
+        List<UserResponse> userResponses = new ArrayList<>(userService.searchUserByUserNameDisplayName(keyWord));
         return new Response(HttpStatus.OK.getReasonPhrase(), userResponses , Constant.SUCCESS);
     }
 }

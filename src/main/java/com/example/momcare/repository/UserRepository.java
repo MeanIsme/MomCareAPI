@@ -21,5 +21,7 @@ public interface UserRepository extends MongoRepository<User,String> {
     @Query("{'userName': {$regex : ?0, $options: 'i'}}")
     List<User> findByUserNameLike(String keyWord);
 
+    @Query("{$or: [{'userName': {$regex : ?0, $options: 'i'}}, {'nameDisplay': {$regex : ?0, $options: 'i'}}]}")
+    List<User> findByUserNameOrNameDisplayLike(String keyWord);
     boolean existsByUserName(String userName);
 }

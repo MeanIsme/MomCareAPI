@@ -229,9 +229,9 @@ public class UserService{
         this.userRepository.save(user);
     }
 
-    public List<UserResponse> searchUserByUserName(String keyWord){
+    public List<UserResponse> searchUserByUserNameDisplayName(String keyWord){
         List<UserResponse> userResponses = new ArrayList<>();
-        List<User> users = userRepository.findByUserNameLike(keyWord);
+        List<User> users = userRepository.findByUserNameOrNameDisplayLike(keyWord);
         for (User user : users)
             userResponses.add(new UserResponse(user.getId(), user.getUserName(), user.getEmail(), user.getDatePregnant(), user.getPremium(), user.getAvtUrl(), user.getFollower(), user.getFollowing(), user.getNameDisplay()));
         return userResponses;
