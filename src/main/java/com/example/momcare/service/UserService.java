@@ -198,7 +198,8 @@ public class UserService {
                 update(userFollowing);
             }
         }
-        throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
+        else {
+        throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);}
     }
 
     @Transactional
