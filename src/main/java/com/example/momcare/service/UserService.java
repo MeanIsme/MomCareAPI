@@ -24,7 +24,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
-public class UserService{
+public class UserService {
 
     private final UserRepository userRepository;
     private final EmailService emailService;
@@ -37,7 +37,6 @@ public class UserService{
         this.passwordEncoder = passwordEncoder;
         this.checkAccount = new CheckAccount();
     }
-
 
 
     @Transactional
@@ -79,6 +78,7 @@ public class UserService{
 
         throw new ResourceNotFoundException(Constant.FAILURE);
     }
+
     public List<UserResponse> findById(String id) throws ResourceNotFoundException {
         User user = findAccountByID(id);
         if (user != null) {
@@ -89,6 +89,7 @@ public class UserService{
         }
         throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
     }
+
     @Transactional
     public void changePassword(ChangePasswordRequest changePasswordRequest) throws ResourceNotFoundException {
         User user = findAccountByID(changePasswordRequest.getId());
@@ -174,8 +175,9 @@ public class UserService{
             idsing.add(userFollower.getIdFollowingUser());
             userFollowing.setFollowing(idsing);
             update(userFollowing);
+        } else {
+            throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
         }
-        throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
     }
 
     @Transactional
@@ -198,6 +200,7 @@ public class UserService{
         }
         throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
     }
+
     @Transactional
     public String verifyEmail(String token) {
         User user = findAccountByToken(token);
@@ -220,16 +223,17 @@ public class UserService{
         throw new ResourceNotFoundException(Constant.USER_NOT_FOUND);
     }
 
-    public void save (User user){
+    public void save(User user) {
         String encoderPassword = passwordEncoder.encode(user.getPassWord());
         user.setPassWord(encoderPassword);
         this.userRepository.save(user);
     }
-    public void update (User user){
+
+    public void update(User user) {
         this.userRepository.save(user);
     }
 
-    public List<UserResponse> searchUserByUserNameDisplayName(String keyWord){
+    public List<UserResponse> searchUserByUserNameDisplayName(String keyWord) {
         List<UserResponse> userResponses = new ArrayList<>();
         List<User> users = userRepository.findByUserNameOrNameDisplayLike(keyWord);
         for (User user : users)
@@ -238,28 +242,32 @@ public class UserService{
     }
 
 
-    public User findAccountByUserName(String user){
+    public User findAccountByUserName(String user) {
         return this.userRepository.findUserByUserName(user);
     }
 
-    public User findAccountByEmail(String email){ return this.userRepository.findUserByEmail(email);}
+    public User findAccountByEmail(String email) {
+        return this.userRepository.findUserByEmail(email);
+    }
 
-    public User findAccountByID(String id){
+    public User findAccountByID(String id) {
         ObjectId objectId = new ObjectId(id);
         return this.userRepository.findUserById(objectId);
     }
-    public User findAccountByToken(String token){
+
+    public User findAccountByToken(String token) {
         return this.userRepository.findUserByToken(token);
     }
-    public int gestationalAge(String datePregnant, String dateEnd){
-        if(datePregnant.isEmpty())
+
+    public int gestationalAge(String datePregnant, String dateEnd) {
+        if (datePregnant.isEmpty())
             return 0;
         LocalDateTime dateStart = LocalDateTime.parse(datePregnant);
         LocalDateTime dateEndTime = LocalDateTime.parse(dateEnd);
-        return (int) ChronoUnit.WEEKS.between(dateStart,dateEndTime);
+        return (int) ChronoUnit.WEEKS.between(dateStart, dateEndTime);
     }
 
-    public String otp(){
+    public String otp() {
         // Using numeric values
         Random rnd = new Random();
         int number = rnd.nextInt(999999);
@@ -268,7 +276,8 @@ public class UserService{
         return String.format("%06d", number);
 
     }
-    public User convertUserRequestToUser(UserRequest user){
+
+    public User convertUserRequestToUser(UserRequest user) {
         User user1 = new User();
         user1.setId(user.getId());
         user1.setUserName(user.getUserName());
@@ -285,7 +294,7 @@ public class UserService{
         return user1;
     }
 
-    public List<UserResponse> getAllFollower(String id){
+    public List<UserResponse> getAllFollower(String id) {
         User user = findAccountByID(id);
         List<UserResponse> userResponses = new ArrayList<>();
         if (user != null) {
@@ -299,6 +308,7 @@ public class UserService{
         }
         return userResponses;
     }
+
     public List<UserResponse> getAllFollowing(String id) {
         User user = findAccountByID(id);
         List<UserResponse> userResponses = new ArrayList<>();
