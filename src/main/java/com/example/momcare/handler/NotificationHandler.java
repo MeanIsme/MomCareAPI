@@ -20,6 +20,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -192,7 +193,7 @@ public class NotificationHandler extends TextWebSocketHandler {
         Notification notification = new Notification();
         notification.setReceiverId(notificationRequest.getReceiverId());
         notification.setSenderId(notificationRequest.getSenderId());
-        notification.setTimestamp(notificationRequest.getTimestamp());
+        notification.setTimestamp(LocalDate.now().toString());
         notification.setRead(false);
         notification.setNotificationType(notificationRequest.getNotificationType());
         notification.setTargetId(notificationRequest.getTargetId());

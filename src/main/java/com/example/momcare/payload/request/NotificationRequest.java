@@ -14,6 +14,5 @@ public class NotificationRequest {
     private String senderId;
     private String receiverId;
     private String targetId;
-    private String timestamp;
     private NotificationType notificationType;
 }

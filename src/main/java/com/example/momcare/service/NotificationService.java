@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class NotificationService {
         Notification notification = new Notification();
         notification.setReceiverId(notificationRequest.getReceiverId());
         notification.setSenderId(notificationRequest.getSenderId());
-        notification.setTimestamp(notificationRequest.getTimestamp());
+        notification.setTimestamp(LocalDate.now().toString());
         notification.setRead(false);
         notification.setNotificationType(notificationRequest.getNotificationType());
         notification.setTargetId(notificationRequest.getTargetId());

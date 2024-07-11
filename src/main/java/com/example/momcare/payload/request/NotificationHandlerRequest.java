@@ -9,7 +9,6 @@ import lombok.Setter;
 public class NotificationHandlerRequest {
     private String senderId;
     private String receiverId;
-    private String timestamp;
     private String targetId;
     private NotificationType notificationType;
 }
