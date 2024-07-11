@@ -26,7 +26,7 @@ public class AppConfig {
 
     @Value("${backend.jwt.base64-secret}")
     private String jwtKey;
-
+    
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

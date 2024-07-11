@@ -32,6 +32,7 @@ public class NotificationHandler extends TextWebSocketHandler {
     private final UserService userService;
     private final NotificationRepository notificationRepository;
     private final NotificationService notificationService;
+    private static final long HEARTBEAT_INTERVAL = 30L * 1000;
 
     public NotificationHandler(UserService userService, NotificationRepository notificationRepository, NotificationService notificationService) {
         this.userService = userService;
@@ -43,6 +44,23 @@ public class NotificationHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         // Store the session
         sessions.put(session.getId(), session);
+        startHeartbeat(session);
+    }
+    private void startHeartbeat(WebSocketSession session) {
+        Runnable heartbeatTask = () -> {
+            while (session.isOpen()) {
+                try {
+                    session.sendMessage(new TextMessage("{\"type\":\"heartbeat\"}"));
+                    Thread.sleep(HEARTBEAT_INTERVAL);
+                } catch (InterruptedException | IOException e) {
+                    // Handle exception
+                    break;
+                }
+            }
+        };
+        Thread heartbeatThread = new Thread(heartbeatTask);
+        heartbeatThread.setDaemon(true);
+        heartbeatThread.start();
     }
 
     @Override
