@@ -43,7 +43,7 @@ public class NotificationController {
                                        @RequestParam(defaultValue = "0") int page,
                                        @RequestParam(defaultValue = "10") int size) {
         try {
-            return new Response(HttpStatus.OK.getReasonPhrase(), notificationService.getAllByReceiverId(receiverId, page, size), Constant.SUCCESS);
+            return new Response(HttpStatus.OK.getReasonPhrase(), notificationService.getAllByReceiverIds(receiverId), Constant.SUCCESS);
         } catch (Exception e) {
             return new Response(HttpStatus.EXPECTATION_FAILED.getReasonPhrase(), new ArrayList<>(), e.getMessage());
         }
@@ -54,7 +54,7 @@ public class NotificationController {
                                            @RequestParam(defaultValue = "0") int page,
                                            @RequestParam(defaultValue = "10") int size) {
         try {
-            return new Response(HttpStatus.OK.getReasonPhrase(), notificationService.getUnreadNotifications(receiverId, page, size), Constant.SUCCESS);
+            return new Response(HttpStatus.OK.getReasonPhrase(), notificationService.getUnreadNotification(receiverId), Constant.SUCCESS);
         } catch (Exception e) {
             return new Response(HttpStatus.EXPECTATION_FAILED.getReasonPhrase(), new ArrayList<>(), e.getMessage());
         }

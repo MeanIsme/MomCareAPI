@@ -71,6 +71,7 @@ public class NotificationService {
     }
 
     public List<NotificationResponse> getAllByReceiverId(String receiverId, int page, int size) throws ResourceNotFoundException {
+
         Pageable pageable = PageRequest.of(page, size);
         Page<Notification> notificationsPage = notificationRepository.findByReceiverId(receiverId, pageable);
         List <Notification> notifications = notificationsPage.getContent();
@@ -82,10 +83,28 @@ public class NotificationService {
 
     }
 
+    public List<NotificationResponse> getAllByReceiverIds(String receiverId) throws ResourceNotFoundException {
+
+        List <Notification> notifications = notificationRepository.findAllByReceiverIdOrderByIdDesc(receiverId);
+        List<NotificationResponse> notificationResponses = new ArrayList<>();
+        for (Notification notification : notifications) {
+            notificationResponses.add(this.map(notification));
+        }
+        return notificationResponses;
+    }
+
     public List<NotificationResponse> getUnreadNotifications(String receiverId, int page, int size) throws ResourceNotFoundException {
         Pageable pageable = PageRequest.of(page, size);
         Page<Notification> notificationsPage = notificationRepository.findByReceiverIdAndIsRead(receiverId, false, pageable);
         List <Notification> notifications = notificationsPage.getContent();
+        List<NotificationResponse> notificationResponses = new ArrayList<>();
+        for (Notification notification : notifications) {
+            notificationResponses.add(this.map(notification));
+        }
+        return notificationResponses;
+    }
+    public List<NotificationResponse> getUnreadNotification(String receiverId) throws ResourceNotFoundException {
+        List <Notification> notifications = notificationRepository.findAllByReceiverIdAndIsReadOrderByIdDesc(receiverId, false);
         List<NotificationResponse> notificationResponses = new ArrayList<>();
         for (Notification notification : notifications) {
             notificationResponses.add(this.map(notification));
