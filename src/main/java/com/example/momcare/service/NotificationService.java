@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class NotificationService {
         Notification notification = new Notification();
         notification.setReceiverId(notificationRequest.getReceiverId());
         notification.setSenderId(notificationRequest.getSenderId());
-        notification.setTimestamp(LocalDate.now().toString());
+        notification.setTimestamp(LocalDateTime.now().toString());
         notification.setRead(false);
         notification.setNotificationType(notificationRequest.getNotificationType());
         notification.setTargetId(notificationRequest.getTargetId());
